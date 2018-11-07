@@ -1,0 +1,25 @@
+{
+  "name": "ncm-cli",
+  "version": "1.0.0",
+  "license": "MIT",
+  "description": "A command-line tool that works with the new NCM api to report quality scores for node_modules, fetch and display the policy set for an organization, and check for package compliance",
+  "author": "NodeSource <npm@nodesource.com> (https://nodesource.com)",
+  "contributors": [
+    "Michael Sterpka <michael.sterpka@nodesource.com> (https://github.com/mster)"
+  ],
+  "scripts": {
+    "start": "bin/ncm-cli.js",
+    "test": ""
+  },
+  "bin": {
+    "ncm-cli": "bin/ncm-cli.js"
+  },
+  "keywords": [],
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "configstore": "^4.0.0",
+    "graphql-request": "^1.8.2",
+    "ncm-analyze-tree": "^3.0.0",
+    "yargs": "^12.0.2"
+  }
+}
