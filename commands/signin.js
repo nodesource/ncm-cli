@@ -2,11 +2,9 @@
 
 'use strict'
 
-const { makeRequest, handleError, handleReadline } = require('../lib/tools')
+const { makeRequest, handleError, handleReadline, api } = require('../lib/tools')
 const { getValue, setValue, getTokens, setTokens } = require('../lib/config')
 const logger = require('../lib/logger')
-
-const HOSTNAME = 'api.nodesource.com'
 
 module.exports = signin
 
@@ -41,7 +39,7 @@ function emailAuth(usrInfo) {
 
     const options = {
         method: 'POST',
-        hostname: HOSTNAME,
+        hostname: api,
         path: `/accounts/auth/login`,
         headers: { 'Content-Type': 'application/json' },
         body: usrInfo
@@ -54,7 +52,7 @@ function getUrlSSO(sso) {
 
     const options = {
         method: 'GET',
-        hostname: HOSTNAME,
+        hostname: api,
         path: `/accounts/auth/social-signin-url?source=${sso}`,
     }
 
@@ -73,7 +71,7 @@ function retrieveSession(err, { url, nonce }) {
 
     const options = {
         method: 'GET',
-        hostname: `api.nodesource.com`,
+        hostname: api,
         path: `/accounts/auth/retrieve-session?nonce=${nonce}`
     }
 
@@ -106,7 +104,7 @@ function fetchUserDetails() {
 
     const options = {
         method: 'GET',
-        hostname: HOSTNAME,
+        hostname: api,
         path: `/accounts/user/details`,
         headers: {
             Authorization: `Bearer ${session}`
