@@ -3,108 +3,124 @@
 'use strict'
 
 const { graphql, handleError } = require('../lib/tools')
-const config = require('../lib/config')
+const { getValue, api } = require('../lib/config')
+const logger = require('../lib/logger')
 
-const NCM_API = 'https://api.nodesource.com/ncm2/api/v1'
+module.exports = policy
 
-const managePolicySet = (argv) => {
+function policy(argv) {
 
     let action = (argv['_'][1] ? argv['_'][1].toLowerCase() : null)
 
-    let entries = []
-    argv['_'].forEach((pkg, ind) => {
-        if(ind > 1 && pkg.includes('@')) {
-            entries.push({ name: pkg.split('@')[0], version: pkg.split('@')[1] })
-        } else if (ind > 1) {
-            console.log(`Please specify a version to whitelist for pkg: ${pkg}`)
-        }
-    })
-    
     switch(action) {
-        case "add":
-            modifyWhitelistEntries(action, entries)
-            break;
-        case "del":
-            modifyWhitelistEntries(action, entries)
-            break;
+        case "add" || "del":
+            modifyWhitelistEntries(action, parseEntries(argv))
+            break
+        case "get":
+            getWhitelist()
+            break
         default:
             getWhitelist()
-            break;
+            break
     }
-
     return true
-}
-
-const getWhitelist = async() => {
-
-    let token = config.modifyState({ '_': ['config', 'get', 'token'] })
-    let orgId = config.modifyState({ '_': ['config', 'get', 'org'] })
-
-    if(!token || !orgId) handleError('No valid token or org id!')
-
-    let options = {
-        token: token,
-        url: NCM_API
-    }
-
-    let query = queries.get
-
-    let vars = { orgId }
-
-    const data = await graphql(options, query, vars)
-
-    console.log(JSON.stringify(data))
-}
-
-const getPackageData = async({ pkg, version }) => {
-
-    let token = config.modifyState(['get', 'token'])
-
-    if(!token) handleError('No valid token!')
-
-    let options = {
-        token: token,
-        url: NCM_API
-    }
-
-    let query = queries.package
-
-    let vars = { pkg }
-
-    let data
-    if(options && query && vars) data = await graphql(options, query, vars)
- 
-    console.log(JSON.stringify(data ? data : handleError("graphql parameters unmet")))
 }
 
 const modifyWhitelistEntries = async(action, entries) => {
 
-    let { token, org, policy } = config.getFields(['token', 'org', 'policy'])
+    let token = getValue('token'),
+        policy = getValue('policy'),
+        org = getValue('org')
 
-    if(!token) handleError('No valid token!')
+    if(!token) { 
+        handleError('Policy::NoToken')
+        return
+    }
+    if(!org) {
+        handleError('Policy::NoOrg')
+        return
+    }
+    if(!policy) {
+        handleError('Policy::NoPolicy')
+        return
+    }
+    if(entries.isEmpty) {
+        handleError('Policy::NoValidEntries')
+        return
+    }
 
     let options = {
         token: token,
-        url: NCM_API
+        url: `https://${api}/ncm2/api/v1`
     }
 
-    let query
-    switch(action) {
-        case "add":
-            query = queries.add
-            break;
-        case "delete":
-            query = queries.delete
-        default:
-            break;
-    }
-
+    let query = queries[action]
     let vars = { org, policy, entries }
 
-    let data
-    if(options && query && vars) data = await graphql(options, query, vars)
+    await graphql(options, query, vars)
+    .then(madeModifications)
+    .catch(catchErrors)
+}
 
-    console.log(JSON.stringify(data ? data : { error: "graphql parameters unmet"}))
+const getWhitelist = async() => {
+
+    let token = getValue('token'),
+        policy = getValue('policy'),
+        org = getValue('org')
+
+    if(!token) { 
+        handleError('Policy::NoToken')
+        return
+    }
+    if(!org) {
+        handleError('Policy::NoOrg')
+        return
+    }
+    if(!policy) {
+        handleError('Policy::NoPolicy')
+        return
+    }
+
+    let options = {
+        token: token,
+        url: `https://${api}/ncm2/api/v1`
+    }
+
+    let query = queries['get']
+    let vars = { org }
+
+    await graphql(options, query, vars)
+    .then(gotWhitelist)
+    .catch(catchErrors)
+}
+
+const parseEntries = (argv) => {
+
+    let entries = []
+
+    argv['_'].forEach((pkg, ind) => {
+        if(ind > 1 && pkg.includes('@')) {
+            entries.push({ name: pkg.split('@')[0], version: pkg.split('@')[1] })
+        } 
+        else if (ind > 1) {
+            logger([{ text: 'Unable to determine package: ', style: [] },{ text: `${pkg}`, style: 'error'} ])
+        }
+    })
+
+    return entries
+}
+
+const gotWhitelist = () => {
+
+}
+
+const madeModifications = () => {
+
+}
+
+const catchErrors = (err) => {
+    err.response.code ? err = err.response.code : null
+    handleError(err)
 }
 
 const queries = {
@@ -135,7 +151,7 @@ const queries = {
             }
         }`,
     get: 
-        `query($orgId: String!) {
+        `query($org: String!) {
             policies(organizationId: $org) {
                 whitelist {
                     name
@@ -170,10 +186,3 @@ const queries = {
             }
         }`
 }
-
-module.exports = {
-    getWhitelist: getWhitelist,
-    modifyWhitelistEntries: modifyWhitelistEntries,
-    managePolicySet: managePolicySet,
-}
-
