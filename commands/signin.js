@@ -22,7 +22,12 @@ function signin(argv, options) {
         let password = (args[1].length > 0 ? args[2] : null)
 
         if(email && password) {
-            emailAuth(JSON.stringify({ email, password }))
+            try {
+                emailAuth(JSON.stringify({ email, password }))
+            } catch (err) {
+                handleError('Signin::InvalidLoginCredentials')
+            }
+            
         }
     }
 
@@ -34,7 +39,6 @@ function signin(argv, options) {
 }
 
 function emailAuth(usrInfo) {
-    console.log(usrInfo)
 
     const options = {
         method: 'POST',
@@ -60,7 +64,7 @@ function getUrlSSO(sso) {
 
 function retrieveSession(err, { url, nonce }) {
 
-    if(err) console.error(err)
+    if(err) handleError('Signin::RetrieveSession')
 
     logger([{ text: 'NCM-CLI:', style: 'ncm' }])
     logger([{ text: 'Please open the following URL in your browser: ', style: 'main' }])
@@ -80,13 +84,12 @@ function retrieveSession(err, { url, nonce }) {
 function onSession(err, data) {
 
     if(err) { 
-        handleError(err)
+        handleError('Signin::Generic')
         return
     }
 
     if(!data['session'] || !data['refreshToken'] ) {
-        console.log(JSON.stringify(data))
-        handleError({ message: 'Invalid login details' })
+        handleError('Signin::InvalidLoginCredentials')
         return
     }
 
@@ -100,7 +103,7 @@ function onSession(err, data) {
 
 function fetchUserDetails() {
 
-    let { session, refreshToken } = config.getTokens()
+    let { session } = config.getTokens()
 
     const options = {
         method: 'GET',
@@ -129,7 +132,7 @@ function refreshSession() {
 }
 
 function setDetails(err, data) {
-    if(err) handleError(err)
+    if(err) handleError('Signin::FetchUserDetails')
 
     //stub
 }

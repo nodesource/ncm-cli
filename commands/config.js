@@ -7,12 +7,14 @@ const {
     resetState 
 } = require('../lib/config')
 const logger = require('../lib/logger')
+const { handleError } = require('../lib/tools')
 
 module.exports = config
 
 const userAccess = [
     'token',
     'org',
+    'orgId',
     'policy'
 ]
 
@@ -20,7 +22,10 @@ function config(argv) {
 
     let action = (argv['_'][1] ? argv['_'][1].toLowerCase() : null)
 
-    if(!action) console.error('No action specified')
+    if(!action) {
+        handleError('Config::NoAction')
+        return true
+    }
 
     let key = (argv['_'][2] ? argv['_'][2].toLowerCase() : null),
         value = (argv['_'][3] ? argv['_'][3] : null)
@@ -30,8 +35,7 @@ function config(argv) {
         case "set":
             let setErr = setValue(key, value)
             if(setErr) {
-                logger([{ text: `Could not set `, style: [] }, { text: `<${key}>`, style: 'error' }])
-                logger()
+                handleError(setErr)
             } else {
                 logger([{ text: `<${key}> `, style: 'success' },{ text: `has been set to:`, style: [] }])
                 logger([{ text: `${value}`, style: [] }])
@@ -39,10 +43,9 @@ function config(argv) {
             }
             break
         case "get":
-            let getErr, val = getValue(key)
-            if(getErr) {
-                logger([{ text: `Could not get `, style: [] }, { text: `<${key}>`, style: 'error' }])
-                logger()
+            let { err, val } = getValue(key)
+            if(err) {
+                handleError(err)
             } else {
                 logger([{ text: `<${key}>:`, style: 'success' }])
                 logger([{ text: `${val ? val : ''}`, style: [] }])
@@ -52,8 +55,7 @@ function config(argv) {
         case "del":
             let delErr = delValue(key)
             if(delErr) {
-                logger([{ text: `Could not delete `, style: [] }, { text: `<${key}>`, style: 'error' }])
-                logger()
+                handleError(delErr)
             } else {
                 logger([{ text: `<${key}>:`, style: 'success' }])
                 logger([{ text: `${value ? value : ''}`, style: [] }])
@@ -72,7 +74,6 @@ function config(argv) {
                 logger([{ text: `<${key}> `, style: 'success' }, { text: `${list[key]}`, style: [] }])
             }
             logger()
-
             break
     }   
     return true
@@ -82,8 +83,8 @@ const prepareList = () => {
     let l = new Set()
 
     for(let ind in userAccess) {
-        let getErr, val = getValue(userAccess[ind])
-        if(val) l[userAccess[ind]] = val
+        let { err, val } = getValue(userAccess[ind])
+        if(!err) l[userAccess[ind]] = val
     }
 
     return l

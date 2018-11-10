@@ -4,6 +4,7 @@ const signin = require('./signin')
 const signout = require('./signout')
 const policy = require('./policy')
 const verify = require('./verify')
+const watch = require('./watch')
 const config = require('./config')
 
 const commands = {
@@ -11,19 +12,19 @@ const commands = {
         'config',
         'NCM-cli configuration management',
         (yargs) => {
-            let argv = yargs
+            yargs
             .command(
                 'set',
                 'Set a configuration option',
                 (yargs) => { 
-                    argv = yargs
+                    yargs
                     .usage('usage: $0 config set <key> <value>')
             })
             .command(
                 'get',
                 'Get a configuration option',
                 (yargs) => {
-                    argv = yargs
+                    yargs
                     .usage('usage: $0 config get <key>')
                 }
             )
@@ -31,7 +32,7 @@ const commands = {
                 ['del', 'delete'],
                 'description',
                 (yargs) => {
-                    argv = yargs
+                    yargs
                     .usage('usage: $0 config del <key>')
                 }
             )
@@ -39,7 +40,7 @@ const commands = {
                 'reset',
                 'description',
                 (yargs) => {
-                    argv = yargs
+                    yargs
                     .usage('usage: $0 config reset')
                 }
             )
@@ -50,7 +51,7 @@ const commands = {
         ['signin', 'login', 's'], 
         'Signin to NCM-cli',
         (yargs) => {
-            let argv = yargs
+            yargs
             .usage('usage: $0 signin <username> <password> [options]')
             .options({
                 google: { alias: 'G', describe: 'Google SSO' },
@@ -63,7 +64,7 @@ const commands = {
         ['signout', 'logout', 'o'],
         'Signout of NCM-cli',
         (yargs) => {
-            let argv = yargs
+            yargs
             .usage('usage: $0 signout')
             .check(signout)
         }
@@ -72,7 +73,7 @@ const commands = {
         ['policy', 'p'],
         'Display the policy set for the organization',
         (yargs) => {
-            let argv = yargs
+            yargs
             .command(
                 'add',
                 'Add a package to the current policy whitelist',
@@ -95,7 +96,7 @@ const commands = {
         ['verify', 'v'],
         'Verify that all packages in the tree are certified',
         (yargs) => {
-            let argv = yargs
+            yargs
             .check(verify)
         }
     ],
@@ -103,7 +104,8 @@ const commands = {
         ['watch', 'w'],
         'Watches directory for changes',
         (yargs) => {
-            let argv = yargs
+            yargs
+            .check(watch)
         }
     ]
 }

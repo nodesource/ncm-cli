@@ -25,6 +25,7 @@ const managePolicySet = (argv) => {
             modifyWhitelistEntries(action, entries)
             break;
         case "del":
+            modifyWhitelistEntries(action, entries)
             break;
         default:
             getWhitelist()
