@@ -2,8 +2,8 @@
 
 'use strict'
 
-const { makeRequest, handleError } = require('../lib/tools')
-const config = require('../lib/config')
+const { makeRequest, handleError, handleReadline } = require('../lib/tools')
+const { getValue, setValue, getTokens, setTokens } = require('../lib/config')
 const logger = require('../lib/logger')
 
 const HOSTNAME = 'api.nodesource.com'
@@ -27,7 +27,6 @@ function signin(argv, options) {
             } catch (err) {
                 handleError('Signin::InvalidLoginCredentials')
             }
-            
         }
     }
 
@@ -93,9 +92,9 @@ function onSession(err, data) {
         return
     }
 
-    fetchUserDetails()
+    setTokens(data)
 
-    config.setTokens(data)
+    fetchUserDetails()
 
     logger([{ text: 'Login Successful', style: 'success' }])
     logger()
@@ -103,7 +102,7 @@ function onSession(err, data) {
 
 function fetchUserDetails() {
 
-    let { session } = config.getTokens()
+    let { session } = getTokens()
 
     const options = {
         method: 'GET',
@@ -115,24 +114,52 @@ function fetchUserDetails() {
     }
 
     makeRequest(options, setDetails)
-
-}
-
-function refreshSession() {
-    const options = {
-        method: 'GET',
-        hostname: HOSTNAME,
-        path: `/accounts/auth/refresh`,
-        headers: {
-            'Authorization': `Bearer ${refreshToken}`
-        }
-    }
-
-    makeRequest(options, handleError)
 }
 
 function setDetails(err, data) {
-    if(err) handleError('Signin::FetchUserDetails')
+    if(err) {
+        handleError('Signin::FetchUserDetails')
+        return
+    }
 
-    //stub
+    let orgs = data.orgs  ? Object.keys(data.orgs) : null // array of orgs
+    let { val } = getValue('apiVer')
+    let hasOrgs = orgs.length > 0
+
+    if(!hasOrgs) handleError('Signin::NoOrgs')
+
+
+    // only supported version, currently
+    if(hasOrgs && val == 'v1') {
+        let orgId = orgs[0] // current api only supports single org
+        let org = data.orgs[orgId].name
+
+        setValue('org', org)
+        setValue('orgId', orgId)
+    }
+
+    // to come soon, allowing for mutliple orgs
+    if(hasOrgs && val == 'v2') {
+        let orgSet = new Set()
+    
+        const templateList = []
+        for(let ind in orgs) {
+            orgSet[data.orgs[orgs[ind]].name] = orgs[ind]
+            templateList.push({ text: `${data.orgs[orgs[ind]].name}    `, style: ['bold'] })
+        }
+    
+        logger([{ text: 'Select an organization to set as default', style: [] }])
+        logger(templateList)
+    
+        // todo: de-turdification
+        handleReadline('', readChoice)
+    
+        const readChoice = (choice) => {
+            choice = choice.trim()
+            if(orgSet[choice]) {
+                setValue('org', choice)
+                setValue('orgId', orgSet[choice])
+            }
+        }
+    }
 }

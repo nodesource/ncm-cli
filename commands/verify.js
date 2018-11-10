@@ -59,6 +59,4 @@ const catchAuth = (err) => {
     } catch (err) {
 
     }
-
-    console.log(err)
 }
