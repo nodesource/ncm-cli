@@ -22,7 +22,7 @@ function signin(argv, options) {
         let password = (args[1].length > 0 ? args[2] : null)
 
         if(email && password) {
-            emailAuth({ email, password })
+            emailAuth(JSON.stringify({ email, password }))
         }
     }
 
@@ -34,6 +34,8 @@ function signin(argv, options) {
 }
 
 function emailAuth(usrInfo) {
+    console.log(usrInfo)
+
     const options = {
         method: 'POST',
         hostname: HOSTNAME,
@@ -75,6 +77,44 @@ function retrieveSession(err, { url, nonce }) {
     makeRequest(options, onSession)
 }
 
+function onSession(err, data) {
+
+    if(err) { 
+        handleError(err)
+        return
+    }
+
+    if(!data['session'] || !data['refreshToken'] ) {
+        console.log(JSON.stringify(data))
+        handleError({ message: 'Invalid login details' })
+        return
+    }
+
+    fetchUserDetails()
+
+    config.setTokens(data)
+
+    logger([{ text: 'Login Successful', style: 'success' }])
+    logger()
+}
+
+function fetchUserDetails() {
+
+    let { session, refreshToken } = config.getTokens()
+
+    const options = {
+        method: 'GET',
+        hostname: HOSTNAME,
+        path: `/accounts/user/details`,
+        headers: {
+            Authorization: `Bearer ${session}`
+        }
+    }
+
+    makeRequest(options, setDetails)
+
+}
+
 function refreshSession() {
     const options = {
         method: 'GET',
@@ -85,23 +125,11 @@ function refreshSession() {
         }
     }
 
-    makeRequest(options, onSession)
+    makeRequest(options, handleError)
 }
 
-function onSession(err, data) {
+function setDetails(err, data) {
+    if(err) handleError(err)
 
-    if(err) { 
-        handleError(err) 
-        return 
-    }
-
-    if(!data['session'] || !data['refreshToken'] ) {
-        handleError({ message: 'Invalid login details' })
-        return
-    }
-
-    config.setTokens(data)
-
-    logger([{ text: 'Login Successful', style: 'success' }])
-    logger()
+    //stub
 }

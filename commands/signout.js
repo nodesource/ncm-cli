@@ -8,4 +8,5 @@ module.exports = signout
 
 function signout (argv) {
     config.setTokens({ session: '', refreshToken: ''})
+    return true
 }

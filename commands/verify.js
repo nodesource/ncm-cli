@@ -4,7 +4,7 @@
 
 const analyze = require('ncm-analyze-tree')
 const config = require('../lib/config')
-const { scoreReport, handleError } = require('../lib/tools')
+const { scoreReport, handleError, refreshSession } = require('../lib/tools')
 
 module.exports = verify
 
@@ -19,7 +19,7 @@ function verify(argv) {
         if(json) null
         if(output) null
     })
-    .catch(handleError)
+    .catch(catchAuth)
 
     return true
 }
@@ -48,4 +48,17 @@ const crawl = async({ session }, dir) => {
     }
 
     return { scores: r, failures: f }
+}
+
+const catchAuth = (err) => {
+    try {
+        let json = JSON.stringify(err)
+        if(json.response && json.response.message == "Auth::LoginExpired") {
+            refreshSession()
+        }
+    } catch (err) {
+
+    }
+
+    console.log(err)
 }
