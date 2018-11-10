@@ -6,7 +6,7 @@ const { commands, options } = require('../commands/cli')
 
 var yargs = require('yargs')
 
-var argv = yargs
+yargs
     .usage('usage: $0 [command] [options]')
     .command(...commands.config)
     .command(...commands.signin)
