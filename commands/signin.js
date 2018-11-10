@@ -2,8 +2,8 @@
 
 'use strict'
 
-const { makeRequest, handleError, handleReadline, api } = require('../lib/tools')
-const { getValue, setValue, getTokens, setTokens } = require('../lib/config')
+const { makeRequest, handleError, handleReadline } = require('../lib/tools')
+const { getValue, setValue, getTokens, setTokens, api } = require('../lib/config')
 const logger = require('../lib/logger')
 
 module.exports = signin
@@ -61,7 +61,10 @@ function getUrlSSO(sso) {
 
 function retrieveSession(err, { url, nonce }) {
 
-    if(err) handleError('Signin::RetrieveSession')
+    if(err) {
+        handleError('Signin::RetrieveSession')
+    }
+
 
     logger([{ text: 'NCM-CLI:', style: 'ncm' }])
     logger([{ text: 'Please open the following URL in your browser: ', style: 'main' }])
@@ -81,6 +84,7 @@ function retrieveSession(err, { url, nonce }) {
 function onSession(err, data) {
 
     if(err) { 
+        console.log(err)
         handleError('Signin::Generic')
         return
     }

@@ -3,7 +3,7 @@
 'use strict'
 
 const analyze = require('ncm-analyze-tree')
-const config = require('../lib/config')
+const { getTokens } = require('../lib/config')
 const { scoreReport, handleError, refreshSession } = require('../lib/tools')
 
 module.exports = verify
@@ -11,7 +11,7 @@ module.exports = verify
 function verify(argv) {
 
     let { json, output, dir, report } = argv 
-    let tokens = config.getTokens()
+    let tokens = getTokens()
 
     crawl(tokens, dir)
     .then(({ scores, failures }) => {
@@ -56,7 +56,8 @@ const catchAuth = (err) => {
         if(json.response && json.response.message == "Auth::LoginExpired") {
             refreshSession()
         }
+        handleError('TEMP::UnauthorizedInvalidToken')
     } catch (err) {
-
+        handleError('TEMP::UncaughtException')
     }
 }
