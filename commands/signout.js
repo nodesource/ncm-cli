@@ -2,11 +2,11 @@
 
 'use strict'
 
-const config = require('../lib/config')
+const { setTokens } = require('../lib/config')
 
 module.exports = signout
 
-function signout (argv) {
-    config.setTokens({ session: '', refreshToken: ''})
+function signout () {
+    setTokens({ session: ' ', refreshToken: ' '})
     return true
 }
