@@ -15,7 +15,8 @@ const userAccess = [
     'token',
     'org',
     'orgId',
-    'policy'
+    'policy',
+    'policyId'
 ]
 
 function config(argv) {

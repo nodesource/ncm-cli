@@ -3,7 +3,7 @@
 'use strict'
 
 const { graphql, handleError } = require('../lib/tools')
-const { getValue, api } = require('../lib/config')
+const { getValue, setValue, api } = require('../lib/config')
 const logger = require('../lib/logger')
 
 module.exports = policy
@@ -13,14 +13,16 @@ function policy(argv) {
     let action = (argv['_'][1] ? argv['_'][1].toLowerCase() : null)
 
     switch(action) {
-        case "add" || "del":
+        case "add":
             modifyWhitelistEntries(action, parseEntries(argv))
             break
+        case "del":
+            modifyWhitelistEntries(action, parseEntries(argv))
         case "get":
             getWhitelist()
             break
         default:
-            getWhitelist()
+            getPolicy()
             break
     }
     return true
@@ -28,9 +30,9 @@ function policy(argv) {
 
 const modifyWhitelistEntries = async(action, entries) => {
 
-    let token = getValue('token'),
-        policy = getValue('policy'),
-        org = getValue('org')
+    let { val: token } = getValue('token'),
+        { val: policy }= getValue('policyId'),
+        { val: org } = getValue('orgId')
 
     if(!token) { 
         handleError('Policy::NoToken')
@@ -55,7 +57,7 @@ const modifyWhitelistEntries = async(action, entries) => {
     }
 
     let query = queries[action]
-    let vars = { org, policy, entries }
+    let vars = { policy, org, entries }
 
     await graphql(options, query, vars)
     .then(madeModifications)
@@ -64,9 +66,8 @@ const modifyWhitelistEntries = async(action, entries) => {
 
 const getWhitelist = async() => {
 
-    let token = getValue('token'),
-        policy = getValue('policy'),
-        org = getValue('org')
+    let { val: token } = getValue('token'),
+        { val: org } = getValue('orgId')
 
     if(!token) { 
         handleError('Policy::NoToken')
@@ -76,8 +77,26 @@ const getWhitelist = async() => {
         handleError('Policy::NoOrg')
         return
     }
-    if(!policy) {
-        handleError('Policy::NoPolicy')
+
+    let options = {
+        token: token,
+        url: `https://${api}/ncm2/api/v1`
+    }
+
+    let query = queries['whitelist']
+    let vars = { org }
+
+    await graphql(options, query, vars)
+    .then(gotWhitelist)
+    .catch(catchErrors)
+}
+
+const getPolicy = async() => {
+    let { val: token } = getValue('token'),
+        { val: org } = getValue('orgId')
+
+    if(!token) { 
+        handleError('Policy::NoToken')
         return
     }
 
@@ -86,11 +105,11 @@ const getWhitelist = async() => {
         url: `https://${api}/ncm2/api/v1`
     }
 
-    let query = queries['get']
+    let query = queries['policy']
     let vars = { org }
 
     await graphql(options, query, vars)
-    .then(gotWhitelist)
+    .then(gotPolicy)
     .catch(catchErrors)
 }
 
@@ -110,47 +129,53 @@ const parseEntries = (argv) => {
     return entries
 }
 
-const gotWhitelist = () => {
-
+const gotWhitelist = (data) => {
+    console.log(data)
 }
 
-const madeModifications = () => {
+const gotPolicy = (data) => {
+    if(!data.policies) handleError('Policy::NoPolicy')
 
+    let policyId = data.policies[0].id,
+        policyName = data.policies[0].name
+
+    setValue('policyId', policyId)
+    setValue('policy', policyName)
+}
+
+const madeModifications = (data) => {
+    console.log(data)
 }
 
 const catchErrors = (err) => {
-    err.response.code ? err = err.response.code : null
+    err.response && err.response.code ? err = err.response.code : null
     handleError(err)
 }
 
 const queries = {
     add:
-        `mutation {
+        `mutation($org: String!, $policy: String!, $entries: [WhitelistEntryInput]!) {
             addWhitelistEntries(
-                organizationId: $org
-                policyId: $policy
-                whitelistEntries: [
-                    $entries
-                ]
-            ){
-                name
-                version
-            }
+                organizationId:$org
+                policyId:$policy
+                whitelistEntries:$entries
+          ){
+            name
+            version
+          }
         }`,
-    delete:
-        `mutation {
+    del:
+        `mutation($org: String!, $policy: String!, $entries: [WhitelistEntryInput]!) {
             deleteWhitelistEntries(
-                    organizationId: $org
-                    policyId: $policy
-                    whitelistEntries: [
-                    $entries
-                ]
+                    organizationId:$org
+                    policyId:$policy
+                    whitelistEntries:$entries
             ){
                 name
                 version
             }
         }`,
-    get: 
+    whitelist: 
         `query($org: String!) {
             policies(organizationId: $org) {
                 whitelist {
@@ -159,30 +184,17 @@ const queries = {
                 }
             }
         }`,
-    package:
-        `{
-            package(name: $package) {
+    policy:
+        `query($org: String!) {
+            policies(organizationId: $org) {
+              id
+              name
+              organizationId
+              whitelist {
                 name
-                versions {
-                    name
-                    version
-                    score
-                    results {
-                        name
-                        severity
-                        test
-                        pass
-                        value
-                    }
-                    vulnerabilities {
-                        id
-                        title
-                        semver {
-                            vulnerable
-                        }
-                        severity
-                    }
-                }
+                version
+              }
             }
-        }`
+          }
+        `
 }
