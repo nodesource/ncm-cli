@@ -10,43 +10,62 @@ module.exports = policy
 
 function policy(argv) {
 
-    let action = (argv['_'][1] ? argv['_'][1].toLowerCase() : null)
+    const cmd = (argv) => {
+        let action = (argv['_'][1] ? argv['_'][1].toLowerCase() : null)
 
-    switch(action) {
-        case "add":
-            modifyWhitelistEntries(action, parseEntries(argv))
-            break
-        case "del":
-            modifyWhitelistEntries(action, parseEntries(argv))
-        case "get":
-            getWhitelist()
-            break
-        default:
-            getPolicy()
-            break
+        switch(action) {
+            case "add":
+                modifyWhitelistEntries(action, parseEntries(argv))
+                break
+            case "del":
+                modifyWhitelistEntries(action, parseEntries(argv))
+            case "whitelist":
+                getWhitelist()
+                break
+            case "get":
+                getPolicy()
+                break
+            default:
+                break
+        }
     }
+
+    let { val: org } = getValue('orgId'),
+        { val: policy } = getValue('policyId')
+
+    if(policy == ' ') {
+        getPolicy(setPolicy)
+        .then(()=> cmd(argv))
+    }
+    else {
+        cmd(argv)
+    }
+
     return true
 }
 
 const modifyWhitelistEntries = async(action, entries) => {
 
     let { val: token } = getValue('token'),
-        { val: policy }= getValue('policyId'),
-        { val: org } = getValue('orgId')
+        { val: org } = getValue('orgId'),
+        { val: policy } = getValue('policyId')
 
-    if(!token) { 
+    if(!token|| token == ' ') { 
         handleError('Policy::NoToken')
         return
     }
-    if(!org) {
+
+    if(!org || org == ' ') {
         handleError('Policy::NoOrg')
         return
     }
-    if(!policy) {
-        handleError('Policy::NoPolicy')
+
+    if(!policy || policy == ' ') {
+        handleError('Policy::PolicyNotSet')
         return
     }
-    if(entries.isEmpty) {
+
+    if(!entries || entries.length == 0) {
         handleError('Policy::NoValidEntries')
         return
     }
@@ -91,7 +110,7 @@ const getWhitelist = async() => {
     .catch(catchErrors)
 }
 
-const getPolicy = async() => {
+const getPolicy = async (fn) => {
     let { val: token } = getValue('token'),
         { val: org } = getValue('orgId')
 
@@ -109,7 +128,7 @@ const getPolicy = async() => {
     let vars = { org }
 
     await graphql(options, query, vars)
-    .then(gotPolicy)
+    .then(fn)
     .catch(catchErrors)
 }
 
@@ -130,10 +149,10 @@ const parseEntries = (argv) => {
 }
 
 const gotWhitelist = (data) => {
-    console.log(data)
+    console.log(data.policies[0].whitelist)
 }
 
-const gotPolicy = (data) => {
+const setPolicy = (data) => {
     if(!data.policies) handleError('Policy::NoPolicy')
 
     let policyId = data.policies[0].id,

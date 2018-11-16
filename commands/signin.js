@@ -8,7 +8,7 @@ const logger = require('../lib/logger')
 
 module.exports = signin
 
-function signin(argv, options) {
+function signin(argv) {
     let args = argv['_'] || null
     let SSO = 
         (argv['G'] ? 'google' : null) ||
@@ -124,24 +124,52 @@ function setDetails(err, data) {
         return
     }
 
-    let orgs = data.orgs  ? Object.keys(data.orgs) : null // array of orgs
-    let { val } = getValue('apiVer')
+    let orgs = data.orgs ? Object.keys(data.orgs) : null // array of orgs
+    let { val: apiVer } = getValue('apiVer')
     let hasOrgs = orgs.length > 0
 
-    if(!hasOrgs) handleError('Signin::NoOrgs')
+    if(!hasOrgs) {
+        // user does not belong to any organizations: set orgId and policyId to personal configuration
+        setValue('org', 'default')
+        setValue('orgId', '1')
+        setValue('policy', 'personal')
+        setValue('policyId', 'default')
+
+        handleError('Signin::NoOrgs')
+    }
 
 
     // only supported version, currently
-    if(hasOrgs && val == 'v1') {
-        let orgId = orgs[0] // current api only supports single org
+    if(hasOrgs && apiVer == 'v1') {
+        let orgId = orgs[0]
         let org = data.orgs[orgId].name
 
-        setValue('org', org)
-        setValue('orgId', orgId)
+        logger([
+            { text: 'You belong to the organization: ', style: [] },
+            { text: org, style: 'success' }
+        ])
+        logger([
+            { text: 'Would you like to use the organiztion policy set? (y/n)', style: [] }
+        ])
+
+        handleReadline('', (choice) => {
+
+            choice = choice.trim()
+            choice = choice.toLowerCase()
+
+            if(choice == 'n' || choice == 'no') {
+                setValue('org', 'default')
+                setValue('orgId', '1')
+            }
+            if(choice == 'y' || choice == 'yes'){
+                setValue('org', org)
+                setValue('orgId', orgId)
+            }
+        })
     }
 
     // to come soon, allowing for mutliple orgs
-    if(hasOrgs && val == 'v2') {
+    if(hasOrgs && apiVer == 'v2') {
         let orgSet = new Set()
     
         const templateList = []

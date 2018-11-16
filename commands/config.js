@@ -14,9 +14,6 @@ module.exports = config
 const userAccess = [
     'token',
     'org',
-    'orgId',
-    'policy',
-    'policyId'
 ]
 
 function config(argv) {

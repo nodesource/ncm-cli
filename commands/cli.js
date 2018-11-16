@@ -85,7 +85,7 @@ const commands = {
                 (yargs) => yargs.usage('usage: $0 policy del <pkg>@<version>')
             )
             .command(
-                'get',
+                'whitelist',
                 'Get the current policy whitelist',
                 (yargs) => yargs.usage('usage: $0 policy get')
             )
