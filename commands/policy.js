@@ -22,16 +22,12 @@ function policy(argv) {
             case "whitelist":
                 getWhitelist()
                 break
-            case "get":
-                getPolicy()
-                break
             default:
                 break
         }
     }
 
-    let { val: org } = getValue('orgId'),
-        { val: policy } = getValue('policyId')
+    let { val: policy } = getValue('policyId')
 
     if(policy == ' ') {
         getPolicy(setPolicy)

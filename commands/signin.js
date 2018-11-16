@@ -84,8 +84,7 @@ function retrieveSession(err, { url, nonce }) {
 function onSession(err, data) {
 
     if(err) { 
-        console.log(err)
-        handleError('Signin::Generic')
+        handleError('Signin::UnableToRetrieveSession')
         return
     }
 
@@ -125,7 +124,6 @@ function setDetails(err, data) {
     }
 
     let orgs = data.orgs ? Object.keys(data.orgs) : null // array of orgs
-    let { val: apiVer } = getValue('apiVer')
     let hasOrgs = orgs.length > 0
 
     if(!hasOrgs) {
@@ -139,8 +137,8 @@ function setDetails(err, data) {
     }
 
 
-    // only supported version, currently
-    if(hasOrgs && apiVer == 'v1') {
+    // only supports api v1, currently
+    if(hasOrgs) {
         let orgId = orgs[0]
         let org = data.orgs[orgId].name
 
@@ -166,30 +164,5 @@ function setDetails(err, data) {
                 setValue('orgId', orgId)
             }
         })
-    }
-
-    // to come soon, allowing for mutliple orgs
-    if(hasOrgs && apiVer == 'v2') {
-        let orgSet = new Set()
-    
-        const templateList = []
-        for(let ind in orgs) {
-            orgSet[data.orgs[orgs[ind]].name] = orgs[ind]
-            templateList.push({ text: `${data.orgs[orgs[ind]].name}    `, style: ['bold'] })
-        }
-    
-        logger([{ text: 'Select an organization to set as default', style: [] }])
-        logger(templateList)
-    
-        // todo: de-turdification
-        handleReadline('', readChoice)
-    
-        const readChoice = (choice) => {
-            choice = choice.trim()
-            if(orgSet[choice]) {
-                setValue('org', choice)
-                setValue('orgId', orgSet[choice])
-            }
-        }
     }
 }

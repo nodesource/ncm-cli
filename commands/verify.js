@@ -4,7 +4,7 @@
 
 const analyze = require('ncm-analyze-tree')
 const { getTokens } = require('../lib/config')
-const { scoreReport, handleError, refreshSession } = require('../lib/tools')
+const { scoreReport, jsonReport, outputReport, handleError, refreshSession } = require('../lib/tools')
 
 module.exports = verify
 
@@ -16,8 +16,8 @@ function verify(argv) {
     crawl(tokens, dir)
     .then(({ scores, failures }) => {
         if(report) scoreReport(scores)
-        if(json) null
-        if(output) null
+        if(json) jsonReport(scores)
+        if(output) outputReport(scores, output)
     })
     .catch(catchAuth)
 

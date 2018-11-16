@@ -9,7 +9,7 @@ const config = require('./config')
 
 const commands = {
     config: [
-        'config',
+        ['config', 'c'],
         'NCM-cli configuration management',
         (yargs) => {
             yargs
@@ -124,6 +124,7 @@ const options = {
         describe: 'Formats the score report in JSON' 
     },
     output: { 
+        alias: 'o',
         describe: 'Outputs score report to a file' 
     },
     production: {
