@@ -2,13 +2,20 @@
 
 'use strict'
 
-const { graphql, handleError } = require('../lib/tools')
+const { graphql, handleError, displayHelp } = require('../lib/tools')
 const { getValue, setValue, api } = require('../lib/config')
 const logger = require('../lib/logger')
 
 module.exports = policy
 
 function policy(argv) {
+
+    let help = (argv['_'] && argv['_'][1] == 'help') || argv.help
+
+    if(help)  { 
+        displayHelp('policy')
+        return true
+    }
 
     const cmd = (argv) => {
         let action = (argv['_'][1] ? argv['_'][1].toLowerCase() : null)
@@ -23,6 +30,7 @@ function policy(argv) {
                 getWhitelist()
                 break
             default:
+                displayHelp('policy')
                 break
         }
     }

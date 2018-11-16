@@ -2,14 +2,24 @@
 
 'use strict'
 
-const { makeRequest, handleError, handleReadline } = require('../lib/tools')
+const { makeRequest, handleError, handleReadline, displayHelp } = require('../lib/tools')
 const { getValue, setValue, getTokens, setTokens, api } = require('../lib/config')
 const logger = require('../lib/logger')
 
 module.exports = signin
 
 function signin(argv) {
+
+    let help = (argv['_'] && argv['_'][1] == 'help') || argv.help
+
+    if(help)  { 
+        displayHelp('signin')
+        return true
+    }
+
+    // todo: deturd
     let args = argv['_'] || null
+
     let SSO = 
         (argv['G'] ? 'google' : null) ||
         (argv['g'] ? 'github' : null) ||

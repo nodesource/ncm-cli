@@ -7,7 +7,7 @@ const {
     resetState 
 } = require('../lib/config')
 const logger = require('../lib/logger')
-const { handleError } = require('../lib/tools')
+const { handleError, displayHelp } = require('../lib/tools')
 
 module.exports = config
 
@@ -18,23 +18,25 @@ const userAccess = [
 
 function config(argv) {
 
-    let action = (argv['_'][1] ? argv['_'][1].toLowerCase() : null)
+    let help = (argv['_'] && argv['_'][1] == 'help') || argv.help
 
-    if(!action) {
-        handleError('Config::NoAction')
+    if(help)  { 
+        displayHelp('config')
         return true
     }
+
+    let action = (argv['_'][1] ? argv['_'][1].toLowerCase() : null)
 
     let key = (argv['_'][2] ? argv['_'][2].toLowerCase() : null),
         value = (argv['_'][3] ? argv['_'][3] : null)
 
-    logger([{ text: 'NCM-CLI', style: 'ncm' }])
     switch (action) {
         case "set":
             let setErr = setValue(key, value)
             if(setErr) {
                 handleError(setErr)
             } else {
+                logger([{ text: 'NCM-CLI', style: 'ncm' }])
                 logger([{ text: `<${key}> `, style: 'success' },{ text: `has been set to:`, style: [] }])
                 logger([{ text: `${value}`, style: [] }])
                 logger()
@@ -45,6 +47,7 @@ function config(argv) {
             if(err) {
                 handleError(err)
             } else {
+                logger([{ text: 'NCM-CLI', style: 'ncm' }])
                 logger([{ text: `<${key}>:`, style: 'success' }])
                 logger([{ text: `${val ? val : ''}`, style: [] }])
                 logger()
@@ -55,6 +58,7 @@ function config(argv) {
             if(delErr) {
                 handleError(delErr)
             } else {
+                logger([{ text: 'NCM-CLI', style: 'ncm' }])
                 logger([{ text: `<${key}>:`, style: 'success' }])
                 logger([{ text: `${value ? value : ''}`, style: [] }])
                 logger()
@@ -63,6 +67,7 @@ function config(argv) {
         case "reset":
             resetState()
             
+            logger([{ text: 'NCM-CLI', style: 'ncm' }])
             logger([{ text: `Config reset successful.`, style: 'success' }])
             logger()
             break
@@ -74,7 +79,7 @@ function config(argv) {
             logger()
             break
         default:
-            process.exit(1)
+            displayHelp('config')
             break
     }   
     return true

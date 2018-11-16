@@ -7,6 +7,8 @@ const verify = require('./verify')
 const watch = require('./watch')
 const config = require('./config')
 
+const { displayHelp } = require('../lib/tools')
+
 const commands = {
     config: [
         ['config', 'c'],
@@ -107,6 +109,11 @@ const commands = {
             yargs
             .check(watch)
         }
+    ],
+    help: [
+        ['help', 'h'],
+        'Display help information',
+        () => displayHelp('help')
     ]
 }
 

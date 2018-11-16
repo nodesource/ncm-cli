@@ -4,13 +4,26 @@
 
 const analyze = require('ncm-analyze-tree')
 const { getTokens } = require('../lib/config')
-const { scoreReport, jsonReport, outputReport, handleError, refreshSession } = require('../lib/tools')
+const { 
+    scoreReport,
+    jsonReport, 
+    outputReport, 
+    handleError, 
+    refreshSession, 
+    displayHelp 
+} = require('../lib/tools')
 
 module.exports = verify
 
 function verify(argv) {
 
-    let { json, output, dir, report } = argv 
+    let { json, output, dir, report, help } = argv 
+
+    if((argv['_'] && argv['_'][1] == 'help') || help )  { 
+        displayHelp('verify')
+        return true
+    }
+
     let tokens = getTokens()
 
     return crawl(tokens, dir)
