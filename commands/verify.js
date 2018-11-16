@@ -13,15 +13,16 @@ function verify(argv) {
     let { json, output, dir, report } = argv 
     let tokens = getTokens()
 
-    crawl(tokens, dir)
+    return crawl(tokens, dir)
     .then(({ scores, failures }) => {
         if(report) scoreReport(scores)
         if(json) jsonReport(scores)
         if(output) outputReport(scores, output)
-    })
-    .catch(catchAuth)
 
-    return true
+        if(failures) process.exit(1)
+        else return true
+    })
+    .catch(catchAuth)    
 }
 
 
@@ -51,13 +52,20 @@ const crawl = async({ session }, dir) => {
 }
 
 const catchAuth = (err) => {
+    // graphql login error
     try {
-        let json = JSON.stringify(err)
-        if(json.response && json.response.message == "Auth::LoginExpired") {
+        let e = JSON.stringify(err)
+
+        // session token has expired, request new token and update
+        if(e.response && e.response.message == "Auth::LoginExpired") {
             refreshSession()
         }
-        handleError('TEMP::UnauthorizedInvalidToken')
-    } catch (err) {
+        
+        // username / password has invalid token
+        handleError('TEMP::InvalidToken')
+    } 
+
+    catch (err) {
         handleError('TEMP::UncaughtException')
     }
 }

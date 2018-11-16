@@ -73,6 +73,9 @@ function config(argv) {
             }
             logger()
             break
+        default:
+            process.exit(1)
+            break
     }   
     return true
 }
