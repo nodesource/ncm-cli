@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "start": "bin/ncm-cli.js",
-    "test": ""
+    "lint": "standard --verbose",
+    "test": "npm run lint"
   },
   "bin": {
     "ncm-cli": "bin/ncm-cli.js"
@@ -21,5 +22,8 @@
     "graphql-request": "^1.8.2",
     "ncm-analyze-tree": "^3.0.0",
     "yargs": "^12.0.2"
+  },
+  "devDependencies": {
+    "standard": "^12.0.1"
   }
 }
