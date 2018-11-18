@@ -54,8 +54,8 @@ const crawl = async ({ session }, dir) => {
   for (const pkg of data) {
     r[pkg.name] = { name: pkg.name, version: pkg.version, score: pkg.score }
     pkg.results.forEach(result => {
-      if (!result.pass) {
-        f[pkg.name] ? f[pkg.name].push(result) : f[pkg.name] = [result]
+      if (result.pass === false) {
+        f[pkg.name] && f[pkg.name].results ? f[pkg.name]['results'] = [ f[pkg.name]['results'], result ] : f[pkg.name] = { name: pkg.name, version: pkg.version, 'results': [ result ] }
       }
     })
   }
