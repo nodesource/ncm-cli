@@ -8,175 +8,173 @@ const logger = require('../lib/logger')
 
 module.exports = policy
 
-function policy(argv) {
+function policy (argv) {
+  let help = (argv['_'] && argv['_'][1] === 'help') || argv.help
 
-    let help = (argv['_'] && argv['_'][1] == 'help') || argv.help
-
-    if(help)  { 
-        displayHelp('policy')
-        return true
-    }
-
-    const cmd = (argv) => {
-        let action = (argv['_'][1] ? argv['_'][1].toLowerCase() : null)
-
-        switch(action) {
-            case "add":
-                modifyWhitelistEntries(action, parseEntries(argv))
-                break
-            case "del":
-                modifyWhitelistEntries(action, parseEntries(argv))
-            case "whitelist":
-                getWhitelist()
-                break
-            default:
-                displayHelp('policy')
-                break
-        }
-    }
-
-    let { val: policy } = getValue('policyId')
-
-    if(policy == ' ') {
-        getPolicy(setPolicy)
-        .then(()=> cmd(argv))
-    }
-    else {
-        cmd(argv)
-    }
-
+  if (help) {
+    displayHelp('policy')
     return true
+  }
+
+  const cmd = (argv) => {
+    let action = (argv['_'][1] ? argv['_'][1].toLowerCase() : null)
+
+    switch (action) {
+      case 'add':
+        modifyWhitelistEntries(action, parseEntries(argv))
+        break
+      case 'del':
+        modifyWhitelistEntries(action, parseEntries(argv))
+        break
+      case 'whitelist':
+        getWhitelist()
+        break
+      default:
+        displayHelp('policy')
+        break
+    }
+  }
+
+  let { val: policy } = getValue('policyId')
+
+  if (policy === ' ') {
+    getPolicy(setPolicy)
+      .then(() => cmd(argv))
+  } else {
+    cmd(argv)
+  }
+
+  return true
 }
 
-const modifyWhitelistEntries = async(action, entries) => {
+const modifyWhitelistEntries = async (action, entries) => {
+  let { val: token } = getValue('token')
+  let { val: org } = getValue('orgId')
+  let { val: policy } = getValue('policyId')
 
-    let { val: token } = getValue('token'),
-        { val: org } = getValue('orgId'),
-        { val: policy } = getValue('policyId')
+  if (!token || token === ' ') {
+    handleError('Policy::NoToken')
+    return
+  }
 
-    if(!token|| token == ' ') { 
-        handleError('Policy::NoToken')
-        return
-    }
+  if (!org || org === ' ') {
+    handleError('Policy::NoOrg')
+    return
+  }
 
-    if(!org || org == ' ') {
-        handleError('Policy::NoOrg')
-        return
-    }
+  if (!policy || policy === ' ') {
+    handleError('Policy::PolicyNotSet')
+    return
+  }
 
-    if(!policy || policy == ' ') {
-        handleError('Policy::PolicyNotSet')
-        return
-    }
+  if (!entries || entries.length === 0) {
+    handleError('Policy::NoValidEntries')
+    return
+  }
 
-    if(!entries || entries.length == 0) {
-        handleError('Policy::NoValidEntries')
-        return
-    }
+  let options = {
+    token: token,
+    url: `https://${api}/ncm2/api/v1`
+  }
 
-    let options = {
-        token: token,
-        url: `https://${api}/ncm2/api/v1`
-    }
+  let query = queries[action]
+  let vars = { policy, org, entries }
 
-    let query = queries[action]
-    let vars = { policy, org, entries }
-
-    await graphql(options, query, vars)
+  await graphql(options, query, vars)
     .then(madeModifications)
     .catch(catchErrors)
 }
 
-const getWhitelist = async() => {
+const getWhitelist = async () => {
+  let { val: token } = getValue('token')
+  let { val: org } = getValue('orgId')
 
-    let { val: token } = getValue('token'),
-        { val: org } = getValue('orgId')
+  if (!token) {
+    handleError('Policy::NoToken')
+    return
+  }
+  if (!org) {
+    handleError('Policy::NoOrg')
+    return
+  }
 
-    if(!token) { 
-        handleError('Policy::NoToken')
-        return
-    }
-    if(!org) {
-        handleError('Policy::NoOrg')
-        return
-    }
+  let options = {
+    token: token,
+    url: `https://${api}/ncm2/api/v1`
+  }
 
-    let options = {
-        token: token,
-        url: `https://${api}/ncm2/api/v1`
-    }
+  let query = queries['whitelist']
+  let vars = { org }
 
-    let query = queries['whitelist']
-    let vars = { org }
-
-    await graphql(options, query, vars)
+  await graphql(options, query, vars)
     .then(gotWhitelist)
     .catch(catchErrors)
 }
 
 const getPolicy = async (fn) => {
-    let { val: token } = getValue('token'),
-        { val: org } = getValue('orgId')
+  let { val: token } = getValue('token')
+  let { val: org } = getValue('orgId')
 
-    if(!token) { 
-        handleError('Policy::NoToken')
-        return
-    }
+  if (!token) {
+    handleError('Policy::NoToken')
+    return
+  }
 
-    let options = {
-        token: token,
-        url: `https://${api}/ncm2/api/v1`
-    }
+  let options = {
+    token: token,
+    url: `https://${api}/ncm2/api/v1`
+  }
 
-    let query = queries['policy']
-    let vars = { org }
+  let query = queries['policy']
+  let vars = { org }
 
-    await graphql(options, query, vars)
+  await graphql(options, query, vars)
     .then(fn)
     .catch(catchErrors)
 }
 
 const parseEntries = (argv) => {
+  let entries = []
 
-    let entries = []
+  argv['_'].forEach((pkg, ind) => {
+    if (ind > 1 && pkg.includes('@')) {
+      entries.push({ name: pkg.split('@')[0], version: pkg.split('@')[1] })
+    } else if (ind > 1) {
+      logger([{ text: 'Unable to determine package: ', style: [] }, { text: `${pkg}`, style: 'error' }])
+    }
+  })
 
-    argv['_'].forEach((pkg, ind) => {
-        if(ind > 1 && pkg.includes('@')) {
-            entries.push({ name: pkg.split('@')[0], version: pkg.split('@')[1] })
-        } 
-        else if (ind > 1) {
-            logger([{ text: 'Unable to determine package: ', style: [] },{ text: `${pkg}`, style: 'error'} ])
-        }
-    })
-
-    return entries
+  return entries
 }
 
 const gotWhitelist = (data) => {
-    console.log(data.policies[0].whitelist)
+  console.log(data.policies[0].whitelist)
 }
 
 const setPolicy = (data) => {
-    if(!data.policies) handleError('Policy::NoPolicy')
+  if (!data.policies) handleError('Policy::NoPolicy')
 
-    let policyId = data.policies[0].id,
-        policyName = data.policies[0].name
+  let policyId = data.policies[0].id
+  let policyName = data.policies[0].name
 
-    setValue('policyId', policyId)
-    setValue('policy', policyName)
+  setValue('policyId', policyId)
+  setValue('policy', policyName)
 }
 
 const madeModifications = (data) => {
-    console.log(data)
+  console.log(data)
 }
 
 const catchErrors = (err) => {
-    err.response && err.response.code ? err = err.response.code : null
+  if (err.response && err.response.code) {
+    handleError(err.response.code)
+  } else {
     handleError(err)
+  }
 }
 
 const queries = {
-    add:
+  add:
         `mutation($org: String!, $policy: String!, $entries: [WhitelistEntryInput]!) {
             addWhitelistEntries(
                 organizationId:$org
@@ -187,7 +185,7 @@ const queries = {
             version
           }
         }`,
-    del:
+  del:
         `mutation($org: String!, $policy: String!, $entries: [WhitelistEntryInput]!) {
             deleteWhitelistEntries(
                     organizationId:$org
@@ -198,7 +196,7 @@ const queries = {
                 version
             }
         }`,
-    whitelist: 
+  whitelist:
         `query($org: String!) {
             policies(organizationId: $org) {
                 whitelist {
@@ -207,7 +205,7 @@ const queries = {
                 }
             }
         }`,
-    policy:
+  policy:
         `query($org: String!) {
             policies(organizationId: $org) {
               id
