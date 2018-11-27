@@ -19,15 +19,24 @@ function policy (argv) {
   const cmd = (argv) => {
     let action = (argv['_'][1] ? argv['_'][1].toLowerCase() : null)
 
+    let subaction = (argv['_'][2] ? argv['_'][2].toLowerCase() : null)
+
     switch (action) {
-      case 'add':
-        modifyWhitelistEntries(action, parseEntries(argv))
-        break
-      case 'del':
-        modifyWhitelistEntries(action, parseEntries(argv))
-        break
       case 'whitelist':
-        getWhitelist()
+        switch (subaction) {
+          case null:
+            getWhitelist()
+            break
+          case 'add':
+            modifyWhitelistEntries(subaction, parseEntries(argv))
+            break
+          case 'del':
+            modifyWhitelistEntries(subaction, parseEntries(argv))
+            break
+          default:
+            displayHelp('policy')
+            break
+        }
         break
       default:
         displayHelp('policy')
@@ -137,9 +146,9 @@ const parseEntries = (argv) => {
   let entries = []
 
   argv['_'].forEach((pkg, ind) => {
-    if (ind > 1 && pkg.includes('@')) {
+    if (ind > 2 && pkg.includes('@')) {
       entries.push({ name: pkg.split('@')[0], version: pkg.split('@')[1] })
-    } else if (ind > 1) {
+    } else if (ind > 2) {
       logger([{ text: 'Unable to determine package: ', style: [] }, { text: `${pkg}`, style: 'error' }])
     }
   })
