@@ -2,7 +2,13 @@
 
 'use strict'
 
-const { makeRequest, handleError, handleReadline, displayHelp } = require('../lib/tools')
+const {
+  makeRequest,
+  handleError,
+  handleReadline,
+  handleHiddenReadline,
+  displayHelp
+} = require('../lib/tools')
 const { setValue, getTokens, setTokens, api } = require('../lib/config')
 const logger = require('../lib/logger')
 
@@ -16,30 +22,20 @@ function signin (argv) {
     return true
   }
 
-  // todo: deturd
-  let args = argv['_'] || null
-
   let SSO =
         (argv['G'] ? 'google' : null) ||
         (argv['g'] ? 'github' : null) ||
         null
 
-  if (args && args.length === 3) {
-    let email = (args[1].length > 0 ? args[1] : null)
-    let password = (args[1].length > 0 ? args[2] : null)
-
-    if (email && password) {
-      try {
-        emailAuth(JSON.stringify({ email, password }))
-      } catch (err) {
-        handleError('Signin::InvalidLoginCredentials')
-      }
-    }
+  if (argv['_'].length !== 1) {
+    handleError('Signin::InvalidMethod')
   }
 
   if (SSO) {
     getUrlSSO(SSO)
   }
+
+  promptEmailSignin()
 
   return true
 }
@@ -54,6 +50,18 @@ function emailAuth (usrInfo) {
   }
 
   makeRequest(options, onSession)
+}
+
+function promptEmailSignin () {
+  handleReadline('email: ', email => {
+    handleHiddenReadline('password: ', password => {
+      try {
+        emailAuth(JSON.stringify({ email, password }))
+      } catch (err) {
+        handleError('Signin::InvalidLoginCredentials')
+      }
+    })
+  })
 }
 
 function getUrlSSO (sso) {
