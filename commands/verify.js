@@ -2,8 +2,6 @@
 
 'use strict'
 
-const path = require('path')
-
 const analyze = require('ncm-analyze-tree')
 const { getTokens } = require('../lib/config')
 const {
@@ -12,7 +10,8 @@ const {
   outputReport,
   handleError,
   refreshSession,
-  displayHelp
+  displayHelp,
+  crawlDir
 } = require('../lib/tools')
 
 module.exports = verify
@@ -40,8 +39,8 @@ function verify (argv) {
 }
 
 const crawl = async ({ session }, dir) => {
-  // start position logic
-  if (!dir) dir = path.join(__dirname, '..')
+  if (!dir) dir = crawlDir(__dirname)
+  else dir = crawlDir(dir)
 
   const f = new Set()
   const r = new Set()
