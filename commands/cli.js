@@ -7,7 +7,7 @@ const verify = require('./verify')
 const watch = require('./watch')
 const config = require('./config')
 
-const { displayHelp } = require('../lib/tools')
+const { displayHelp } = require('../lib/util')
 
 const commands = {
   config: [

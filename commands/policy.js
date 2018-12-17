@@ -1,6 +1,7 @@
 'use strict'
 
-const { graphql, handleError, displayHelp } = require('../lib/tools')
+const { graphql, handleError } = require('../lib/util')
+const { displayHelp } = require('../lib/help')
 const { getValue, setValue, api } = require('../lib/config')
 const logger = require('../lib/logger')
 
