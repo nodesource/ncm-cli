@@ -1,7 +1,7 @@
 'use strict'
 
 const { setTokens } = require('../lib/config')
-const { displayHelp } = require('../lib/tools')
+const { displayHelp } = require('../lib/help')
 
 module.exports = signout
 

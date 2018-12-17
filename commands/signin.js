@@ -1,6 +1,7 @@
 'use strict'
 
-const { makeRequest, handleError, handleReadline, displayHelp } = require('../lib/tools')
+const { makeRequest, handleError, handleReadline } = require('../lib/util')
+const { displayHelp } = require('../lib/help')
 const { setValue, getTokens, setTokens, api } = require('../lib/config')
 const logger = require('../lib/logger')
 

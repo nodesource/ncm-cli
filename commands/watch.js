@@ -1,6 +1,6 @@
 'use strict'
 
-const { displayHelp } = require('../lib/tools')
+const { displayHelp } = require('../lib/help')
 
 module.exports = watch
 

@@ -7,7 +7,8 @@ const {
   resetState
 } = require('../lib/config')
 const logger = require('../lib/logger')
-const { handleError, displayHelp } = require('../lib/tools')
+const { handleError } = require('../lib/util')
+const { displayHelp } = require('../lib/help')
 
 module.exports = config
 

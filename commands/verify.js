@@ -5,13 +5,15 @@ const path = require('path')
 const analyze = require('ncm-analyze-tree')
 const { getTokens } = require('../lib/config')
 const {
+  handleError,
+  refreshSession
+} = require('../lib/util')
+const {
   scoreReport,
   jsonReport,
-  outputReport,
-  handleError,
-  refreshSession,
-  displayHelp
-} = require('../lib/tools')
+  outputReport
+} = require('../lib/report')
+const { displayHelp } = require('../lib/help')
 
 module.exports = verify
 
