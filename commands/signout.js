@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 'use strict'
 
 const { setTokens } = require('../lib/config')
