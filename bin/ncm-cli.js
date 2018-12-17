@@ -2,6 +2,11 @@
 
 'use strict'
 
+process.on('unhandledRejection', function (err) {
+  console.error(err)
+  process.exit(1)
+})
+
 const { commands, options } = require('../commands/cli')
 
 const yargs = require('yargs')
