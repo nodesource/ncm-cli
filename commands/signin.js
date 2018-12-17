@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 'use strict'
 
 const { makeRequest, handleError, handleReadline, displayHelp } = require('../lib/tools')

@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 'use strict'
 
 const { graphql, handleError, displayHelp } = require('../lib/tools')

@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 'use strict'
 
 const { displayHelp } = require('../lib/tools')
