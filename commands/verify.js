@@ -33,7 +33,7 @@ async function doVerify (session, argv) {
   let { json, output, dir, report } = argv
 
   // start position logic
-  if (!dir) dir = path.join(__dirname, '..')
+  if (!dir) dir = process.cwd()
 
   const scores = []
   let failures = false
