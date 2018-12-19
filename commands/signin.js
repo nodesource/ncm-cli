@@ -1,8 +1,9 @@
 'use strict'
 
-const { makeRequest, handleError, handleReadline } = require('../lib/util')
+const clientRequest = require('../lib/client-request')
+const { formatAPIURL, handleError, queryReadline } = require('../lib/util')
 const { displayHelp } = require('../lib/help')
-const { setValue, getTokens, setTokens, api } = require('../lib/config')
+const { setValue, getTokens, setTokens } = require('../lib/config')
 const logger = require('../lib/logger')
 
 module.exports = signin
@@ -16,120 +17,121 @@ function signin (argv) {
   }
 
   // todo: deturd
-  let args = argv['_'] || null
+  const args = argv['_'] || []
 
-  let SSO =
+  const SSO =
         (argv['G'] ? 'google' : null) ||
         (argv['g'] ? 'github' : null) ||
         null
 
-  if (args && args.length === 3) {
-    let email = (args[1].length > 0 ? args[1] : null)
-    let password = (args[1].length > 0 ? args[2] : null)
+  const [ email, password ] = args
+  const basicAuth = args && email && password && args.length === 3
 
-    if (email && password) {
-      try {
-        emailAuth(JSON.stringify({ email, password }))
-      } catch (err) {
-        handleError('Signin::InvalidLoginCredentials')
-      }
+  if (SSO || basicAuth) {
+    doSignin(SSO, basicAuth, email, password)
+  }
+
+  return Boolean(SSO || basicAuth)
+}
+
+async function doSignin (SSO, basicAuth, email, password) {
+  let authData
+  if (basicAuth) {
+    const usrInfo = JSON.stringify({ email, password })
+
+    try {
+      const { body } = await clientRequest({
+        method: 'POST',
+        uri: formatAPIURL('/accounts/auth/login'),
+        json: true,
+        body: usrInfo
+      })
+      authData = body
+    } catch (err) {
+      handleError('Signin::UnableToRetrieveSession')
+      return
+    }
+  } else if (SSO) {
+    try {
+      const { body: b1 } = await clientRequest({
+        method: 'GET',
+        uri: formatAPIURL('/accounts/auth/social-signin-url', { source: SSO }),
+        json: true
+      })
+      const { url, nonce } = b1
+
+      logger([{ text: 'NCM-CLI:', style: 'ncm' }])
+      logger([{ text: 'Please open the following URL in your browser: ', style: 'main' }])
+      logger()
+      logger([{ text: url, style: 'main' }])
+      logger()
+
+      const { body: b2 } = await clientRequest({
+        method: 'GET',
+        uri: formatAPIURL('/accounts/auth/retrieve-session', { nonce }),
+        json: true
+      })
+      authData = b2
+    } catch (err) {
+      console.error(err)
+      handleError('Signin::RetrieveSession')
+      return
     }
   }
 
-  if (SSO) {
-    getUrlSSO(SSO)
-  }
-
-  return true
-}
-
-function emailAuth (usrInfo) {
-  const options = {
-    method: 'POST',
-    hostname: api,
-    path: `/accounts/auth/login`,
-    headers: { 'Content-Type': 'application/json' },
-    body: usrInfo
-  }
-
-  makeRequest(options, onSession)
-}
-
-function getUrlSSO (sso) {
-  const options = {
-    method: 'GET',
-    hostname: api,
-    path: `/accounts/auth/social-signin-url?source=${sso}`
-  }
-
-  makeRequest(options, retrieveSession)
-}
-
-function retrieveSession (err, { url, nonce }) {
-  if (err) {
-    handleError('Signin::RetrieveSession')
-  }
-
-  logger([{ text: 'NCM-CLI:', style: 'ncm' }])
-  logger([{ text: 'Please open the following URL in your browser: ', style: 'main' }])
-  logger()
-  logger([{ text: url, style: 'main' }])
-  logger()
-
-  const options = {
-    method: 'GET',
-    hostname: api,
-    path: `/accounts/auth/retrieve-session?nonce=${nonce}`
-  }
-
-  makeRequest(options, onSession)
-}
-
-function onSession (err, data) {
-  if (err) {
-    handleError('Signin::UnableToRetrieveSession')
-    return
-  }
-
-  if (!data['session'] || !data['refreshToken']) {
+  if (!authData['session'] || !authData['refreshToken']) {
     handleError('Signin::InvalidLoginCredentials')
     return
   }
 
-  setTokens(data)
-
-  fetchUserDetails()
-
-  logger([{ text: 'Login Successful', style: 'success' }])
-  logger()
-}
-
-function fetchUserDetails () {
+  setTokens(authData)
   let { session } = getTokens()
 
-  const options = {
-    method: 'GET',
-    hostname: api,
-    path: `/accounts/user/details`,
-    headers: {
-      Authorization: `Bearer ${session}`
-    }
-  }
-
-  makeRequest(options, setDetails)
-}
-
-function setDetails (err, data) {
-  if (err) {
+  let details
+  try {
+    const { body } = await clientRequest({
+      method: 'GET',
+      uri: formatAPIURL('/accounts/user/details'),
+      json: true,
+      headers: {
+        Authorization: `Bearer ${session}`
+      }
+    })
+    details = body
+  } catch (err) {
     handleError('Signin::FetchUserDetails')
     return
   }
 
-  let orgs = data.orgs ? Object.keys(data.orgs) : null // array of orgs
+  let orgs = details.orgs ? Object.keys(details.orgs) : null // array of orgs
   let hasOrgs = orgs.length > 0
 
-  if (!hasOrgs) {
-    // user does not belong to any organizations: set orgId and policyId to personal configuration
+  // only supports api v1, currently
+  if (hasOrgs) {
+    let orgId = orgs[0]
+    let org = details.orgs[orgId].name
+
+    logger([
+      { text: 'You belong to the organization: ', style: [] },
+      { text: org, style: 'success' }
+    ])
+    logger([
+      { text: 'Would you like to use the organiztion policy set? (Y/n)', style: [] }
+    ])
+
+    const result = await queryReadline('')
+    const choice = result.trim().toLowerCase()
+
+    if (choice === 'n' || choice === 'no') {
+      setValue('org', 'default')
+      setValue('orgId', '1')
+    } else if (choice === 'y' || choice === 'yes' || choice === '' /* default */) {
+      setValue('org', org)
+      setValue('orgId', orgId)
+    }
+  } else {
+    // User does not belong to any organizations.
+    // Set orgId and policyId to personal configuration.
     setValue('org', 'default')
     setValue('orgId', '1')
     setValue('policy', 'personal')
@@ -138,31 +140,6 @@ function setDetails (err, data) {
     handleError('Signin::NoOrgs')
   }
 
-  // only supports api v1, currently
-  if (hasOrgs) {
-    let orgId = orgs[0]
-    let org = data.orgs[orgId].name
-
-    logger([
-      { text: 'You belong to the organization: ', style: [] },
-      { text: org, style: 'success' }
-    ])
-    logger([
-      { text: 'Would you like to use the organiztion policy set? (y/n)', style: [] }
-    ])
-
-    handleReadline('', (choice) => {
-      choice = choice.trim()
-      choice = choice.toLowerCase()
-
-      if (choice === 'n' || choice === 'no') {
-        setValue('org', 'default')
-        setValue('orgId', '1')
-      }
-      if (choice === 'y' || choice === 'yes') {
-        setValue('org', org)
-        setValue('orgId', orgId)
-      }
-    })
-  }
+  logger([{ text: 'Login Successful', style: 'success' }])
+  logger()
 }
