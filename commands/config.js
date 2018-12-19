@@ -72,9 +72,10 @@ function config (argv) {
       logger()
       break
     case 'list':
-      let list = prepareList()
-      for (let key in list) {
-        logger([{ text: `<${key}> `, style: 'success' }, { text: `${list[key]}`, style: [] }])
+      for (let key of userAccess) {
+        let { err, val } = getValue(key)
+        if (err) continue
+        logger([{ text: `<${key}> `, style: 'success' }, { text: `${val}`, style: [] }])
       }
       logger()
       break
@@ -83,15 +84,4 @@ function config (argv) {
       break
   }
   return true
-}
-
-const prepareList = () => {
-  let l = new Set()
-
-  for (let ind in userAccess) {
-    let { err, val } = getValue(userAccess[ind])
-    if (!err) l[userAccess[ind]] = val
-  }
-
-  return l
 }

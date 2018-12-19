@@ -1,7 +1,5 @@
 'use strict'
 
-const path = require('path')
-
 const analyze = require('ncm-analyze-tree')
 const { getTokens } = require('../lib/config')
 const {
@@ -18,64 +16,63 @@ const { displayHelp } = require('../lib/help')
 module.exports = verify
 
 function verify (argv) {
-  let { json, output, dir, report, help } = argv
-
+  let { help } = argv
   if ((argv['_'] && argv['_'][1] === 'help') || help) {
     displayHelp('verify')
     return true
   }
 
-  let tokens = getTokens()
+  const { session } = getTokens()
 
-  return crawl(tokens, dir)
-    .then(({ scores, failures }) => {
-      if (report) scoreReport(scores)
-      if (json) jsonReport(scores)
-      if (output) outputReport(scores, output)
+  doVerify(session, argv)
 
-      if (failures) process.exit(1)
-      else return true
-    })
-    .catch(catchAuth)
+  return true
 }
 
-const crawl = async ({ session }, dir) => {
+async function doVerify (session, argv) {
+  let { json, output, dir, report } = argv
+
   // start position logic
   if (!dir) dir = path.join(__dirname, '..')
 
-  const f = new Set()
-  const r = new Set()
+  const scores = []
+  let failures = false
 
-  const data = await analyze({
-    dir: dir,
-    token: session
-  })
-
-  for (const pkg of data) {
-    r[pkg.name] = { name: pkg.name, version: pkg.version, score: pkg.score }
-    pkg.results.forEach(result => {
-      if (result.pass === false) {
-        f[pkg.name] && f[pkg.name].results ? f[pkg.name]['results'] = [ f[pkg.name]['results'], result ] : f[pkg.name] = { name: pkg.name, version: pkg.version, 'results': [ result ] }
-      }
-    })
-  }
-
-  return { scores: r, failures: f }
-}
-
-const catchAuth = (err) => {
-  // graphql login error
+  let data
   try {
-    let e = JSON.stringify(err)
-
-    // session token has expired, request new token and update
-    if (e.response && e.response.message === 'Auth::LoginExpired') {
-      refreshSession()
-    }
-
-    // username / password has invalid token
-    handleError('TEMP::InvalidToken')
+    data = await analyze({
+      dir,
+      token: session
+    })
   } catch (err) {
-    handleError('TEMP::UncaughtException')
+    // XXX(Jeremiah): Not the right way to handle this. See client-request retries.
+    //
+    // session token has expired, request new token and update
+    if (err.response && err.response.message === 'Auth::LoginExpired') {
+      refreshSession()
+      // username / password has invalid token
+      handleError('TEMP::InvalidToken')
+    } else if (err.response && err.response.error === 'Unauthorized') {
+      handleError('TEMP::Unauthorized')
+    } else {
+      console.error(err)
+    }
+    return
   }
+
+  for (const { name, version, score, results } of data) {
+    scores.push({ name, version, score })
+    for (const result of results) {
+      if (result.pass === false) {
+        failures = true
+        break
+      }
+    }
+  }
+
+  if (report) scoreReport(scores)
+  if (json) jsonReport(scores)
+  if (output) outputReport(scores, output)
+
+  if (failures) process.exitCode = 1
 }

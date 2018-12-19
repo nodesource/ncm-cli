@@ -15,47 +15,54 @@ function policy (argv) {
     return true
   }
 
-  const cmd = (argv) => {
-    let action = (argv['_'][1] ? argv['_'][1].toLowerCase() : null)
-
-    let subaction = (argv['_'][2] ? argv['_'][2].toLowerCase() : null)
-
-    switch (action) {
-      case 'whitelist':
-        switch (subaction) {
-          case null:
-            getWhitelist()
-            break
-          case 'add':
-            modifyWhitelistEntries(subaction, parseEntries(argv))
-            break
-          case 'del':
-            modifyWhitelistEntries(subaction, parseEntries(argv))
-            break
-          default:
-            displayHelp('policy')
-            break
-        }
-        break
-      default:
-        displayHelp('policy')
-        break
-    }
-  }
-
-  let { val: policy } = getValue('policyId')
-
-  if (policy === ' ') {
-    getPolicy(setPolicy)
-      .then(() => cmd(argv))
-  } else {
-    cmd(argv)
-  }
+  doPolicy(argv)
 
   return true
 }
 
-const modifyWhitelistEntries = async (action, entries) => {
+async function doPolicy (argv) {
+  let { val: policy } = getValue('policyId')
+
+  if (policy === ' ') {
+    const policyData = await getPolicy()
+    if (!policyData.policies) handleError('Policy::NoPolicy')
+
+    setValue('policyId', policyData.policies[0].id)
+    setValue('policy', policyData.policies[0].name)
+  }
+
+  const action = argv['_'][1] ? argv['_'][1].toLowerCase() : null
+  const subaction = argv['_'][2] ? argv['_'][2].toLowerCase() : null
+
+  if (action === 'whitelist') {
+    if (subaction === 'add' || subaction === 'del') {
+      const entries = []
+
+      argv['_'].forEach((pkg, ind) => {
+        if (ind > 2 && pkg.includes('@')) {
+          entries.push({ name: pkg.split('@')[0], version: pkg.split('@')[1] })
+        } else if (ind > 2) {
+          logger([
+            { text: 'Unable to determine package: ', style: [] },
+            { text: `${pkg}`, style: 'error' }
+          ])
+        }
+      })
+
+      const data = await modifyWhitelistEntries(subaction, entries)
+      console.log(data)
+    } else if (subaction === null) {
+      const data = await getWhitelist()
+      console.log(data.policies[0].whitelist)
+    } else {
+      displayHelp('policy')
+    }
+  } else {
+    displayHelp('policy')
+  }
+}
+
+async function modifyWhitelistEntries (action, entries) {
   let { val: token } = getValue('token')
   let { val: org } = getValue('orgId')
   let { val: policy } = getValue('policyId')
@@ -88,12 +95,11 @@ const modifyWhitelistEntries = async (action, entries) => {
   let query = queries[action]
   let vars = { policy, org, entries }
 
-  await graphql(options, query, vars)
-    .then(madeModifications)
+  return graphql(options, query, vars)
     .catch(catchErrors)
 }
 
-const getWhitelist = async () => {
+async function getWhitelist () {
   let { val: token } = getValue('token')
   let { val: org } = getValue('orgId')
 
@@ -114,12 +120,11 @@ const getWhitelist = async () => {
   let query = queries['whitelist']
   let vars = { org }
 
-  await graphql(options, query, vars)
-    .then(gotWhitelist)
+  return graphql(options, query, vars)
     .catch(catchErrors)
 }
 
-const getPolicy = async (fn) => {
+async function getPolicy () {
   let { val: token } = getValue('token')
   let { val: org } = getValue('orgId')
 
@@ -136,44 +141,11 @@ const getPolicy = async (fn) => {
   let query = queries['policy']
   let vars = { org }
 
-  await graphql(options, query, vars)
-    .then(fn)
+  return graphql(options, query, vars)
     .catch(catchErrors)
 }
 
-const parseEntries = (argv) => {
-  let entries = []
-
-  argv['_'].forEach((pkg, ind) => {
-    if (ind > 2 && pkg.includes('@')) {
-      entries.push({ name: pkg.split('@')[0], version: pkg.split('@')[1] })
-    } else if (ind > 2) {
-      logger([{ text: 'Unable to determine package: ', style: [] }, { text: `${pkg}`, style: 'error' }])
-    }
-  })
-
-  return entries
-}
-
-const gotWhitelist = (data) => {
-  console.log(data.policies[0].whitelist)
-}
-
-const setPolicy = (data) => {
-  if (!data.policies) handleError('Policy::NoPolicy')
-
-  let policyId = data.policies[0].id
-  let policyName = data.policies[0].name
-
-  setValue('policyId', policyId)
-  setValue('policy', policyName)
-}
-
-const madeModifications = (data) => {
-  console.log(data)
-}
-
-const catchErrors = (err) => {
+function catchErrors (err) {
   if (err.response && err.response.code) {
     handleError(err.response.code)
   } else {
@@ -183,47 +155,47 @@ const catchErrors = (err) => {
 
 const queries = {
   add:
-        `mutation($org: String!, $policy: String!, $entries: [WhitelistEntryInput]!) {
-            addWhitelistEntries(
+    `mutation($org: String!, $policy: String!, $entries: [WhitelistEntryInput]!) {
+        addWhitelistEntries(
+            organizationId:$org
+            policyId:$policy
+            whitelistEntries:$entries
+      ){
+        name
+        version
+      }
+    }`,
+  del:
+    `mutation($org: String!, $policy: String!, $entries: [WhitelistEntryInput]!) {
+        deleteWhitelistEntries(
                 organizationId:$org
                 policyId:$policy
                 whitelistEntries:$entries
-          ){
+        ){
+            name
+            version
+        }
+    }`,
+  whitelist:
+    `query($org: String!) {
+        policies(organizationId: $org) {
+            whitelist {
+                name
+                version
+            }
+        }
+    }`,
+  policy:
+    `query($org: String!) {
+        policies(organizationId: $org) {
+          id
+          name
+          organizationId
+          whitelist {
             name
             version
           }
-        }`,
-  del:
-        `mutation($org: String!, $policy: String!, $entries: [WhitelistEntryInput]!) {
-            deleteWhitelistEntries(
-                    organizationId:$org
-                    policyId:$policy
-                    whitelistEntries:$entries
-            ){
-                name
-                version
-            }
-        }`,
-  whitelist:
-        `query($org: String!) {
-            policies(organizationId: $org) {
-                whitelist {
-                    name
-                    version
-                }
-            }
-        }`,
-  policy:
-        `query($org: String!) {
-            policies(organizationId: $org) {
-              id
-              name
-              organizationId
-              whitelist {
-                name
-                version
-              }
-            }
-          }
-        `
+        }
+      }
+    `
 }

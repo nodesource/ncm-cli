@@ -18,6 +18,7 @@
   "keywords": [],
   "dependencies": {
     "chalk": "^2.4.1",
+    "client-request": "^2.3.0",
     "configstore": "^4.0.0",
     "graphql-request": "^1.8.2",
     "ncm-analyze-tree": "^3.0.0",
