@@ -8,7 +8,7 @@ const logger = require('../lib/logger')
 module.exports = policy
 
 function policy (argv) {
-  let help = (argv['_'] && argv['_'][1] === 'help') || argv.help
+  const help = argv.help || argv._[1] === 'help'
 
   if (help) {
     displayHelp('policy')
@@ -31,17 +31,17 @@ async function doPolicy (argv) {
     setValue('policy', policyData.policies[0].name)
   }
 
-  const action = argv['_'][1] ? argv['_'][1].toLowerCase() : null
-  const subaction = argv['_'][2] ? argv['_'][2].toLowerCase() : null
+  const [ action, subaction ] = argv._.slice(1)
 
   if (action === 'whitelist') {
     if (subaction === 'add' || subaction === 'del') {
       const entries = []
 
-      argv['_'].forEach((pkg, ind) => {
-        if (ind > 2 && pkg.includes('@')) {
-          entries.push({ name: pkg.split('@')[0], version: pkg.split('@')[1] })
-        } else if (ind > 2) {
+      argv._.slice(2).forEach((pkg, ind) => {
+        if (pkg.includes('@')) {
+          const [ name, version ] = pkg.split('@')
+          entries.push({ name, version })
+        } else {
           logger([
             { text: 'Unable to determine package: ', style: [] },
             { text: `${pkg}`, style: 'error' }
@@ -51,7 +51,7 @@ async function doPolicy (argv) {
 
       const data = await modifyWhitelistEntries(subaction, entries)
       console.log(data)
-    } else if (subaction === null) {
+    } else if (!subaction) {
       const data = await getWhitelist()
       console.log(data.policies[0].whitelist)
     } else {

@@ -5,7 +5,7 @@ const { displayHelp } = require('../lib/help')
 module.exports = watch
 
 function watch (argv) {
-  let help = (argv['_'] && argv['_'][1] === 'help') || argv.help
+  const help = argv.help || argv._[1] === 'help'
 
   if (help) {
     displayHelp('watch')
