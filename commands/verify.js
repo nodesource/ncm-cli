@@ -1,10 +1,11 @@
 'use strict'
 
-const analyze = require('ncm-analyze-tree')
+const analyze = require('../lib/ncm-analyze-tree')
 const { getTokens } = require('../lib/config')
 const {
   handleError,
-  refreshSession
+  refreshSession,
+  formatAPIURL
 } = require('../lib/util')
 const {
   scoreReport,
@@ -12,6 +13,14 @@ const {
   outputReport
 } = require('../lib/report')
 const { displayHelp } = require('../lib/help')
+
+const SEVERITY_MAP = {
+  NONE: 0,
+  LOW: 1,
+  MEDIUM: 2,
+  HIGH: 3,
+  CRITICAL: 4
+}
 
 module.exports = verify
 
@@ -36,14 +45,15 @@ async function doVerify (session, argv) {
   // start position logic
   if (!dir) dir = process.cwd()
 
-  const scores = []
+  const pkgScores = []
   let failures = false
 
   let data
   try {
     data = await analyze({
       dir,
-      token: session
+      token: session,
+      url: formatAPIURL('/ncm2/api/v2/graphql')
     })
   } catch (err) {
     // XXX(Jeremiah): Not the right way to handle this. See client-request retries.
@@ -61,19 +71,32 @@ async function doVerify (session, argv) {
     return
   }
 
-  for (const { name, version, score, results } of data) {
-    scores.push({ name, version, score })
-    for (const result of results) {
-      if (result.pass === false) {
+  for (const { name, version, scores } of data) {
+    let maxSeverity = SEVERITY_MAP.NONE
+
+    for (const score of scores) {
+      const severityValue = SEVERITY_MAP[score.severity]
+
+      if (score.group !== 'compliance' &&
+          score.group !== 'security' &&
+          score.group !== 'risk') {
+        continue
+      }
+
+      if (severityValue > maxSeverity) {
+        maxSeverity = severityValue
+      }
+
+      if (score.pass === false) {
         failures = true
-        break
       }
     }
+    pkgScores.push({ name, version, maxSeverity })
   }
 
-  if (report) scoreReport(scores)
-  if (json) jsonReport(scores)
-  if (output) outputReport(scores, output)
+  if (report) scoreReport(pkgScores)
+  if (json) jsonReport(pkgScores)
+  if (output) outputReport(pkgScores, output)
 
   if (failures) process.exitCode = 1
 }
