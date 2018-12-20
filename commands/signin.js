@@ -9,23 +9,20 @@ const logger = require('../lib/logger')
 module.exports = signin
 
 function signin (argv) {
-  let help = (argv['_'] && argv['_'][1] === 'help') || argv.help
+  const help = argv.help || argv._[1] === 'help'
 
   if (help) {
     displayHelp('signin')
     return true
   }
 
-  // todo: deturd
-  const args = argv['_'] || []
-
   const SSO =
-        (argv['G'] ? 'google' : null) ||
-        (argv['g'] ? 'github' : null) ||
+        (argv.G ? 'google' : null) ||
+        (argv.g ? 'github' : null) ||
         null
 
-  const [ email, password ] = args
-  const basicAuth = args && email && password && args.length === 3
+  const [ email, password ] = argv._.slice(1)
+  const basicAuth = email && password && argv._.length === 3
 
   if (SSO || basicAuth) {
     doSignin(SSO, basicAuth, email, password)

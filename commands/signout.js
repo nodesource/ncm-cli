@@ -6,7 +6,7 @@ const { displayHelp } = require('../lib/help')
 module.exports = signout
 
 function signout (argv) {
-  let help = (argv['_'] && argv['_'][1] === 'help') || argv.help
+  const help = argv.help || argv._[1] === 'help'
 
   if (help) {
     displayHelp('signout')

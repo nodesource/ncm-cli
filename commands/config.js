@@ -18,17 +18,14 @@ const userAccess = [
 ]
 
 function config (argv) {
-  let help = (argv['_'] && argv['_'][1] === 'help') || argv.help
+  const help = argv.help || argv._[1] === 'help'
 
   if (help) {
     displayHelp('config')
     return true
   }
 
-  let action = (argv['_'][1] ? argv['_'][1].toLowerCase() : null)
-
-  let key = (argv['_'][2] ? argv['_'][2].toLowerCase() : null)
-  let value = (argv['_'][3] ? argv['_'][3] : null)
+  const [ action, key, value ] = argv._.slice(1)
 
   switch (action) {
     case 'set':

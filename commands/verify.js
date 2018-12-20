@@ -16,8 +16,9 @@ const { displayHelp } = require('../lib/help')
 module.exports = verify
 
 function verify (argv) {
-  let { help } = argv
-  if ((argv['_'] && argv['_'][1] === 'help') || help) {
+  const help = argv.help || argv._[1] === 'help'
+
+  if (help) {
     displayHelp('verify')
     return true
   }
