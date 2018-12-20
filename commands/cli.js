@@ -6,10 +6,24 @@ const policy = require('./policy')
 const verify = require('./verify')
 const watch = require('./watch')
 const config = require('./config')
+const orgs = require('./orgs')
 
 const { displayHelp } = require('../lib/help')
 
 const commands = {
+  non: [
+    ['$0'],
+    'NCM-cli general management',
+    (yargs) => {
+      yargs
+      .options({
+        org: { describe: 'Switch active organization' },
+      })
+      // depending on the amount of "default" commands/options needed,
+      // we may wish to support a `general` or `default` command, rather than just `orgs`.
+      .check(orgs) 
+    }
+  ],
   config: [
     ['config', 'c'],
     'NCM-cli configuration management',

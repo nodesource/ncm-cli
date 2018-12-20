@@ -12,6 +12,7 @@ const { commands, options } = require('../commands/cli')
 const yargs = require('yargs')
 
 yargs /* eslint-disable-line no-unused-expressions */
+  .command(...commands.non)
   .command(...commands.config)
   .command(...commands.signin)
   .command(...commands.signout)
