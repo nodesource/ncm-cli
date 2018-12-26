@@ -16,12 +16,12 @@ const commands = {
     'NCM-cli general management',
     (yargs) => {
       yargs
-      .options({
-        org: { describe: 'Switch active organization' },
-      })
+        .options({
+          org: { describe: 'Switch active organization' }
+        })
       // depending on the amount of "default" commands/options needed,
       // we may wish to support a `general` or `default` command, rather than just `orgs`.
-      .check(orgs) 
+        .check(orgs)
     }
   ],
   config: [

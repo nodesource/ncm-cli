@@ -21,7 +21,7 @@ function orgs (argv) {
   return true
 }
 
-async function doOrgs(argv) {
+async function doOrgs (argv) {
   let { session } = getTokens()
 
   let details
@@ -54,16 +54,14 @@ async function doOrgs(argv) {
           setValue('orgId', org)
           match = true
           break
-        } 
+        }
       }
-  
+
       if (!match) {
         process.exitCode = 1
       }
     }
-  }
-
-  else {
+  } else {
     // user has not provided an org, prompt them via readline
 
     const orgs = [ 'personal' ]
@@ -77,9 +75,11 @@ async function doOrgs(argv) {
     let result1 = await queryReadline('')
     let choice = result1.trim().toLowerCase()
 
-    // only checks once
+    // verifies that the user's choice is valid once
     if (!orgs.includes(choice)) {
       logger([ { text: 'Choice was not recognized, try again:', style: [] } ])
+      logger()
+      logger([ { text: 'Please select an organization to set as active:', style: [] } ])
       logger([ { text: orgs.join(' '), style: [] } ])
 
       result1 = await queryReadline('')
@@ -100,15 +100,13 @@ async function doOrgs(argv) {
       } else {
         for (let org in details.orgs) {
           if (org === choice || details.orgs[org].name === choice) {
-            // we found a match
             setValue('org', details.orgs[org].name)
             setValue('orgId', org)
             process.exitCode = 0
             break
-          } 
+          }
         }
       }
     }
-
   }
 }
