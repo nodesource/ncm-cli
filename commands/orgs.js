@@ -12,7 +12,7 @@ function orgs (argv) {
   const help = argv.help || argv._[1] === 'help'
 
   if (help) {
-    displayHelp('policy')
+    displayHelp('help')
     return true
   }
 
