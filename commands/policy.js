@@ -1,8 +1,8 @@
 'use strict'
 
-const { graphql, handleError } = require('../lib/util')
+const { graphql, handleError, formatAPIURL } = require('../lib/util')
 const { displayHelp } = require('../lib/help')
-const { getValue, setValue, api } = require('../lib/config')
+const { getValue, setValue } = require('../lib/config')
 const logger = require('../lib/logger')
 
 module.exports = policy
@@ -31,34 +31,56 @@ async function doPolicy (argv) {
     setValue('policy', policyData.policies[0].name)
   }
 
-  const [ action, subaction ] = argv._.slice(1)
+  const [ action ] = argv._.slice(1)
 
-  if (action === 'whitelist') {
-    if (subaction === 'add' || subaction === 'del') {
-      const entries = []
+  if (action === 'add' || action === 'del') {
+    const entries = []
 
-      argv._.slice(2).forEach((pkg, ind) => {
-        if (pkg.includes('@')) {
-          const [ name, version ] = pkg.split('@')
-          entries.push({ name, version })
-        } else {
-          logger([
-            { text: 'Unable to determine package: ', style: [] },
-            { text: `${pkg}`, style: 'error' }
-          ])
-        }
-      })
+    argv._.slice(2).forEach(pkg => {
+      if (pkg.includes('@')) {
+        const [ name, version ] = pkg.split('@')
+        entries.push({ name, version })
+      } else {
+        logger([
+          { text: 'Unable to determine package: ', style: [] },
+          { text: `${pkg}`, style: 'error' }
+        ])
+      }
+    })
 
-      const data = await modifyWhitelistEntries(subaction, entries)
-      console.log(data)
-    } else if (!subaction) {
-      const data = await getWhitelist()
-      console.log(data.policies[0].whitelist)
-    } else {
-      displayHelp('policy')
+    const data = await modifyWhitelistEntries(action, entries)
+
+    if (!data) {
+      process.exitCode = 1
+      return
     }
+
+    /*
+      We will need some designs for output here:
+      We can either print the entire whitelist (which is returned to us in `data`)
+      OR
+      Print a general success message
+      OR
+      Print a success message per entry of `entries`.
+    */
+    logger([{ text: `Whitelist modification successful`, style: [] }])
   } else {
-    displayHelp('policy')
+    const data = await getWhitelist()
+
+    if (!data) {
+      process.exitCode = 1
+      return
+    }
+
+    /*
+      Also requiring design work:
+      Successful requests return the current whitelist for the active org (policy set)
+    */
+    try {
+      logger([{ text: JSON.stringify(data, null, 2), style: [] }])
+    } catch (e) {
+      handleError(e)
+    }
   }
 }
 
@@ -89,7 +111,7 @@ async function modifyWhitelistEntries (action, entries) {
 
   let options = {
     token: token,
-    url: `https://${api}/ncm2/api/v1`
+    url: formatAPIURL('/ncm2/api/v2/graphql')
   }
 
   let query = queries[action]
@@ -114,7 +136,7 @@ async function getWhitelist () {
 
   let options = {
     token: token,
-    url: `https://${api}/ncm2/api/v1`
+    url: formatAPIURL('/ncm2/api/v2/graphql')
   }
 
   let query = queries['whitelist']
@@ -135,7 +157,7 @@ async function getPolicy () {
 
   let options = {
     token: token,
-    url: `https://${api}/ncm2/api/v1`
+    url: formatAPIURL('/ncm2/api/v2/graphql')
   }
 
   let query = queries['policy']
@@ -155,7 +177,7 @@ function catchErrors (err) {
 
 const queries = {
   add:
-    `mutation($org: String!, $policy: String!, $entries: [WhitelistEntryInput]!) {
+    `mutation($org: String!, $policy: String!, $entries: [WhitelistEntryInput!]!) {
         addWhitelistEntries(
             organizationId:$org
             policyId:$policy
@@ -166,7 +188,7 @@ const queries = {
       }
     }`,
   del:
-    `mutation($org: String!, $policy: String!, $entries: [WhitelistEntryInput]!) {
+    `mutation($org: String!, $policy: String!, $entries: [WhitelistEntryInput!]!) {
         deleteWhitelistEntries(
                 organizationId:$org
                 policyId:$policy

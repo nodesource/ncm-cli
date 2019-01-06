@@ -72,7 +72,8 @@ const commands = {
     }
   ],
   policy: [
-    ['policy', 'p'],
+    /* revert to 'policy' when additional subcommands are introduced */
+    ['whitelist'],
     'Display the policy set for the organization',
     (yargs) => {
       yargs
