@@ -11,7 +11,7 @@ const orgs = require('./orgs')
 const { displayHelp } = require('../lib/help')
 
 const commands = {
-  non: [
+  default: [
     ['$0'],
     'NCM-cli general management',
     (yargs) => {

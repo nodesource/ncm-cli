@@ -48,10 +48,10 @@ async function doOrgs (argv) {
       setValue('orgId', '1')
     } else {
       let match
-      for (let org in details.orgs) {
-        if (org === argv.org || details.orgs[org].name === argv.org) {
-          setValue('org', details.orgs[org].name)
-          setValue('orgId', org)
+      for (const orgId in details.orgs) {
+        if (orgId === argv.org || details.orgs[orgId].name === argv.org) {
+          setValue('org', details.orgs[orgId].name)
+          setValue('orgId', orgId)
           match = true
           break
         }
@@ -98,10 +98,10 @@ async function doOrgs (argv) {
         setValue('orgId', '1')
         process.exitCode = 0
       } else {
-        for (let org in details.orgs) {
-          if (org === choice || details.orgs[org].name === choice) {
-            setValue('org', details.orgs[org].name)
-            setValue('orgId', org)
+        for (const orgId in details.orgs) {
+          if (orgId === choice || details.orgs[orgId].name === choice) {
+            setValue('org', details.orgs[orgId].name)
+            setValue('orgId', orgId)
             process.exitCode = 0
             break
           }
