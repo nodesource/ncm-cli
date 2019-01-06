@@ -13,7 +13,7 @@ const commands = {
   config: require('../commands/config'),
   help: require('../commands/help'),
   orgs: require('../commands/orgs'),
-  policy: require('../commands/policy'),
+  whitelist: require('../commands/whitelist'),
   signin: require('../commands/signin'),
   signout: require('../commands/signout'),
   verify: require('../commands/verify'),
