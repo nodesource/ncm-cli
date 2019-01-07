@@ -40,73 +40,59 @@ async function doOrgs (argv) {
     return
   }
 
-  if (typeof argv.org === 'string') {
-    // user has provided an org choice, we need to verify it now
+  const orgs = [ 'personal' ]
+  for (let orgId in details.orgs) {
+    orgs.push(details.orgs[orgId].name)
+  }
 
-    if (argv.org === 'personal') {
-      setValue('org', 'personal')
-      setValue('orgId', '1')
-    } else {
-      let match
-      for (const orgId in details.orgs) {
-        if (orgId === argv.org || details.orgs[orgId].name === argv.org) {
-          setValue('org', details.orgs[orgId].name)
-          setValue('orgId', orgId)
-          match = true
-          break
-        }
-      }
-
-      if (!match) {
-        process.exitCode = 1
-      }
-    }
-  } else {
+  let { org } = argv
+  if (typeof org !== 'string') {
     // user has not provided an org, prompt them via readline
 
-    const orgs = [ 'personal' ]
-    for (let org in details.orgs) {
-      orgs.push(details.orgs[org].name)
-    }
-
-    logger([ { text: 'Please select an organization to set as active:', style: [] } ])
-    logger([ { text: orgs.join(' '), style: [] } ])
-
-    let result1 = await queryReadline('')
-    let choice = result1.trim().toLowerCase()
-
-    // verifies that the user's choice is valid once
-    if (!orgs.includes(choice)) {
-      logger([ { text: 'Choice was not recognized, try again:', style: [] } ])
-      logger()
+    let hasOrg = false
+    while (!hasOrg) {
       logger([ { text: 'Please select an organization to set as active:', style: [] } ])
       logger([ { text: orgs.join(' '), style: [] } ])
 
-      result1 = await queryReadline('')
-      choice = result1.trim().toLowerCase()
-      process.exitCode = 1 // prepare nonzero exit if choice isn't verified
+      org = (await queryReadline('')).trim()
+
+      // verifies that the user's choice is valid once
+      hasOrg = orgs.includes(org)
+      if (!hasOrg) {
+        logger([ { text: 'Choice was not recognized, try again:', style: ['red'] } ])
+        logger()
+      }
     }
 
-    logger([ { text: `Do you wish to set org:${choice} as active? (Y/n)`, style: [] } ])
+    logger([ { text: `Do you wish to set org: ${org} as active? (Y/n)`, style: [] } ])
 
-    let result2 = await queryReadline('')
-    let confirm = result2.trim().toLowerCase()
+    const confirm = (await queryReadline('')).trim().toLowerCase()
 
-    if (confirm === 'y' || confirm === 'yes' || confirm === '' /* default */) {
-      if (choice === 'personal') {
-        setValue('org', 'personal')
-        setValue('orgId', '1')
-        process.exitCode = 0
-      } else {
-        for (const orgId in details.orgs) {
-          if (orgId === choice || details.orgs[orgId].name === choice) {
-            setValue('org', details.orgs[orgId].name)
-            setValue('orgId', orgId)
-            process.exitCode = 0
-            break
-          }
-        }
+    if (confirm !== 'y' || confirm !== 'yes' || confirm !== '' /* default */) {
+      // prepare nonzero exit if choice isn't confirmed
+      process.exitCode = 1
+      return
+    }
+  }
+
+  // user has provided an org choice, we need to verify it now
+
+  if (org === 'personal') {
+    setValue('org', 'personal')
+    setValue('orgId', '1')
+  } else {
+    let match
+    for (const orgId in details.orgs) {
+      if (orgId === org || details.orgs[orgId].name === org) {
+        setValue('org', details.orgs[orgId].name)
+        setValue('orgId', orgId)
+        match = true
+        break
       }
+    }
+
+    if (!match) {
+      process.exitCode = 1
     }
   }
 }
