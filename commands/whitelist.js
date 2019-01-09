@@ -3,7 +3,8 @@
 const { graphql, handleError, formatAPIURL } = require('../lib/util')
 const { helpHeader } = require('../lib/help')
 const { getValue, setValue } = require('../lib/config')
-const logger = require('../lib/logger')
+const chalk = require('chalk')
+const L = console.log
 
 module.exports = policy
 
@@ -33,41 +34,57 @@ async function policy (argv) {
   if (action === 'add' || action === 'del') {
     const entries = []
 
-    argv._.slice(2).forEach(pkg => {
-      if (pkg.includes('@')) {
-        const [ name, version ] = pkg.split('@')
-        entries.push({ name, version })
+    argv._.slice(2).forEach(pkgVer => {
+      const match = pkgVer.match(/^(.*)@(.*)$/)
+
+      if (match !== null) {
+        entries.push({ name: match[1], version: match[2] })
       } else {
-        logger([
-          { text: 'Unable to determine package: ', style: [] },
-          { text: `${pkg}`, style: 'error' }
-        ])
+        L(chalk`{rgb(255,183,38) ┌────────────────────────────${'─'.repeat(pkgVer.length)}┐}`)
+        L(chalk`{rgb(255,183,38) │ !} Package not recognized: ${pkgVer} {rgb(255,183,38) │}`)
+        L(chalk`{rgb(255,183,38) └────────────────────────────${'─'.repeat(pkgVer.length)}┘}`)
       }
     })
+
+    if (entries.length === 0) {
+      process.exitCode = 1
+      L(chalk`{rgb(255,96,64) ┌───┬─────────────────────────────┐}`)
+      L(chalk`{rgb(255,96,64) │ X │} {white Unable to modify whitelist.} {rgb(255,96,64) │}`)
+      L(chalk`{rgb(255,96,64) └───┴─────────────────────────────┘}`)
+      return
+    }
 
     const data = await modifyWhitelistEntries(action, entries)
 
     if (!data) {
       process.exitCode = 1
+      L(chalk`{rgb(255,96,64) ┌───┬─────────────────────────────┐}`)
+      L(chalk`{rgb(255,96,64) │ X │} {white Unable to modify whitelist.} {rgb(255,96,64) │}`)
+      L(chalk`{rgb(255,96,64) └───┴─────────────────────────────┘}`)
       return
     }
 
-    logger([{ text: `Whitelist modification successful`, style: [] }])
-  }
-
-  if (action === 'list') {
+    L(chalk`{rgb(90,200,120) ┌────────────────────────────────────┐ }`)
+    L(chalk`{rgb(90,200,120) │ ✓} {white Whitelist successfully modified.} {rgb(90,200,120) │ }`)
+    L(chalk`{rgb(90,200,120) └────────────────────────────────────┘}`)
+  } else {
     const data = await getWhitelist()
 
-    if (!data) {
+    if (!data || !data.policies[0].whitelist) {
       process.exitCode = 1
+      L(chalk`{rgb(255,96,64) ┌───┬────────────────────────────┐}`)
+      L(chalk`{rgb(255,96,64) │ X │} {white Unable to fetch whitelist.} {rgb(255,96,64) │}`)
+      L(chalk`{rgb(255,96,64) └───┴────────────────────────────┘}`)
       return
     }
 
     try {
+      /* pass-off to reports */
       logger([{ text: JSON.stringify(data, null, 2), style: [] }])
     } catch (e) {
       handleError(e)
     }
+    L()
   }
 }
 
