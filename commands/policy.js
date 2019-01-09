@@ -3,7 +3,8 @@
 const { graphql, handleError, formatAPIURL } = require('../lib/util')
 const { displayHelp } = require('../lib/help')
 const { getValue, setValue } = require('../lib/config')
-const logger = require('../lib/logger')
+const chalk = require('chalk')
+const L = console.log
 
 module.exports = policy
 
@@ -36,51 +37,86 @@ async function doPolicy (argv) {
   if (action === 'add' || action === 'del') {
     const entries = []
 
-    argv._.slice(2).forEach(pkg => {
-      if (pkg.includes('@')) {
-        const [ name, version ] = pkg.split('@')
-        entries.push({ name, version })
+    argv._.slice(2).forEach(pkgVer => {
+      const match = pkgVer.match(/^(.*)@(.*)$/)
+
+      if (match !== null) {
+        entries.push({ name: match[1], version: match[2] })
       } else {
-        logger([
-          { text: 'Unable to determine package: ', style: [] },
-          { text: `${pkg}`, style: 'error' }
-        ])
+        L(chalk`{rgb(255,183,38) ┌────────────────────────────${'─'.repeat(pkgVer.length)}┐}`)
+        L(chalk`{rgb(255,183,38) │ !} Package not recognized: ${pkgVer} {rgb(255,183,38) │}`)
+        L(chalk`{rgb(255,183,38) └────────────────────────────${'─'.repeat(pkgVer.length)}┘}`)
       }
     })
+
+    if (entries.length === 0) {
+      process.exitCode = 1
+      L(chalk`{rgb(255,96,64) ┌───┬─────────────────────────────┐}`)
+      L(chalk`{rgb(255,96,64) │ X │} {white Unable to modify whitelist.} {rgb(255,96,64) │}`)
+      L(chalk`{rgb(255,96,64) └───┴─────────────────────────────┘}`)
+      return
+    }
 
     const data = await modifyWhitelistEntries(action, entries)
 
     if (!data) {
       process.exitCode = 1
+      L(chalk`{rgb(255,96,64) ┌───┬─────────────────────────────┐}`)
+      L(chalk`{rgb(255,96,64) │ X │} {white Unable to modify whitelist.} {rgb(255,96,64) │}`)
+      L(chalk`{rgb(255,96,64) └───┴─────────────────────────────┘}`)
       return
     }
 
-    /*
-      We will need some designs for output here:
-      We can either print the entire whitelist (which is returned to us in `data`)
-      OR
-      Print a general success message
-      OR
-      Print a success message per entry of `entries`.
-    */
-    logger([{ text: `Whitelist modification successful`, style: [] }])
+    L(chalk`{rgb(90,200,120) ┌────────────────────────────────────┐ }`)
+    L(chalk`{rgb(90,200,120) │ ✓} {white Whitelist successfully modified.} {rgb(90,200,120) │ }`)
+    L(chalk`{rgb(90,200,120) └────────────────────────────────────┘}`)
   } else {
     const data = await getWhitelist()
 
-    if (!data) {
+    if (!data || !data.policies[0].whitelist) {
       process.exitCode = 1
+      L(chalk`{rgb(255,96,64) ┌───┬────────────────────────────┐}`)
+      L(chalk`{rgb(255,96,64) │ X │} {white Unable to fetch whitelist.} {rgb(255,96,64) │}`)
+      L(chalk`{rgb(255,96,64) └───┴────────────────────────────┘}`)
       return
     }
 
     /*
-      Also requiring design work:
-      Successful requests return the current whitelist for the active org (policy set)
+      According to the designs, the whitelist "list" should include:
+      pkg name, pkg ver, max risk score, license, and security details
+
+      We are only given pkg name & ver from the /ncm2/api/v2/graphql whitelist query
+      ?: How can we obtain the missing parameters in a reasonable manner?
+      => Check compliance per package, or create new batch for 'verify'?
     */
-    try {
-      logger([{ text: JSON.stringify(data, null, 2), style: [] }])
-    } catch (e) {
-      handleError(e)
+    const { val: orgName } = getValue('org')
+    const W = [30, 15, 15, 15]
+
+    /* Title Bar */
+    L()
+    L(chalk`{rgb(137,161,157) ╳╳╳╳${'╳'.repeat(orgName.length + 20)}}`)
+    L(chalk`{rgb(137,161,157) ╔══${'═'.repeat(orgName.length + 20)}╗}`)
+    L(chalk`{rgb(137,161,157) ║} {white ${orgName} Whitelisted Modules} {rgb(137,161,157) ║}`)
+    L(chalk`{rgb(137,161,157) ╚══${'═'.repeat(orgName.length + 20)}╝}`)
+    L(chalk`{rgb(137,161,157) ╳╳╳╳${'╳'.repeat(orgName.length + 20)}}`)
+    L()
+
+    /* Whitelist details */
+    L(chalk`{white ${data.policies[0].whitelist.length}} {rgb(137,161,157) modules total}`)
+    L()
+
+    /* Divider */
+    L(chalk`{rgb(137,161,157) ${'-'.repeat(W[0] + W[1] + W[2] + W[3] + 7)}}`)
+    L()
+
+    /* Module List */
+    L(chalk`{rgb(137,161,157)    Module Name${' '.repeat(W[0] - 9)}Risk${' '.repeat(W[1] - 3)}License${' '.repeat(W[2] - 6)}Security}`)
+    L(chalk`{rgb(137,161,157) ┌──${'─'.repeat(W[0])}┬${'─'.repeat(W[1])}┬${'─'.repeat(W[2])}┬${'─'.repeat(W[3])}┐}`)
+    for (const pkg of data.policies[0].whitelist) {
+      L(chalk`{rgb(137,161,157) │}  {white ${pkg.name} @ ${pkg.version}}${' '.repeat(W[0] - pkg.name.length - pkg.version.length - 3)}{rgb(137,161,157) │${' '.repeat(W[1])}│${' '.repeat(W[2])}│${' '.repeat(W[3])}│}`)
+      L(chalk`{rgb(137,161,157) ├──${'─'.repeat(W[0])}┼${'─'.repeat(W[1])}┼${'─'.repeat(W[2])}┼${'─'.repeat(W[3])}┤}`)
     }
+    L()
   }
 }
 
