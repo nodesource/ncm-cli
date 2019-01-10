@@ -4,24 +4,16 @@ module.exports = orgs
 
 const clientRequest = require('../lib/client-request')
 const { formatAPIURL, handleError, queryReadline } = require('../lib/util')
-const { displayHelp } = require('../lib/help')
+const { helpHeader } = require('../lib/help')
 const { setValue, getTokens } = require('../lib/config')
 const logger = require('../lib/logger')
 
-function orgs (argv) {
-  const help = argv.help || argv._[1] === 'help'
-
-  if (help) {
-    displayHelp('help')
-    return true
+async function orgs (argv) {
+  if (argv.help) {
+    printHelp()
+    return
   }
 
-  doOrgs(argv)
-
-  return true
-}
-
-async function doOrgs (argv) {
   let { session } = getTokens()
 
   let details
@@ -95,4 +87,11 @@ async function doOrgs (argv) {
       process.exitCode = 1
     }
   }
+}
+
+function printHelp () {
+  helpHeader()
+
+  logger([{ text: 'ncm-cli orgs [<org name>]', style: ['bold'] }])
+  logger()
 }

@@ -12,7 +12,8 @@ const {
   jsonReport,
   outputReport
 } = require('../lib/report')
-const { displayHelp } = require('../lib/help')
+const logger = require('../lib/logger')
+const { helpHeader } = require('../lib/help')
 
 const SEVERITY_MAP = {
   NONE: 0,
@@ -24,26 +25,20 @@ const SEVERITY_MAP = {
 
 module.exports = verify
 
-function verify (argv) {
-  const help = argv.help || argv._[1] === 'help'
+async function verify (argv, _dir) {
+  const {
+    json,
+    output,
+    dir = _dir || process.cwd(),
+    report
+  } = argv
 
-  if (help) {
-    displayHelp('verify')
-    return true
+  if (argv.help) {
+    printHelp()
+    return
   }
 
   const { session } = getTokens()
-
-  doVerify(session, argv)
-
-  return true
-}
-
-async function doVerify (session, argv) {
-  let { json, output, dir, report } = argv
-
-  // start position logic
-  if (!dir) dir = process.cwd()
 
   const pkgScores = []
   let failures = false
@@ -99,4 +94,21 @@ async function doVerify (session, argv) {
   if (output) outputReport(pkgScores, output)
 
   if (failures) process.exitCode = 1
+}
+
+function printHelp () {
+  helpHeader()
+
+  logger([{ text: 'ncm-cli verify', style: ['bold'] }])
+  logger([{ text: `ncm-cli verify [options]`, style: [] }])
+  logger()
+
+  logger([{ text: 'verify Options:', style: ['bold'] }])
+  logger([{ text: `--dir, -d`, style: [] }])
+  logger([{ text: `--report, -r`, style: [] }])
+  logger([{ text: `--json, -j`, style: [] }])
+  logger([{ text: `--output, -o`, style: [] }])
+  logger([{ text: `--certified, -C`, style: [] }])
+  logger([{ text: `--production, -p`, style: [] }])
+  logger()
 }
