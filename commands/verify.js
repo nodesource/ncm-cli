@@ -46,7 +46,7 @@ async function doVerify (session, argv) {
   if (!dir) dir = process.cwd()
 
   const pkgScores = []
-  let failures = false
+  let hasFailures = false
 
   let data
   try {
@@ -73,6 +73,8 @@ async function doVerify (session, argv) {
 
   for (const { name, version, scores } of data) {
     let maxSeverity = SEVERITY_MAP.NONE
+    let license
+    const failures = []
 
     for (const score of scores) {
       const severityValue = SEVERITY_MAP[score.severity]
@@ -88,15 +90,20 @@ async function doVerify (session, argv) {
       }
 
       if (score.pass === false) {
-        failures = true
+        failures.push(score)
+        hasFailures = true
+      }
+
+      if (score.name === 'license') {
+        license = score
       }
     }
-    pkgScores.push({ name, version, maxSeverity })
+    pkgScores.push({ name, version, maxSeverity, failures, license })
   }
 
   if (report) scoreReport(pkgScores)
   if (json) jsonReport(pkgScores)
   if (output) outputReport(pkgScores, output)
 
-  if (failures) process.exitCode = 1
+  if (hasFailures) process.exitCode = 1
 }
