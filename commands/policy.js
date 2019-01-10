@@ -1,26 +1,22 @@
 'use strict'
 
 const { graphql, handleError } = require('../lib/util')
-const { displayHelp } = require('../lib/help')
+const { helpHeader } = require('../lib/help')
 const { getValue, setValue, api } = require('../lib/config')
 const logger = require('../lib/logger')
 
 module.exports = policy
 
-function policy (argv) {
-  const help = argv.help || argv._[1] === 'help'
-
-  if (help) {
-    displayHelp('policy')
-    return true
+async function policy (argv, action, subaction) {
+  if (argv.help) {
+    printHelp()
+    return
+  } else if (!action) {
+    printHelp()
+    process.exitCode = 1
+    return
   }
 
-  doPolicy(argv)
-
-  return true
-}
-
-async function doPolicy (argv) {
   let { val: policy } = getValue('policyId')
 
   if (policy === ' ') {
@@ -30,8 +26,6 @@ async function doPolicy (argv) {
     setValue('policyId', policyData.policies[0].id)
     setValue('policy', policyData.policies[0].name)
   }
-
-  const [ action, subaction ] = argv._.slice(1)
 
   if (action === 'whitelist') {
     if (subaction === 'add' || subaction === 'del') {
@@ -55,10 +49,12 @@ async function doPolicy (argv) {
       const data = await getWhitelist()
       console.log(data.policies[0].whitelist)
     } else {
-      displayHelp('policy')
+      printHelp()
+      process.exitCode = 1
     }
   } else {
-    displayHelp('policy')
+    printHelp()
+    process.exitCode = 1
   }
 }
 
@@ -198,4 +194,14 @@ const queries = {
         }
       }
     `
+}
+
+function printHelp () {
+  helpHeader()
+
+  logger([{ text: 'ncm-cli policy', style: ['bold'] }])
+  logger([{ text: `ncm-cli policy whitelist`, style: [] }])
+  logger([{ text: `ncm-cli policy whitelist add <pkg-name>@<ver>`, style: [] }])
+  logger([{ text: `ncm-cli policy whitelist del <pkg-name>@<ver>`, style: [] }])
+  logger()
 }

@@ -2,36 +2,25 @@
 
 const clientRequest = require('../lib/client-request')
 const { formatAPIURL, handleError, queryReadline } = require('../lib/util')
-const { displayHelp } = require('../lib/help')
 const { setValue, getTokens, setTokens } = require('../lib/config')
 const logger = require('../lib/logger')
+const { helpHeader } = require('../lib/help')
 
 module.exports = signin
 
-function signin (argv) {
-  const help = argv.help || argv._[1] === 'help'
-
-  if (help) {
-    displayHelp('signin')
-    return true
+async function signin (argv, email, password) {
+  if (argv.help) {
+    printHelp()
+    return
   }
 
   const SSO =
-        (argv.G ? 'google' : null) ||
-        (argv.g ? 'github' : null) ||
+        (argv.google ? 'google' : null) ||
+        (argv.github ? 'github' : null) ||
         null
 
-  const [ email, password ] = argv._.slice(1)
   const basicAuth = email && password && argv._.length === 3
 
-  if (SSO || basicAuth) {
-    doSignin(SSO, basicAuth, email, password)
-  }
-
-  return Boolean(SSO || basicAuth)
-}
-
-async function doSignin (SSO, basicAuth, email, password) {
   let authData
   if (basicAuth) {
     const usrInfo = JSON.stringify({ email, password })
@@ -74,6 +63,9 @@ async function doSignin (SSO, basicAuth, email, password) {
       handleError('Signin::RetrieveSession')
       return
     }
+  } else {
+    printHelp()
+    process.exitCode = 1
   }
 
   if (!authData['session'] || !authData['refreshToken']) {
@@ -138,5 +130,19 @@ async function doSignin (SSO, basicAuth, email, password) {
   }
 
   logger([{ text: 'Login Successful', style: 'success' }])
+  logger()
+}
+
+function printHelp () {
+  helpHeader()
+
+  logger([{ text: 'ncm-cli signin', style: ['bold'] }])
+  logger([{ text: `ncm-cli signin [options]`, style: [] }])
+  logger()
+
+  logger([{ text: 'signin Options:', style: ['bold'] }])
+  logger([{ text: `--help`, style: [] }])
+  logger([{ text: `--google, -G`, style: [] }])
+  logger([{ text: `--github, -g`, style: [] }])
   logger()
 }

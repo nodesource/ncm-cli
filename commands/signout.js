@@ -1,18 +1,23 @@
 'use strict'
 
 const { setTokens } = require('../lib/config')
-const { displayHelp } = require('../lib/help')
+const logger = require('../lib/logger')
+const { helpHeader } = require('../lib/help')
 
 module.exports = signout
 
-function signout (argv) {
-  const help = argv.help || argv._[1] === 'help'
-
-  if (help) {
-    displayHelp('signout')
-    return true
+async function signout (argv) {
+  if (argv.help) {
+    printHelp()
+    return
   }
 
   setTokens({ session: ' ', refreshToken: ' ' })
-  return true
+}
+
+function printHelp () {
+  helpHeader()
+
+  logger([{ text: `ncm-cli signout`, style: ['bold'] }])
+  logger()
 }

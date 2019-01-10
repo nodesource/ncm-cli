@@ -8,7 +8,7 @@ const {
 } = require('../lib/config')
 const logger = require('../lib/logger')
 const { handleError } = require('../lib/util')
-const { displayHelp } = require('../lib/help')
+const { helpHeader } = require('../lib/help')
 
 module.exports = config
 
@@ -17,15 +17,15 @@ const userAccess = [
   'org'
 ]
 
-function config (argv) {
-  const help = argv.help || argv._[1] === 'help'
-
-  if (help) {
-    displayHelp('config')
-    return true
+async function config (argv, action, key, value) {
+  if (argv.help) {
+    printHelp()
+    return
+  } else if (!action || !key || !value) {
+    printHelp()
+    process.exitCode = 1
+    return
   }
-
-  const [ action, key, value ] = argv._.slice(1)
 
   switch (action) {
     case 'set':
@@ -77,8 +77,20 @@ function config (argv) {
       logger()
       break
     default:
-      displayHelp('config')
+      printHelp()
+      process.exitCode = 1
       break
   }
-  return true
+}
+
+function printHelp () {
+  helpHeader()
+
+  logger([{ text: 'ncm-cli config', style: ['bold'] }])
+  logger([{ text: `ncm-cli config set`, style: [] }])
+  logger([{ text: `ncm-cli config get`, style: [] }])
+  logger([{ text: `ncm-cli config del`, style: [] }])
+  logger([{ text: `ncm-cli config list`, style: [] }])
+  logger([{ text: `ncm-cli config reset`, style: [] }])
+  logger()
 }
