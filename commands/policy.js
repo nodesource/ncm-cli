@@ -70,7 +70,8 @@ async function doPolicy (argv) {
     L(chalk`{rgb(90,200,120) ┌────────────────────────────────────┐ }`)
     L(chalk`{rgb(90,200,120) │ ✓} {white Whitelist successfully modified.} {rgb(90,200,120) │ }`)
     L(chalk`{rgb(90,200,120) └────────────────────────────────────┘}`)
-  } else {
+  }
+  if (action === 'list') {
     const data = await getWhitelist()
 
     if (!data || !data.policies[0].whitelist) {
@@ -81,14 +82,6 @@ async function doPolicy (argv) {
       return
     }
 
-    /*
-      According to the designs, the whitelist "list" should include:
-      pkg name, pkg ver, max risk score, license, and security details
-
-      We are only given pkg name & ver from the /ncm2/api/v2/graphql whitelist query
-      ?: How can we obtain the missing parameters in a reasonable manner?
-      => Check compliance per package, or create new batch for 'verify'?
-    */
     const { val: orgName } = getValue('org')
     const W = [30, 15, 15, 15]
 
@@ -109,7 +102,7 @@ async function doPolicy (argv) {
     L(chalk`{rgb(137,161,157) ${'-'.repeat(W[0] + W[1] + W[2] + W[3] + 7)}}`)
     L()
 
-    /* Module List */
+    /* Module List -- to be migrated to lib/report.js */
     L(chalk`{rgb(137,161,157)    Module Name${' '.repeat(W[0] - 9)}Risk${' '.repeat(W[1] - 3)}License${' '.repeat(W[2] - 6)}Security}`)
     L(chalk`{rgb(137,161,157) ┌──${'─'.repeat(W[0])}┬${'─'.repeat(W[1])}┬${'─'.repeat(W[2])}┬${'─'.repeat(W[3])}┐}`)
     for (const pkg of data.policies[0].whitelist) {
@@ -117,6 +110,9 @@ async function doPolicy (argv) {
       L(chalk`{rgb(137,161,157) ├──${'─'.repeat(W[0])}┼${'─'.repeat(W[1])}┼${'─'.repeat(W[2])}┼${'─'.repeat(W[3])}┤}`)
     }
     L()
+  }
+  if (!action) {
+    displayHelp('policy')
   }
 }
 
