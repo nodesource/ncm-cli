@@ -67,7 +67,8 @@ async function policy (argv) {
     L(chalk`{rgb(90,200,120) ┌────────────────────────────────────┐ }`)
     L(chalk`{rgb(90,200,120) │ ✓} {white Whitelist successfully modified.} {rgb(90,200,120) │ }`)
     L(chalk`{rgb(90,200,120) └────────────────────────────────────┘}`)
-  } else {
+  }
+  if (action === 'list') {
     const data = await getWhitelist()
 
     if (!data || !data.policies[0].whitelist) {
@@ -85,6 +86,9 @@ async function policy (argv) {
       handleError(e)
     }
     L()
+  }
+  if (!action) {
+    displayHelp('policy')
   }
 }
 
