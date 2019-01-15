@@ -51,41 +51,74 @@ async function verify (argv, _dir) {
 async function doVerify (session, argv) {
   const { json, output, dir, report } = argv
 
-  /* report using provided module / package */ 
+  /* search */ 
   if (argv._.length === 2) {
     // todo
 
-    graphql(
-      /* options */
-      {
-        token: session,
-        url: formatAPIURL('/ncm2/api/v2/graphql')
-      },
-      /* query */ 
-      `{
-        getPackage(name: $name, registry_id: "1", version: $version) {
-          name
-          maintainers
-          latest
-          registry_id
-          description
-          readme
-          versions {
+    if (!argv._[1].includes('@')) {
+      console.log(`Unrecognized module syntax: ${argv._[1]}`)
+      process.exitCode = 1
+      return
+    }
+
+    const options = {
+      token: session,
+      url: formatAPIURL('/ncm2/api/v2/graphql') 
+    }
+
+    const vars = {
+      name: argv._[1].split('@')[0],
+      version: argv._[1].split('@')[1]
+    }
+
+    const data = await graphql(
+      options,
+      `query($name: String!, $version: String!) {
+          packageVersion(name: $name, version: $version) {
             name
             version
             published
+            publishedAt
+            description
+            author
+            maintainers
+            keywords
+            scores {
+              group
+              name
+              pass
+              severity
+              title
+              data
+            }
           }
         }
-      }`,
-      /* vars */
-      {
-        name: 'lodash',
-        version: 'latest'
-      }
+        `,
+      vars
     )
+
+    let report = data.packageVersion
+    for (const score of report.scores) {
+      if (score.group !== 'compliance' && 
+          score.group !== 'security' &&
+          score.group !== 'risk') {
+        continue
+      }
+
+      if (score.pass === false) {
+        report.failures ? report.failures.push(score) : report.failures = [ score ]
+      }
+
+      if (score.name === 'license') {
+        report.license = score
+      }
+    }
+
+    /* todo: pass off to reports */
+    console.log(JSON.stringify(report, null, 2))
   }
 
-  /* report using dir-tree */ 
+  /* verify */ 
   if (argv._.length === 1) {
     
     // start position logic
