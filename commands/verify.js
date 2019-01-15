@@ -5,7 +5,8 @@ const { getTokens } = require('../lib/config')
 const {
   handleError,
   refreshSession,
-  formatAPIURL
+  formatAPIURL,
+  graphql,
 } = require('../lib/util')
 const {
   jsonReport,
@@ -42,68 +43,117 @@ async function verify (argv, _dir) {
 
   const { session } = getTokens()
 
-  const pkgScores = []
-  let hasFailures = false
+  doVerify(session, argv)
 
-  let data
-  try {
-    data = await analyze({
-      dir,
-      token: session,
-      url: formatAPIURL('/ncm2/api/v2/graphql')
-    })
-  } catch (err) {
-    // XXX(Jeremiah): Not the right way to handle this. See client-request retries.
-    //
-    // session token has expired, request new token and update
-    if (err.response && err.response.message === 'Auth::LoginExpired') {
-      refreshSession()
-      // username / password has invalid token
-      handleError('TEMP::InvalidToken')
-    } else if (err.response && err.response.error === 'Unauthorized') {
-      handleError('TEMP::Unauthorized')
-    } else {
-      console.error(err)
-    }
-    return
+  return true
+}
+
+async function doVerify (session, argv) {
+  const { json, output, dir, report } = argv
+
+  /* report using provided module / package */ 
+  if (argv._.length === 2) {
+    // todo
+
+    graphql(
+      /* options */
+      {
+        token: session,
+        url: formatAPIURL('/ncm2/api/v2/graphql')
+      },
+      /* query */ 
+      `{
+        getPackage(name: $name, registry_id: "1", version: $version) {
+          name
+          maintainers
+          latest
+          registry_id
+          description
+          readme
+          versions {
+            name
+            version
+            published
+          }
+        }
+      }`,
+      /* vars */
+      {
+        name: 'lodash',
+        version: 'latest'
+      }
+    )
   }
 
-  for (const { name, version, scores } of data) {
-    let maxSeverity = SEVERITY_MAP.NONE
-    let license
-    const failures = []
+  /* report using dir-tree */ 
+  if (argv._.length === 1) {
+    
+    // start position logic
+    if (!dir) dir = process.cwd()
 
-    for (const score of scores) {
-      const severityValue = SEVERITY_MAP[score.severity]
+    const pkgScores = []
+    let hasFailures = false
 
-      if (score.group !== 'compliance' &&
-          score.group !== 'security' &&
-          score.group !== 'risk') {
-        continue
+    let data
+    try {
+      data = await analyze({
+        dir,
+        token: session,
+        url: formatAPIURL('/ncm2/api/v2/graphql')
+      })
+    } catch (err) {
+      // XXX(Jeremiah): Not the right way to handle this. See client-request retries.
+      //
+      // session token has expired, request new token and update
+      if (err.response && err.response.message === 'Auth::LoginExpired') {
+        refreshSession()
+        // username / password has invalid token
+        handleError('TEMP::InvalidToken')
+      } else if (err.response && err.response.error === 'Unauthorized') {
+        handleError('TEMP::Unauthorized')
+      } else {
+        console.error(err)
       }
-
-      if (severityValue > maxSeverity) {
-        maxSeverity = severityValue
-      }
-
-      if (score.pass === false) {
-        failures.push(score)
-        hasFailures = true
-      }
-
-      if (score.name === 'license') {
-        license = score
-      }
+      return
     }
-    pkgScores.push({ name, version, maxSeverity, failures, license })
-  }
+
+    for (const { name, version, scores } of data) {
+      let maxSeverity = SEVERITY_MAP.NONE
+      let license
+      const failures = []
+
+      for (const score of scores) {
+        const severityValue = SEVERITY_MAP[score.severity]
+
+        if (score.group !== 'compliance' &&
+            score.group !== 'security' &&
+            score.group !== 'risk') {
+          continue
+        }
+
+        if (severityValue > maxSeverity) {
+          maxSeverity = severityValue
+        }
+
+        if (score.pass === false) {
+          failures.push(score)
+          hasFailures = true
+        }
+
+        if (score.name === 'license') {
+          license = score
+        }
+      }
+      pkgScores.push({ name, version, maxSeverity, failures, license })
+    }
 
   if (report && long) longReport(pkgScores, dir)
   else if (report) shortReport(pkgScores, dir)
   if (json) jsonReport(pkgScores)
   if (output) outputReport(pkgScores, output)
 
-  if (hasFailures) process.exitCode = 1
+    if (hasFailures) process.exitCode = 1
+  }
 }
 
 function printHelp () {
