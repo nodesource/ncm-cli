@@ -8,9 +8,10 @@ const {
   formatAPIURL
 } = require('../lib/util')
 const {
-  scoreReport,
   jsonReport,
-  outputReport
+  outputReport,
+  shortReport,
+  longReport
 } = require('../lib/report')
 const logger = require('../lib/logger')
 const { helpHeader } = require('../lib/help')
@@ -30,7 +31,8 @@ async function verify (argv, _dir) {
     json,
     output,
     dir = _dir || process.cwd(),
-    report
+    report,
+    long
   } = argv
 
   if (argv.help) {
@@ -96,7 +98,8 @@ async function verify (argv, _dir) {
     pkgScores.push({ name, version, maxSeverity, failures, license })
   }
 
-  if (report) scoreReport(pkgScores)
+  if (report && long) longReport(pkgScores, dir)
+  else if (report) shortReport(pkgScores, dir)
   if (json) jsonReport(pkgScores)
   if (output) outputReport(pkgScores, output)
 
