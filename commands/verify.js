@@ -3,17 +3,21 @@
 const analyze = require('../lib/ncm-analyze-tree')
 const { getTokens } = require('../lib/config')
 const {
-  handleError,
-  refreshSession,
-  formatAPIURL
+  formatAPIURL,
+  graphql
 } = require('../lib/util')
 const {
-  scoreReport,
   jsonReport,
-  outputReport
-} = require('../lib/report')
+  outputReport,
+  reportFailMsg
+} = require('../lib/report/util')
+const longReport = require('../lib/report/long')
+const shortReport = require('../lib/report/short')
+const moduleReport = require('../lib/report/module')
 const logger = require('../lib/logger')
 const { helpHeader } = require('../lib/help')
+const semver = require('semver')
+const L = console.log
 
 const SEVERITY_MAP = {
   NONE: 0,
@@ -29,9 +33,9 @@ async function verify (argv, _dir) {
   const {
     json,
     output,
-    dir = _dir || process.cwd(),
-    report
+    long
   } = argv
+  let { dir = _dir || process.cwd() } = argv
 
   if (argv.help) {
     printHelp()
@@ -40,67 +44,171 @@ async function verify (argv, _dir) {
 
   const { session } = getTokens()
 
-  const pkgScores = []
-  let hasFailures = false
+  /* details */
+  if (argv._.length > 1) {
+    let pkgName = argv._.length === 4 ? argv._[1] : argv._[1].split('@')[0]
+    let pkgVer = argv._.length === 4 ? argv._[3] : argv._[1].split('@')[1]
 
-  let data
-  try {
-    data = await analyze({
-      dir,
+    if (!pkgName || !semver.valid(pkgVer) || argv.length > 4) {
+      L()
+      reportFailMsg(`Unrecognized module syntax: ${argv._.slice(1).join('')}`)
+      L()
+      process.exitCode = 1
+      return
+    }
+
+    const options = {
       token: session,
       url: formatAPIURL('/ncm2/api/v2/graphql')
-    })
-  } catch (err) {
-    // XXX(Jeremiah): Not the right way to handle this. See client-request retries.
-    //
-    // session token has expired, request new token and update
-    if (err.response && err.response.message === 'Auth::LoginExpired') {
-      refreshSession()
-      // username / password has invalid token
-      handleError('TEMP::InvalidToken')
-    } else if (err.response && err.response.error === 'Unauthorized') {
-      handleError('TEMP::Unauthorized')
-    } else {
-      console.error(err)
     }
-    return
-  }
 
-  for (const { name, version, scores } of data) {
-    let maxSeverity = SEVERITY_MAP.NONE
-    let license
-    const failures = []
+    const vars = {
+      name: pkgName,
+      version: pkgVer
+    }
 
-    for (const score of scores) {
-      const severityValue = SEVERITY_MAP[score.severity]
+    let hasFailures = false
+    let data
+    try {
+      data = await graphql(
+        options,
+        `query($name: String!, $version: String!) {
+            packageVersion(name: $name, version: $version) {
+              name
+              version
+              published
+              publishedAt
+              description
+              author
+              maintainers
+              keywords
+              scores {
+                group
+                name
+                pass
+                severity
+                title
+                data
+              }
+            }
+          }
+          `,
+        vars
+      )
+    } catch (err) {
+      console.error(err)
+      process.exitCode = 1
+      return
 
+      /* refresh session */
+    }
+
+    if (!data) {
+      L()
+      reportFailMsg('Unable to fetch module details.')
+      L()
+      process.exitCode = 1
+      return
+    }
+
+    let report = data.packageVersion
+
+    if (!report.published) {
+      L()
+      reportFailMsg(`Module not found: ${argv._.slice(1).join('')}`)
+      L()
+      process.exitCode = 1
+      return
+    }
+
+    for (const score of report.scores) {
       if (score.group !== 'compliance' &&
           score.group !== 'security' &&
           score.group !== 'risk') {
         continue
       }
 
-      if (severityValue > maxSeverity) {
-        maxSeverity = severityValue
-      }
-
       if (score.pass === false) {
-        failures.push(score)
+        report.failures ? report.failures.push(score) : report.failures = [ score ]
         hasFailures = true
       }
 
       if (score.name === 'license') {
-        license = score
+        report.license = score
       }
     }
-    pkgScores.push({ name, version, maxSeverity, failures, license })
+
+    if (!json && !output) moduleReport(report)
+    if (json) jsonReport(report)
+    if (output) outputReport(report, output)
+    if (hasFailures) process.exitCode = 1
   }
 
-  if (report) scoreReport(pkgScores)
-  if (json) jsonReport(pkgScores)
-  if (output) outputReport(pkgScores, output)
+  /* verify */
+  if (argv._.length === 1) {
+    if (!dir) dir = process.cwd()
 
-  if (hasFailures) process.exitCode = 1
+    const pkgScores = []
+    let hasFailures = false
+
+    let data
+    try {
+      data = await analyze({
+        dir,
+        token: session,
+        url: formatAPIURL('/ncm2/api/v2/graphql')
+      })
+    } catch (err) {
+      process.exitCode = 1
+      if (err.code === 'ENOENT') {
+        L()
+        reportFailMsg(`Unable to find project at: ${dir}`)
+        L()
+      } else {
+        L()
+        reportFailMsg('Unable to fetch project report.')
+        L()
+      }
+      return
+    }
+
+    for (const { name, version, scores } of data) {
+      let maxSeverity = SEVERITY_MAP.NONE
+      let license
+      const failures = []
+
+      for (const score of scores) {
+        const severityValue = SEVERITY_MAP[score.severity]
+
+        if (score.group !== 'compliance' &&
+            score.group !== 'security' &&
+            score.group !== 'risk') {
+          continue
+        }
+
+        if (severityValue > maxSeverity) {
+          maxSeverity = severityValue
+        }
+
+        if (score.pass === false) {
+          failures.push(score)
+          hasFailures = true
+        }
+
+        if (score.name === 'license') {
+          license = score
+        }
+      }
+      pkgScores.push({ name, version, maxSeverity, failures, license })
+    }
+
+    if (long) longReport(pkgScores, dir)
+    else shortReport(pkgScores, dir)
+
+    if (json) jsonReport(pkgScores)
+    if (output) outputReport(pkgScores, output)
+    if (hasFailures) process.exitCode = 1
+  }
 }
 
 function printHelp () {
