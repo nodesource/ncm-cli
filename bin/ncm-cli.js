@@ -28,6 +28,7 @@ async function main () {
       google: 'G',
       help: 'h',
       json: 'j',
+      long: 'l',
       output: 'o',
       org: 'O',
       report: 'r',
