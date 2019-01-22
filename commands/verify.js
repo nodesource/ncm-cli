@@ -12,10 +12,14 @@ const {
   jsonReport,
   outputReport,
   shortReport,
-  longReport
+  longReport,
+  moduleReport,
+  reportFailMsg
 } = require('../lib/report')
 const logger = require('../lib/logger')
 const { helpHeader } = require('../lib/help')
+const semver = require('semver')
+const L = console.log
 
 const SEVERITY_MAP = {
   NONE: 0,
@@ -43,20 +47,15 @@ async function verify (argv, _dir) {
 
   const { session } = getTokens()
 
-  doVerify(session, argv)
+  /* module-report */ 
+  if (argv._.length > 1) {
+    let pkgName = argv._.length === 4 ? argv._[1] : argv._[1].split('@')[0]
+    let pkgVer = argv._.length === 4 ? argv._[3] : argv._[1].split('@')[1]
 
-  return true
-}
-
-async function doVerify (session, argv) {
-  const { json, output, dir, report } = argv
-
-  /* search */ 
-  if (argv._.length === 2) {
-    // todo
-
-    if (!argv._[1].includes('@')) {
-      console.log(`Unrecognized module syntax: ${argv._[1]}`)
+    if (!pkgName || !semver.valid(pkgVer) || argv.length > 4) {
+      L()
+      reportFailMsg(`Unrecognized module syntax: ${argv._.slice(1).join('')}`)
+      L()
       process.exitCode = 1
       return
     }
@@ -67,9 +66,11 @@ async function doVerify (session, argv) {
     }
 
     const vars = {
-      name: argv._[1].split('@')[0],
-      version: argv._[1].split('@')[1]
+      name: pkgName,
+      version: pkgVer
     }
+
+    let hasFailures = false
 
     const data = await graphql(
       options,
@@ -96,8 +97,22 @@ async function doVerify (session, argv) {
         `,
       vars
     )
+    .catch(error => {
+      L()
+      reportFailMsg('Unable to fetch module report.')
+      L()
+      process.exit(1)
+    })
 
     let report = data.packageVersion
+
+    if(!report.published) {
+      L()
+      reportFailMsg(`Module not found: ${argv._.slice(1).join('')}`)
+      L()
+      process.exit(1)
+    }
+
     for (const score of report.scores) {
       if (score.group !== 'compliance' && 
           score.group !== 'security' &&
@@ -107,6 +122,7 @@ async function doVerify (session, argv) {
 
       if (score.pass === false) {
         report.failures ? report.failures.push(score) : report.failures = [ score ]
+        hasFailures = true
       }
 
       if (score.name === 'license') {
@@ -114,14 +130,15 @@ async function doVerify (session, argv) {
       }
     }
 
-    /* todo: pass off to reports */
-    console.log(JSON.stringify(report, null, 2))
+    if (report) moduleReport(report)
+    if (json) jsonReport(report)
+    if (output) outputReport(report, output)
+    if (hasFailures) process.exitCode = 1
   }
 
   /* verify */ 
   if (argv._.length === 1) {
     
-    // start position logic
     if (!dir) dir = process.cwd()
 
     const pkgScores = []
@@ -135,19 +152,10 @@ async function doVerify (session, argv) {
         url: formatAPIURL('/ncm2/api/v2/graphql')
       })
     } catch (err) {
-      // XXX(Jeremiah): Not the right way to handle this. See client-request retries.
-      //
-      // session token has expired, request new token and update
-      if (err.response && err.response.message === 'Auth::LoginExpired') {
-        refreshSession()
-        // username / password has invalid token
-        handleError('TEMP::InvalidToken')
-      } else if (err.response && err.response.error === 'Unauthorized') {
-        handleError('TEMP::Unauthorized')
-      } else {
-        console.error(err)
-      }
-      return
+      L()
+      reportFailMsg('Unable to fetch module report.')
+      L()
+      process.exit(1)
     }
 
     for (const { name, version, scores } of data) {
@@ -184,8 +192,7 @@ async function doVerify (session, argv) {
   else if (report) shortReport(pkgScores, dir)
   if (json) jsonReport(pkgScores)
   if (output) outputReport(pkgScores, output)
-
-    if (hasFailures) process.exitCode = 1
+  if (hasFailures) process.exitCode = 1
   }
 }
 
