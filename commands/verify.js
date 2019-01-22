@@ -6,7 +6,7 @@ const {
   handleError,
   refreshSession,
   formatAPIURL,
-  graphql,
+  graphql
 } = require('../lib/util')
 const {
   jsonReport,
@@ -35,10 +35,10 @@ async function verify (argv, _dir) {
   const {
     json,
     output,
-    dir = _dir || process.cwd(),
     report,
     long
   } = argv
+  let { dir = _dir || process.cwd() } = argv
 
   if (argv.help) {
     printHelp()
@@ -47,7 +47,7 @@ async function verify (argv, _dir) {
 
   const { session } = getTokens()
 
-  /* module-report */ 
+  /* module-report */
   if (argv._.length > 1) {
     let pkgName = argv._.length === 4 ? argv._[1] : argv._[1].split('@')[0]
     let pkgVer = argv._.length === 4 ? argv._[3] : argv._[1].split('@')[1]
@@ -62,7 +62,7 @@ async function verify (argv, _dir) {
 
     const options = {
       token: session,
-      url: formatAPIURL('/ncm2/api/v2/graphql') 
+      url: formatAPIURL('/ncm2/api/v2/graphql')
     }
 
     const vars = {
@@ -97,16 +97,21 @@ async function verify (argv, _dir) {
         `,
       vars
     )
-    .catch(error => {
-      L()
-      reportFailMsg('Unable to fetch module report.')
-      L()
-      process.exit(1)
-    })
+      .catch(error => {
+        if (error.response.status !== 401) {
+          L()
+          reportFailMsg('Unable to fetch module report.')
+          L()
+          process.exit(1)
+        }
+
+        /* refresh session */
+        process.exit(1)
+      })
 
     let report = data.packageVersion
 
-    if(!report.published) {
+    if (!report.published) {
       L()
       reportFailMsg(`Module not found: ${argv._.slice(1).join('')}`)
       L()
@@ -114,7 +119,7 @@ async function verify (argv, _dir) {
     }
 
     for (const score of report.scores) {
-      if (score.group !== 'compliance' && 
+      if (score.group !== 'compliance' &&
           score.group !== 'security' &&
           score.group !== 'risk') {
         continue
@@ -136,9 +141,8 @@ async function verify (argv, _dir) {
     if (hasFailures) process.exitCode = 1
   }
 
-  /* verify */ 
+  /* verify */
   if (argv._.length === 1) {
-    
     if (!dir) dir = process.cwd()
 
     const pkgScores = []
@@ -188,11 +192,11 @@ async function verify (argv, _dir) {
       pkgScores.push({ name, version, maxSeverity, failures, license })
     }
 
-  if (report && long) longReport(pkgScores, dir)
-  else if (report) shortReport(pkgScores, dir)
-  if (json) jsonReport(pkgScores)
-  if (output) outputReport(pkgScores, output)
-  if (hasFailures) process.exitCode = 1
+    if (report && long) longReport(pkgScores, dir)
+    else if (report) shortReport(pkgScores, dir)
+    if (json) jsonReport(pkgScores)
+    if (output) outputReport(pkgScores, output)
+    if (hasFailures) process.exitCode = 1
   }
 }
 
