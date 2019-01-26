@@ -4,6 +4,7 @@ const { graphql, handleError, formatAPIURL } = require('../lib/util')
 const { helpHeader } = require('../lib/help')
 const { getValue, setValue } = require('../lib/config')
 const chalk = require('chalk')
+const logger = require('../lib/logger')
 const L = console.log
 
 module.exports = policy
@@ -88,7 +89,7 @@ async function policy (argv) {
     L()
   }
   if (!action) {
-    displayHelp('policy')
+    printHelp()
   }
 }
 
@@ -233,9 +234,9 @@ const queries = {
 function printHelp () {
   helpHeader()
 
-  logger([{ text: 'ncm-cli policy', style: ['bold'] }])
-  logger([{ text: `ncm-cli policy whitelist`, style: [] }])
-  logger([{ text: `ncm-cli policy whitelist add <pkg-name>@<ver>`, style: [] }])
-  logger([{ text: `ncm-cli policy whitelist del <pkg-name>@<ver>`, style: [] }])
+  logger([{ text: 'ncm-cli whitelist', style: ['bold'] }])
+  logger([{ text: `ncm-cli whitelist list`, style: [] }])
+  logger([{ text: `ncm-cli whitelist add <pkg-name>@<ver>`, style: [] }])
+  logger([{ text: `ncm-cli whitelist del <pkg-name>@<ver>`, style: [] }])
   logger()
 }
