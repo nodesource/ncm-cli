@@ -4,13 +4,13 @@ const { graphql, handleError, formatAPIURL } = require('../lib/util')
 const { helpHeader } = require('../lib/help')
 const { getValue, setValue } = require('../lib/config')
 const chalk = require('chalk')
+const semver = require('semver')
 const logger = require('../lib/logger')
 const L = console.log
 
 module.exports = policy
 
 async function policy (argv) {
-
   const [ action ] = argv._.slice(1)
 
   if (argv.help) {
@@ -38,7 +38,7 @@ async function policy (argv) {
     argv._.slice(2).forEach(pkgVer => {
       const match = pkgVer.match(/^(.*)@(.*)$/)
 
-      if (match !== null) {
+      if (match !== null && semver.valid(match[2])) {
         entries.push({ name: match[1], version: match[2] })
       } else {
         L(chalk`{rgb(255,183,38) ┌────────────────────────────${'─'.repeat(pkgVer.length)}┐}`)
