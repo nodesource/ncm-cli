@@ -3,8 +3,6 @@
 const analyze = require('../lib/ncm-analyze-tree')
 const { getTokens } = require('../lib/config')
 const {
-  handleError,
-  refreshSession,
   formatAPIURL,
   graphql
 } = require('../lib/util')
