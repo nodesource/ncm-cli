@@ -9,11 +9,11 @@ const {
 const {
   jsonReport,
   outputReport,
-  shortReport,
-  longReport,
-  moduleReport,
   reportFailMsg
-} = require('../lib/report')
+} = require('../lib/report/util')
+const longReport = require('../lib/report/long')
+const shortReport = require('../lib/report/short')
+const moduleReport = require('../lib/report/module')
 const logger = require('../lib/logger')
 const { helpHeader } = require('../lib/help')
 const semver = require('semver')
@@ -116,6 +116,7 @@ async function verify (argv, _dir) {
       reportFailMsg(`Module not found: ${argv._.slice(1).join('')}`)
       L()
       process.exitCode = 1
+      return
     }
 
     for (const score of report.scores) {
