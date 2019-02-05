@@ -33,7 +33,6 @@ async function verify (argv, _dir) {
   const {
     json,
     output,
-    report,
     long
   } = argv
   let { dir = _dir || process.cwd() } = argv
@@ -69,43 +68,46 @@ async function verify (argv, _dir) {
     }
 
     let hasFailures = false
-
-    const data = await graphql(
-      options,
-      `query($name: String!, $version: String!) {
-          packageVersion(name: $name, version: $version) {
-            name
-            version
-            published
-            publishedAt
-            description
-            author
-            maintainers
-            keywords
-            scores {
-              group
+    let data
+    try {
+      data = await graphql(
+        options,
+        `query($name: String!, $version: String!) {
+            packageVersion(name: $name, version: $version) {
               name
-              pass
-              severity
-              title
-              data
+              version
+              published
+              publishedAt
+              description
+              author
+              maintainers
+              keywords
+              scores {
+                group
+                name
+                pass
+                severity
+                title
+                data
+              }
             }
           }
-        }
-        `,
-      vars
-    )
-      .catch(error => {
-        if (error.response.status !== 401) {
-          L()
-          reportFailMsg('Unable to fetch module report.')
-          L()
-          process.exit(1)
-        }
+          `,
+        vars
+      )
+    } catch (err) {
+      console.error(err)
+      process.exitCode = 1
 
-        /* refresh session */
-        process.exit(1)
-      })
+      /* refresh session */
+    }
+
+    if (!data) {
+      L()
+      reportFailMsg('Unable to fetch module report.')
+      L()
+      process.exitCode = 1
+    }
 
     let report = data.packageVersion
 
@@ -113,7 +115,7 @@ async function verify (argv, _dir) {
       L()
       reportFailMsg(`Module not found: ${argv._.slice(1).join('')}`)
       L()
-      process.exit(1)
+      process.exitCode = 1
     }
 
     for (const score of report.scores) {
@@ -133,7 +135,7 @@ async function verify (argv, _dir) {
       }
     }
 
-    if (report) moduleReport(report)
+    if (!json && !output) moduleReport(report)
     if (json) jsonReport(report)
     if (output) outputReport(report, output)
     if (hasFailures) process.exitCode = 1
@@ -157,7 +159,7 @@ async function verify (argv, _dir) {
       L()
       reportFailMsg('Unable to fetch module report.')
       L()
-      process.exit(1)
+      process.exitCode = 1
     }
 
     for (const { name, version, scores } of data) {
@@ -190,8 +192,9 @@ async function verify (argv, _dir) {
       pkgScores.push({ name, version, maxSeverity, failures, license })
     }
 
-    if (report && long) longReport(pkgScores, dir)
-    else if (report) shortReport(pkgScores, dir)
+    if (long) longReport(pkgScores, dir)
+    else shortReport(pkgScores, dir)
+
     if (json) jsonReport(pkgScores)
     if (output) outputReport(pkgScores, output)
     if (hasFailures) process.exitCode = 1
