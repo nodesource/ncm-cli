@@ -1,18 +1,35 @@
 'use strict'
 
 module.exports = orgs
+module.exports.orgsCli = orgsCli
 
 const clientRequest = require('../lib/client-request')
-const { formatAPIURL, handleError, queryReadline } = require('../lib/util')
+const { formatAPIURL, queryReadline } = require('../lib/util')
 const { helpHeader } = require('../lib/help')
-const { setValue, getTokens } = require('../lib/config')
+const { setValue, getValue, getTokens } = require('../lib/config')
+const {
+  light1,
+  green,
+  yellow,
+  header,
+  line,
+  box,
+  formatError
+} = require('../lib/ncm-style')
+const chalk = require('chalk')
+const L = console.log
+const E = console.error
+// TODO: Remove when refactoring Help
 const logger = require('../lib/logger')
 
-async function orgs (argv) {
+async function orgs (argv, org) {
   if (argv.help) {
     printHelp()
     return
   }
+
+  L()
+  L(header('Select your NodeSource organization'))
 
   let { session } = getTokens()
 
@@ -28,46 +45,59 @@ async function orgs (argv) {
     })
     details = body
   } catch (err) {
-    handleError('Signin::FetchUserDetails')
+    E()
+    E(formatError('Failed to fetch user info.'))
+    E()
     return
   }
 
+  await orgsCli(session, details, org)
+}
+
+async function orgsCli (session, details, org) {
   const orgs = [ 'personal' ]
   for (let orgId in details.orgs) {
     orgs.push(details.orgs[orgId].name)
   }
 
-  let { org } = argv
+  const currentOrg = getValue('org').val
+
   if (typeof org !== 'string') {
-    // user has not provided an org, prompt them via readline
-
-    let hasOrg = false
-    while (!hasOrg) {
-      logger([ { text: 'Please select an organization to set as active:', style: [] } ])
-      logger([ { text: orgs.join(' '), style: [] } ])
-
-      org = (await queryReadline('')).trim()
-
-      // verifies that the user's choice is valid once
-      hasOrg = orgs.includes(org)
-      if (!hasOrg) {
-        logger([ { text: 'Choice was not recognized, try again:', style: ['red'] } ])
-        logger()
-      }
-    }
-
-    logger([ { text: `Do you wish to set org: ${org} as active? (Y/n)`, style: [] } ])
-
-    const confirm = (await queryReadline('')).trim().toLowerCase()
-
-    if (confirm !== 'y' || confirm !== 'yes' || confirm !== '' /* default */) {
-      // prepare nonzero exit if choice isn't confirmed
-      process.exitCode = 1
-      return
+    if (orgs.length === 1) {
+      org = orgs[0]
+    } else {
+      L(box('!', 'Multiple organizations', yellow))
     }
   }
 
-  // user has provided an org choice, we need to verify it now
+  let hasOrg = orgs.includes(org)
+  while (typeof org !== 'string' || !hasOrg) {
+    L(line('|➔', 'Choose an organization to continue with:', yellow))
+    L()
+    orgs.forEach((orgName, index) => {
+      if (orgName === currentOrg) {
+        L(chalk`{bold {${green} ${index}) ${orgName}}}`)
+      } else {
+        L(`${index}) ${orgName}`)
+      }
+    })
+    L()
+
+    org = (await queryReadline(chalk`{${light1} > }`)).trim()
+
+    if (org === '') org = currentOrg
+
+    // Index selection.
+    if (orgs[org]) {
+      org = orgs[org]
+    }
+    // Verifies that the user's choice is valid.
+    hasOrg = orgs.includes(org)
+    if (!hasOrg) {
+      E()
+      E(formatError('Unrecognized organization'))
+    }
+  }
 
   if (org === 'personal') {
     setValue('org', 'personal')
@@ -84,9 +114,17 @@ async function orgs (argv) {
     }
 
     if (!match) {
+      E()
+      E(formatError('Org setting failed. Please contact support.'))
+      E()
       process.exitCode = 1
+      return
     }
   }
+
+  L()
+  L(line('✓', `You're using ncm with the ${org} settings.`, green))
+  L()
 }
 
 function printHelp () {
