@@ -1,10 +1,30 @@
 'use strict'
 
 const clientRequest = require('../lib/client-request')
-const { formatAPIURL, handleError, queryReadline } = require('../lib/util')
-const { setValue, getTokens, setTokens } = require('../lib/config')
-const logger = require('../lib/logger')
+const {
+  formatAPIURL,
+  queryReadline,
+  queryReadlineHidden
+} = require('../lib/util')
+const { getTokens, setTokens } = require('../lib/config')
+const { orgsCli } = require('./orgs')
 const { helpHeader } = require('../lib/help')
+const {
+  light1,
+  blue,
+  green,
+  yellow,
+  red,
+  header,
+  line,
+  box,
+  formatError
+} = require('../lib/ncm-style')
+const chalk = require('chalk')
+const L = console.log
+const E = console.error
+// TODO: Remove when refactoring Help
+const logger = require('../lib/logger')
 
 module.exports = signin
 
@@ -19,25 +39,20 @@ async function signin (argv, email, password) {
         (argv.github ? 'github' : null) ||
         null
 
-  const basicAuth = email && password && argv._.length === 3
+  let headerMessage = 'Sign into NodeSource'
+  if (SSO) {
+    headerMessage += ' with ' + SSO[0].toUpperCase() + SSO.slice(1)
+  }
+
+  L()
+  L(header(headerMessage))
+  L()
 
   let authData
-  if (basicAuth) {
-    const usrInfo = JSON.stringify({ email, password })
 
-    try {
-      const { body } = await clientRequest({
-        method: 'POST',
-        uri: formatAPIURL('/accounts/auth/login'),
-        json: true,
-        body: usrInfo
-      })
-      authData = body
-    } catch (err) {
-      handleError('Signin::UnableToRetrieveSession')
-      return
-    }
-  } else if (SSO) {
+  // TODO: Token Auth
+
+  if (SSO) {
     try {
       const { body: b1 } = await clientRequest({
         method: 'GET',
@@ -46,11 +61,9 @@ async function signin (argv, email, password) {
       })
       const { url, nonce } = b1
 
-      logger([{ text: 'NCM-CLI:', style: 'ncm' }])
-      logger([{ text: 'Please open the following URL in your browser: ', style: 'main' }])
-      logger()
-      logger([{ text: url, style: 'main' }])
-      logger()
+      L(line('|➔', 'Open the following very ugly URL:', yellow))
+      L()
+      L(chalk`{${blue} ${url}}`)
 
       const { body: b2 } = await clientRequest({
         method: 'GET',
@@ -59,22 +72,57 @@ async function signin (argv, email, password) {
       })
       authData = b2
     } catch (err) {
-      console.error(err)
-      handleError('Signin::RetrieveSession')
+      E()
+      E(formatError('Failed SSO Authentication.', err))
+      E()
+      process.exitCode = 1
       return
     }
   } else {
-    printHelp()
-    process.exitCode = 1
+    while (!authData) {
+      let email
+      let password
+
+      L(line('|➔', 'Enter your NodeSource credentials:', yellow))
+      L()
+
+      L(line('?', 'Email:', red))
+      email = (await queryReadline(chalk`{${light1} > }`)).trim()
+      L()
+      L(line('?', 'Password:', red))
+      password = (await queryReadlineHidden(chalk`{${light1} > }`)).trim()
+
+      const usrInfo = JSON.stringify({ email, password })
+
+      try {
+        const { body } = await clientRequest({
+          method: 'POST',
+          uri: formatAPIURL('/accounts/auth/login'),
+          json: true,
+          body: usrInfo
+        })
+        authData = body
+      } catch (err) {
+        E()
+        E(formatError('Failed Authentication.', err))
+        E()
+      }
+    }
   }
 
   if (!authData['session'] || !authData['refreshToken']) {
-    handleError('Signin::InvalidLoginCredentials')
+    E()
+    E(formatError('Bad auth data.', authData))
+    E()
+    process.exitCode = 1
     return
   }
 
   setTokens(authData)
   let { session } = getTokens()
+
+  L()
+  L(chalk`{${light1} Authenticating...}`)
 
   let details
   try {
@@ -88,49 +136,16 @@ async function signin (argv, email, password) {
     })
     details = body
   } catch (err) {
-    handleError('Signin::FetchUserDetails')
+    E()
+    E(formatError('Failed to fetch user info.', err))
+    E()
+    process.exitCode = 1
     return
   }
 
-  let orgs = details.orgs ? Object.keys(details.orgs) : null // array of orgs
-  let hasOrgs = orgs.length > 0
+  L(box('✓', 'Signed in successfully', green))
 
-  // only supports api v1, currently
-  if (hasOrgs) {
-    let orgId = orgs[0]
-    let org = details.orgs[orgId].name
-
-    logger([
-      { text: 'You belong to the organization: ', style: [] },
-      { text: org, style: 'success' }
-    ])
-    logger([
-      { text: 'Would you like to use the organiztion policy set? (Y/n)', style: [] }
-    ])
-
-    const result = await queryReadline('')
-    const choice = result.trim().toLowerCase()
-
-    if (choice === 'n' || choice === 'no') {
-      setValue('org', 'default')
-      setValue('orgId', '1')
-    } else if (choice === 'y' || choice === 'yes' || choice === '' /* default */) {
-      setValue('org', org)
-      setValue('orgId', orgId)
-    }
-  } else {
-    // User does not belong to any organizations.
-    // Set orgId and policyId to personal configuration.
-    setValue('org', 'default')
-    setValue('orgId', '1')
-    setValue('policy', 'personal')
-    setValue('policyId', 'default')
-
-    handleError('Signin::NoOrgs')
-  }
-
-  logger([{ text: 'Login Successful', style: 'success' }])
-  logger()
+  await orgsCli(session, details)
 }
 
 function printHelp () {
