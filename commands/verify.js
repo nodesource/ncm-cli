@@ -44,7 +44,7 @@ async function verify (argv, _dir) {
 
   const { session } = getTokens()
 
-  /* module-report */
+  /* details */
   if (argv._.length > 1) {
     let pkgName = argv._.length === 4 ? argv._[1] : argv._[1].split('@')[0]
     let pkgVer = argv._.length === 4 ? argv._[3] : argv._[1].split('@')[1]
@@ -98,15 +98,17 @@ async function verify (argv, _dir) {
     } catch (err) {
       console.error(err)
       process.exitCode = 1
+      return
 
       /* refresh session */
     }
 
     if (!data) {
       L()
-      reportFailMsg('Unable to fetch module report.')
+      reportFailMsg('Unable to fetch module details.')
       L()
       process.exitCode = 1
+      return
     }
 
     let report = data.packageVersion
@@ -157,10 +159,17 @@ async function verify (argv, _dir) {
         url: formatAPIURL('/ncm2/api/v2/graphql')
       })
     } catch (err) {
-      L()
-      reportFailMsg('Unable to fetch module report.')
-      L()
       process.exitCode = 1
+      if (err.code === 'ENOENT') {
+        L()
+        reportFailMsg(`Unable to find project at: ${dir}`)
+        L()
+      } else {
+        L()
+        reportFailMsg('Unable to fetch project report.')
+        L()
+      }
+      return
     }
 
     for (const { name, version, scores } of data) {
