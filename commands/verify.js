@@ -35,7 +35,8 @@ async function verify (argv, _dir) {
     output,
     long
   } = argv
-  let { dir = _dir || process.cwd() } = argv
+  let { dir = _dir } = argv
+  if (!dir) dir = process.cwd()
 
   if (argv.help) {
     printHelp()
@@ -146,8 +147,6 @@ async function verify (argv, _dir) {
 
   /* verify */
   if (argv._.length === 1) {
-    if (!dir) dir = process.cwd()
-
     const pkgScores = []
     let hasFailures = false
 
@@ -202,9 +201,8 @@ async function verify (argv, _dir) {
       pkgScores.push({ name, version, maxSeverity, failures, license })
     }
 
+    if (!json && !output && !long) shortReport(pkgScores, dir)
     if (long) longReport(pkgScores, dir)
-    else shortReport(pkgScores, dir)
-
     if (json) jsonReport(pkgScores)
     if (output) outputReport(pkgScores, output)
     if (hasFailures) process.exitCode = 1
