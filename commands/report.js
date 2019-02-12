@@ -65,7 +65,7 @@ async function report (argv, _dir) {
     return
   }
 
-  for (const { name, version, scores } of data) {
+  for (const { name, version, scores, published } of data) {
     let maxSeverity = SEVERITY_MAP.NONE
     let license
     const failures = []
@@ -92,7 +92,7 @@ async function report (argv, _dir) {
         license = score
       }
     }
-    pkgScores.push({ name, version, maxSeverity, failures, license, scores })
+    pkgScores.push({ name, version, published, maxSeverity, failures, license, scores })
   }
 
   if (!json && !output && !long) shortReport(pkgScores, dir)
