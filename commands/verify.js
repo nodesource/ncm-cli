@@ -112,7 +112,7 @@ async function verify (argv, _dir) {
       return
     }
 
-    let report = data.packageVersion
+    let report = Object.assign({ failures: [] }, data.packageVersion)
 
     if (!report.published) {
       L()
@@ -130,7 +130,7 @@ async function verify (argv, _dir) {
       }
 
       if (score.pass === false) {
-        report.failures ? report.failures.push(score) : report.failures = [ score ]
+        report.failures.push(score)
         hasFailures = true
       }
 
@@ -198,7 +198,7 @@ async function verify (argv, _dir) {
           license = score
         }
       }
-      pkgScores.push({ name, version, maxSeverity, failures, license })
+      pkgScores.push({ name, version, maxSeverity, failures, license, scores })
     }
 
     if (!json && !output && !long) shortReport(pkgScores, dir)
