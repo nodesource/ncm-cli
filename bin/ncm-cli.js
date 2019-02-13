@@ -16,7 +16,8 @@ const commands = {
   policy: require('../commands/policy'),
   signin: require('../commands/signin'),
   signout: require('../commands/signout'),
-  verify: require('../commands/verify'),
+  report: require('../commands/report'),
+  details: require('../commands/details'),
   watch: require('../commands/watch')
 }
 
