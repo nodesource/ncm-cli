@@ -8,10 +8,10 @@ const { reportFailMsg, reportSuccessMsg, SEVERITY_RMAP } = require('../lib/repor
 const clientRequest = require('../lib/client-request')
 const logger = require('../lib/logger')
 const {
-  red,
-  formatError,
+  COLORS,
+  header,
   line,
-  header
+  formatError
 } = require('../lib/ncm-style')
 
 const L = console.log
@@ -56,7 +56,7 @@ async function whitelist (argv) {
   } catch (error) {
     if (error.statusCode === 401) {
       /* unauthorized -- refresh session */
-      L(line('!', 'Your session has expired.', red))
+      L(line('!', 'Your session has expired.', COLORS.red))
       await refreshSession()
       // TODO(mster): retry
     } else {
@@ -110,7 +110,7 @@ async function whitelist (argv) {
     } catch (error) {
       if (error.statusCode === 401) {
         /* unauthorized -- refresh session */
-        L(line('!', 'Your session has expired.', red))
+        L(line('!', 'Your session has expired.', COLORS.red))
         await refreshSession()
         // TODO(mster): retry
       } else {
@@ -153,7 +153,7 @@ async function whitelist (argv) {
     } catch (error) {
       if (error.statusCode === 401) {
         /* unauthorized -- refresh session */
-        L(line('!', 'Your session has expired.', red))
+        L(line('!', 'Your session has expired.', COLORS.red))
         await refreshSession()
         // TODO(mster): retry
       } else {
@@ -185,7 +185,7 @@ async function whitelist (argv) {
     } catch (error) {
       if (error.statusCode === 401) {
         /* unauthorized -- refresh session */
-        L(line('!', 'Your session has expired.', red))
+        L(line('!', 'Your session has expired.', COLORS.red))
         await refreshSession()
         // TODO(mster): retry
       } else {

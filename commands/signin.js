@@ -10,11 +10,7 @@ const { getTokens, setTokens } = require('../lib/config')
 const { orgsCli } = require('./orgs')
 const { helpHeader } = require('../lib/help')
 const {
-  light1,
-  blue,
-  green,
-  yellow,
-  red,
+  COLORS,
   header,
   line,
   box,
@@ -61,9 +57,9 @@ async function signin (argv, email, password) {
       })
       const { url, nonce } = b1
 
-      L(line('|➔', 'Open the following very ugly URL:', yellow))
+      L(line('|➔', 'Open the following very ugly URL:', COLORS.yellow))
       L()
-      L(chalk`{${blue} ${url}}`)
+      L(chalk`{${COLORS.blue} ${url}}`)
 
       const { body: b2 } = await clientRequest({
         method: 'GET',
@@ -83,14 +79,14 @@ async function signin (argv, email, password) {
       let email
       let password
 
-      L(line('|➔', 'Enter your NodeSource credentials:', yellow))
+      L(line('|➔', 'Enter your NodeSource credentials:', COLORS.yellow))
       L()
 
-      L(line('?', 'Email:', red))
-      email = (await queryReadline(chalk`{${light1} > }`)).trim()
+      L(line('?', 'Email:', COLORS.red))
+      email = (await queryReadline(chalk`{${COLORS.light1} > }`)).trim()
       L()
-      L(line('?', 'Password:', red))
-      password = (await queryReadlineHidden(chalk`{${light1} > }`)).trim()
+      L(line('?', 'Password:', COLORS.red))
+      password = (await queryReadlineHidden(chalk`{${COLORS.light1} > }`)).trim()
 
       const usrInfo = JSON.stringify({ email, password })
 
@@ -122,7 +118,7 @@ async function signin (argv, email, password) {
   let { session } = getTokens()
 
   L()
-  L(chalk`{${light1} Authenticating...}`)
+  L(chalk`{${COLORS.light1} Authenticating...}`)
 
   let details
   try {
@@ -143,7 +139,7 @@ async function signin (argv, email, password) {
     return
   }
 
-  L(box('✓', 'Signed in successfully', green))
+  L(box('✓', 'Signed in successfully', COLORS.green))
 
   await orgsCli(session, details)
 }

@@ -6,21 +6,17 @@ const { formatAPIURL } = require('../lib/util')
 const {
   jsonReport,
   outputReport,
-  reportFailMsg
+  SEVERITY_RMAP
 } = require('../lib/report/util')
 const longReport = require('../lib/report/long')
 const shortReport = require('../lib/report/short')
 const logger = require('../lib/logger')
 const { helpHeader } = require('../lib/help')
-const L = console.log
-
-const SEVERITY_MAP = {
-  NONE: 0,
-  LOW: 1,
-  MEDIUM: 2,
-  HIGH: 3,
-  CRITICAL: 4
-}
+const {
+  failure,
+  formatError
+} = require('../lib/ncm-style')
+const E = console.error
 
 module.exports = report
 
@@ -52,26 +48,26 @@ async function report (argv, _dir) {
       url: formatAPIURL('/ncm2/api/v2/graphql')
     })
   } catch (err) {
-    process.exitCode = 1
     if (err.code === 'ENOENT') {
-      L()
-      reportFailMsg(`Unable to find project at: ${dir}`)
-      L()
+      E()
+      E(failure(`Unable to find project at: ${dir}`))
+      E()
     } else {
-      L()
-      reportFailMsg('Unable to fetch project report.')
-      L()
+      E()
+      E(formatError('Unable to fetch project report.', err))
+      E()
     }
+    process.exitCode = 1
     return
   }
 
   for (const { name, version, scores, published } of data) {
-    let maxSeverity = SEVERITY_MAP.NONE
+    let maxSeverity = 0
     let license
     const failures = []
 
     for (const score of scores) {
-      const severityValue = SEVERITY_MAP[score.severity]
+      const severityValue = SEVERITY_RMAP.indexOf(score.severity)
 
       if (score.group !== 'compliance' &&
           score.group !== 'security' &&

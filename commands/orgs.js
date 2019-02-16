@@ -8,9 +8,7 @@ const { formatAPIURL, queryReadline } = require('../lib/util')
 const { helpHeader } = require('../lib/help')
 const { setValue, getValue, getTokens } = require('../lib/config')
 const {
-  light1,
-  green,
-  yellow,
+  COLORS,
   header,
   line,
   box,
@@ -66,24 +64,24 @@ async function orgsCli (session, details, org) {
     if (orgs.length === 1) {
       org = orgs[0]
     } else {
-      L(box('!', 'Multiple organizations', yellow))
+      L(box('!', 'Multiple organizations', COLORS.yellow))
     }
   }
 
   let hasOrg = orgs.includes(org)
   while (typeof org !== 'string' || !hasOrg) {
-    L(line('|➔', 'Choose an organization to continue with:', yellow))
+    L(line('|➔', 'Choose an organization to continue with:', COLORS.yellow))
     L()
     orgs.forEach((orgName, index) => {
       if (orgName === currentOrg) {
-        L(chalk`{bold {${green} ${index}) ${orgName}}}`)
+        L(chalk`{bold {${COLORS.green} ${index}) ${orgName}}}`)
       } else {
         L(`${index}) ${orgName}`)
       }
     })
     L()
 
-    org = (await queryReadline(chalk`{${light1} > }`)).trim()
+    org = (await queryReadline(chalk`{${COLORS.light1} > }`)).trim()
 
     if (org === '') org = currentOrg
 
@@ -123,7 +121,7 @@ async function orgsCli (session, details, org) {
   }
 
   L()
-  L(line('✓', `You're using ncm with the ${org} settings.`, green))
+  L(line('✓', `You're using ncm with the ${org} settings.`, COLORS.green))
   L()
 }
 

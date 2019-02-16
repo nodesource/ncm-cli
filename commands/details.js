@@ -7,24 +7,27 @@ const {
 } = require('../lib/util')
 const {
   jsonReport,
-  outputReport,
-  reportFailMsg
+  outputReport
 } = require('../lib/report/util')
 const moduleReport = require('../lib/report/module')
+const {
+  header,
+  failure,
+  formatError
+} = require('../lib/ncm-style')
 const logger = require('../lib/logger')
 const { helpHeader } = require('../lib/help')
 const semver = require('semver')
 const L = console.log
+const E = console.error
 
 module.exports = details
 
-async function details (argv, _dir) {
+async function details (argv, arg1, arg2, arg3) {
   const {
     json,
     output
   } = argv
-  let { dir = _dir } = argv
-  if (!dir) dir = process.cwd()
 
   if (argv.help) {
     printHelp()
@@ -33,123 +36,123 @@ async function details (argv, _dir) {
 
   const { session } = getTokens()
 
-  /* details */
-  if (argv._.length > 1) {
-    let pkgName, pkgVer
-    switch (argv._.length) {
-      case 4:
-        pkgName = argv._[1]
-        pkgVer = argv._[3]
-        break
-      case 3:
-        pkgName = argv._[1]
-        pkgVer = argv._[2]
-        break
-      case 2:
-        pkgName = argv._[1].split('@')[0]
-        pkgVer = argv._[1].split('@')[1]
-        break
-    }
+  let name
+  let version
+  if (!arg1) {
+    printHelp()
+    process.exitCode = 1
+    return
+  } else if (arg1.indexOf('@') > 0 && !arg2 && !arg3) {
+    ;[name, version] = arg1.split('@')
+  } else if (arg2 === '@' && arg3) {
+    name = arg1
+    version = arg3
+  } else if (arg1) {
+    name = arg1
+    version = arg2 || 'latest'
+  } else {
+    printHelp()
+    process.exitCode = 1
+    return
+  }
 
-    if (!pkgName || !semver.valid(pkgVer) || argv.length > 4) {
-      L()
-      reportFailMsg(`Unrecognized module syntax: ${argv._.slice(1).join('')}`)
-      L()
-      process.exitCode = 1
-      return
-    }
+  /* NCM-Cli Header */
+  L()
+  L(header(`${name} @ ${version}`))
 
-    const options = {
-      token: session,
-      url: formatAPIURL('/ncm2/api/v2/graphql')
-    }
+  if (!name || (version !== 'latest' && !semver.valid(version))) {
+    E()
+    E(failure(`Unrecognized module syntax: ${argv._.slice(1).join('')}`))
+    E()
+    process.exitCode = 1
+    return
+  }
 
-    const vars = {
-      name: pkgName,
-      version: pkgVer
-    }
+  const options = {
+    token: session,
+    url: formatAPIURL('/ncm2/api/v2/graphql')
+  }
 
-    let hasFailures = false
-    let data
-    try {
-      data = await graphql(
-        options,
-        `query($name: String!, $version: String!) {
-            packageVersion(name: $name, version: $version) {
+  const vars = {
+    name,
+    version
+  }
+
+  let hasFailures = false
+  let data
+  try {
+    data = await graphql(
+      options,
+      `query($name: String!, $version: String!) {
+          packageVersion(name: $name, version: $version) {
+            name
+            version
+            published
+            publishedAt
+            description
+            author
+            maintainers
+            keywords
+            scores {
+              group
               name
-              version
-              published
-              publishedAt
-              description
-              author
-              maintainers
-              keywords
-              scores {
-                group
-                name
-                pass
-                severity
-                title
-                data
-              }
+              pass
+              severity
+              title
+              data
             }
           }
-          `,
-        vars
-      )
-    } catch (err) {
-      console.error(err)
-      process.exitCode = 1
-      return
-
-      /* refresh session */
-    }
-
-    if (!data) {
-      L()
-      reportFailMsg('Unable to fetch module details.')
-      L()
-      process.exitCode = 1
-      return
-    }
-
-    let report = Object.assign({ failures: [] }, data.packageVersion)
-
-    if (!report.published) {
-      L()
-      reportFailMsg(`Module not found: ${argv._.slice(1).join('')}`)
-      L()
-      process.exitCode = 1
-      return
-    }
-
-    for (const score of report.scores) {
-      if (score.group !== 'compliance' &&
-          score.group !== 'security' &&
-          score.group !== 'risk') {
-        continue
-      }
-
-      if (score.pass === false) {
-        report.failures.push(score)
-        hasFailures = true
-      }
-
-      if (score.name === 'license') {
-        report.license = score
-      }
-    }
-
-    if (!json && !output) moduleReport(report)
-    if (json) jsonReport(report)
-    if (output) outputReport(report, output)
-    if (hasFailures) process.exitCode = 1
-  } else {
+        }
+        `,
+      vars
+    )
+  } catch (err) {
+    E()
+    E(formatError('Failed to query NCM API', err))
+    E()
     process.exitCode = 1
-    L()
-    reportFailMsg('Unable to fetch details -- please specify a package.')
-    L()
+    return
   }
+
+  if (!data) {
+    E()
+    E(failure('Unable to fetch module details.'))
+    E()
+    process.exitCode = 1
+    return
+  }
+
+  let report = Object.assign({ failures: [] }, data.packageVersion)
+
+  if (!report.published) {
+    E()
+    E(failure(`Module not found: ${argv._.slice(1).join('')}`))
+    E()
+    process.exitCode = 1
+    return
+  }
+
+  for (const score of report.scores) {
+    if (score.group !== 'compliance' &&
+        score.group !== 'security' &&
+        score.group !== 'risk') {
+      continue
+    }
+
+    if (score.pass === false) {
+      report.failures.push(score)
+      hasFailures = true
+    }
+
+    if (score.name === 'license') {
+      report.license = score
+    }
+  }
+
+  if (!json && !output) moduleReport(report)
+  if (json) jsonReport(report)
+  if (output) outputReport(report, output)
+  if (hasFailures) process.exitCode = 1
 }
 
 function printHelp () {
