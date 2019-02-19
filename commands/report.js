@@ -10,15 +10,18 @@ const {
 } = require('../lib/report/util')
 const longReport = require('../lib/report/long')
 const shortReport = require('../lib/report/short')
-const logger = require('../lib/logger')
 const { helpHeader } = require('../lib/help')
 const {
+  COLORS,
   failure,
   formatError
 } = require('../lib/ncm-style')
+const chalk = require('chalk')
+const L = console.log
 const E = console.error
 
 module.exports = report
+module.exports.optionsList = optionsList
 
 async function report (argv, _dir) {
   const {
@@ -99,18 +102,22 @@ async function report (argv, _dir) {
 }
 
 function printHelp () {
-  helpHeader()
+  helpHeader(
+    'report',
+    chalk`ncm {${COLORS.yellow} report} {${COLORS.teal} [<directory>] [options]}`,
+    'ncm report [<directory>] [options]'
+  )
 
-  logger([{ text: 'ncm-cli verify', style: ['bold'] }])
-  logger([{ text: `ncm-cli verify [options]`, style: [] }])
-  logger()
+  L(optionsList())
+  L()
+}
 
-  logger([{ text: 'verify Options:', style: ['bold'] }])
-  logger([{ text: `--dir, -d`, style: [] }])
-  logger([{ text: `--report, -r`, style: [] }])
-  logger([{ text: `--json, -j`, style: [] }])
-  logger([{ text: `--output, -o`, style: [] }])
-  logger([{ text: `--certified, -C`, style: [] }])
-  logger([{ text: `--production, -p`, style: [] }])
-  logger()
+function optionsList () {
+  return chalk`
+{${COLORS.light1} ncm} {${COLORS.yellow} report}
+{${COLORS.light1} ncm} {${COLORS.yellow} report} {${COLORS.teal} <directory>}
+  {${COLORS.teal} -l, --long}              {white Expanded output with module list}
+  {${COLORS.teal} -j, --json}              {white Output report as JSON}
+  {${COLORS.teal} -o, --output <filepath>} {white Write JSON report to file}
+  `.trim()
 }

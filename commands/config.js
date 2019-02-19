@@ -9,8 +9,12 @@ const {
 const logger = require('../lib/logger')
 const { handleError } = require('../lib/util')
 const { helpHeader } = require('../lib/help')
+const { COLORS } = require('../lib/ncm-style')
+const chalk = require('chalk')
+const L = console.log
 
 module.exports = config
+module.exports.optionsList = optionsList
 
 const userAccess = [
   'token',
@@ -84,13 +88,22 @@ async function config (argv, action, key, value) {
 }
 
 function printHelp () {
-  helpHeader()
+  helpHeader(
+    'config',
+    chalk`ncm {${COLORS.yellow} config} {${COLORS.teal} <action>}`,
+    'ncm config <action>'
+  )
 
-  logger([{ text: 'ncm-cli config', style: ['bold'] }])
-  logger([{ text: `ncm-cli config set`, style: [] }])
-  logger([{ text: `ncm-cli config get`, style: [] }])
-  logger([{ text: `ncm-cli config del`, style: [] }])
-  logger([{ text: `ncm-cli config list`, style: [] }])
-  logger([{ text: `ncm-cli config reset`, style: [] }])
-  logger()
+  L(optionsList())
+  L()
+}
+
+function optionsList () {
+  return chalk`
+{${COLORS.light1} ncm} {${COLORS.yellow} config list}
+{${COLORS.light1} ncm} {${COLORS.yellow} config reset}
+{${COLORS.light1} ncm} {${COLORS.yellow} config del} {${COLORS.teal} <key>}
+{${COLORS.light1} ncm} {${COLORS.yellow} config get} {${COLORS.teal} <key>}
+{${COLORS.light1} ncm} {${COLORS.yellow} config set} {${COLORS.teal} <key> <value>}
+  `.trim()
 }
