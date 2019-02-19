@@ -1,34 +1,59 @@
 'use strict'
 
-const logger = require('../lib/logger')
-const { helpHeader } = require('../lib/help')
+const {
+  COLORS,
+  header,
+  tooltip,
+  rawBox
+} = require('../lib/ncm-style')
+const chalk = require('chalk')
+const L = console.log
 
 module.exports = help
+module.exports.optionsList = optionsList
+
+const commands = [
+  'config',
+  'details',
+  'help',
+  'orgs',
+  'report',
+  'signin',
+  'signout',
+  'whitelist'
+].map(name => {
+  return require(`./${name}`)
+})
 
 async function help () {
-  helpHeader()
+  L()
+  L(header('NodeSource Certified Modules CLI Help'))
+  L()
 
-  logger([{ text: 'Commands:', style: ['bold'] }])
-  logger([{ text: `ncm-cli help`, style: [] }])
-  logger([{ text: `ncm-cli orgs`, style: [] }])
-  logger([{ text: `ncm-cli signin [options]`, style: [] }])
-  logger([{ text: `ncm-cli signout`, style: [] }])
-  logger([{ text: `ncm-cli config [command]`, style: [] }])
-  logger([{ text: `ncm-cli policy [command] [options]`, style: [] }])
-  logger([{ text: `ncm-cli verify [options]`, style: [] }])
-  logger([{ text: `ncm-cli watch [options]`, style: [] }])
-  logger()
+  L('Usage:')
+  L(chalk`
+  ${rawBox(
+    chalk`{${COLORS.light1} ncm} {${COLORS.yellow} <command>} {${COLORS.teal} [options]}`,
+    'ncm <command> [options]'.length
+  )}
 
-  logger([{ text: 'Options:', style: ['bold'] }])
-  logger([{ text: `--help`, style: [] }])
-  logger([{ text: `--google, -G`, style: [] }])
-  logger([{ text: `--github, -g`, style: [] }])
-  logger([{ text: `--dir, -d`, style: [] }])
-  logger([{ text: `--report, -r`, style: [] }])
-  logger([{ text: `--json, -j`, style: [] }])
-  logger([{ text: `--output, -o`, style: [] }])
-  logger([{ text: `--certified, -C`, style: [] }])
-  logger([{ text: `--production, -p`, style: [] }])
-  logger([{ text: `--version, -v`, style: [] }])
-  logger()
+  {${COLORS.teal} -h, --help}    {white Display help for any command OR this message}
+  {${COLORS.teal} -v, --version} {white Print ncm CLI version}
+  `.trim())
+
+  L()
+
+  for (const command of commands) {
+    L(command.optionsList())
+    L()
+  }
+
+  L(tooltip('For more information on a specific command, run "ncm <command> --help".'))
+  L()
+}
+
+function optionsList () {
+  return chalk`
+{${COLORS.light1} ncm} {${COLORS.yellow} help} {italic (this message)}
+  `.trim()
 }

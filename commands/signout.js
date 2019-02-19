@@ -1,10 +1,13 @@
 'use strict'
 
 const { setTokens } = require('../lib/config')
-const logger = require('../lib/logger')
 const { helpHeader } = require('../lib/help')
+const { COLORS } = require('../lib/ncm-style')
+const chalk = require('chalk')
+const L = console.log
 
 module.exports = signout
+module.exports.optionsList = optionsList
 
 async function signout (argv) {
   if (argv.help) {
@@ -16,8 +19,18 @@ async function signout (argv) {
 }
 
 function printHelp () {
-  helpHeader()
+  helpHeader(
+    'signout',
+    chalk`ncm {${COLORS.yellow} signout}`,
+    'ncm signout'
+  )
 
-  logger([{ text: `ncm-cli signout`, style: ['bold'] }])
-  logger()
+  L(optionsList())
+  L()
+}
+
+function optionsList () {
+  return chalk`
+{${COLORS.light1} ncm} {${COLORS.yellow} signout}
+  `.trim()
 }

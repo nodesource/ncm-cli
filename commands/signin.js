@@ -19,10 +19,9 @@ const {
 const chalk = require('chalk')
 const L = console.log
 const E = console.error
-// TODO: Remove when refactoring Help
-const logger = require('../lib/logger')
 
 module.exports = signin
+module.exports.optionsList = optionsList
 
 async function signin (argv, email, password) {
   if (argv.help) {
@@ -145,15 +144,20 @@ async function signin (argv, email, password) {
 }
 
 function printHelp () {
-  helpHeader()
+  helpHeader(
+    'signin',
+    chalk`ncm {${COLORS.yellow} signin} {${COLORS.teal} [options]}`,
+    'ncm signin [options]'
+  )
 
-  logger([{ text: 'ncm-cli signin', style: ['bold'] }])
-  logger([{ text: `ncm-cli signin [options]`, style: [] }])
-  logger()
+  L(optionsList())
+  L()
+}
 
-  logger([{ text: 'signin Options:', style: ['bold'] }])
-  logger([{ text: `--help`, style: [] }])
-  logger([{ text: `--google, -G`, style: [] }])
-  logger([{ text: `--github, -g`, style: [] }])
-  logger()
+function optionsList () {
+  return chalk`
+{${COLORS.light1} ncm} {${COLORS.yellow} signin} {italic (interactive)}
+  {${COLORS.teal} -g, --github} {white Sign in via GitHub account}
+  {${COLORS.teal} -G, --google} {white Sign in via Google account}
+  `.trim()
 }

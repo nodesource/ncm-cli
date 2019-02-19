@@ -1,8 +1,5 @@
 'use strict'
 
-module.exports = orgs
-module.exports.orgsCli = orgsCli
-
 const clientRequest = require('../lib/client-request')
 const { formatAPIURL, queryReadline } = require('../lib/util')
 const { helpHeader } = require('../lib/help')
@@ -17,8 +14,10 @@ const {
 const chalk = require('chalk')
 const L = console.log
 const E = console.error
-// TODO: Remove when refactoring Help
-const logger = require('../lib/logger')
+
+module.exports = orgs
+module.exports.orgsCli = orgsCli
+module.exports.optionsList = optionsList
 
 async function orgs (argv, org) {
   if (argv.help) {
@@ -126,8 +125,19 @@ async function orgsCli (session, details, org) {
 }
 
 function printHelp () {
-  helpHeader()
+  helpHeader(
+    'orgs',
+    chalk`ncm {${COLORS.yellow} orgs} {${COLORS.teal} [<orgname>] [options]}`,
+    'ncm orgs [<orgname>] [options]'
+  )
 
-  logger([{ text: 'ncm-cli orgs [<org name>]', style: ['bold'] }])
-  logger()
+  L(optionsList())
+  L()
+}
+
+function optionsList () {
+  return chalk`
+{${COLORS.light1} ncm} {${COLORS.yellow} orgs} {italic (interactive)}
+{${COLORS.light1} ncm} {${COLORS.yellow} orgs} {${COLORS.teal} <orgname>}
+  `.trim()
 }

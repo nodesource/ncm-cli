@@ -6,13 +6,13 @@ const { getValue, setValue } = require('../lib/config')
 const whitelistReport = require('../lib/report/whitelist')
 const { reportFailMsg, reportSuccessMsg, SEVERITY_RMAP } = require('../lib/report/util')
 const clientRequest = require('../lib/client-request')
-const logger = require('../lib/logger')
 const {
   COLORS,
   header,
   line,
   formatError
 } = require('../lib/ncm-style')
+const chalk = require('chalk')
 
 const L = console.log
 const E = console.error
@@ -20,6 +20,7 @@ const E = console.error
 const semver = require('semver')
 
 module.exports = whitelist
+module.exports.optionsList = optionsList
 
 async function whitelist (argv) {
   if (argv.help) {
@@ -334,11 +335,21 @@ const queries = {
 }
 
 function printHelp () {
-  helpHeader()
+  helpHeader(
+    'whitelist',
+    chalk`ncm {${COLORS.yellow} whitelist} {${COLORS.teal} <option>}`,
+    'ncm whitelist [option]'
+  )
 
-  logger([{ text: 'ncm-cli policy', style: ['bold'] }])
-  logger([{ text: `ncm-cli policy whitelist`, style: [] }])
-  logger([{ text: `ncm-cli policy whitelist add <pkg-name>@<ver>`, style: [] }])
-  logger([{ text: `ncm-cli policy whitelist del <pkg-name>@<ver>`, style: [] }])
-  logger()
+  L(optionsList())
+  L()
+}
+
+function optionsList () {
+  return chalk`
+{${COLORS.light1} ncm} {${COLORS.yellow} whitelist} {${COLORS.teal} <option>}
+  {${COLORS.teal} --list}                      {white List modules in a whitelist}
+  {${COLORS.teal} --add <module\{@version\}>}    {white Add module to a whitelist}
+  {${COLORS.teal} --remove <module\{@version\}>} {white Remove module from a whitelist}
+  `.trim()
 }
