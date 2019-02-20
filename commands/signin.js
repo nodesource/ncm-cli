@@ -1,12 +1,12 @@
 'use strict'
 
-const clientRequest = require('../lib/client-request')
 const {
+  apiRequest,
   formatAPIURL,
   queryReadline,
   queryReadlineHidden
 } = require('../lib/util')
-const { getTokens, setTokens } = require('../lib/config')
+const { setTokens } = require('../lib/config')
 const { orgsCli } = require('./orgs')
 const { helpHeader } = require('../lib/help')
 const {
@@ -49,23 +49,19 @@ async function signin (argv, email, password) {
 
   if (SSO) {
     try {
-      const { body: b1 } = await clientRequest({
-        method: 'GET',
-        uri: formatAPIURL('/accounts/auth/social-signin-url', { source: SSO }),
-        json: true
-      })
-      const { url, nonce } = b1
+      const { url, nonce } = await apiRequest(
+        'GET',
+        formatAPIURL('/accounts/auth/social-signin-url', { source: SSO })
+      )
 
       L(line('|➔', 'Open the following very ugly URL:', COLORS.yellow))
       L()
       L(chalk`{${COLORS.blue} ${url}}`)
 
-      const { body: b2 } = await clientRequest({
-        method: 'GET',
-        uri: formatAPIURL('/accounts/auth/retrieve-session', { nonce }),
-        json: true
-      })
-      authData = b2
+      authData = await apiRequest(
+        'GET',
+        formatAPIURL('/accounts/auth/retrieve-session', { nonce })
+      )
     } catch (err) {
       E()
       E(formatError('Failed SSO Authentication.', err))
@@ -90,13 +86,11 @@ async function signin (argv, email, password) {
       const usrInfo = JSON.stringify({ email, password })
 
       try {
-        const { body } = await clientRequest({
-          method: 'POST',
-          uri: formatAPIURL('/accounts/auth/login'),
-          json: true,
-          body: usrInfo
-        })
-        authData = body
+        authData = await apiRequest(
+          'POST',
+          formatAPIURL('/accounts/auth/login'),
+          usrInfo
+        )
       } catch (err) {
         E()
         E(formatError('Failed Authentication.', err))
@@ -105,7 +99,7 @@ async function signin (argv, email, password) {
     }
   }
 
-  if (!authData['session'] || !authData['refreshToken']) {
+  if (!authData.session || !authData.refreshToken) {
     E()
     E(formatError('Bad auth data.', authData))
     E()
@@ -114,22 +108,16 @@ async function signin (argv, email, password) {
   }
 
   setTokens(authData)
-  let { session } = getTokens()
 
   L()
   L(chalk`{${COLORS.light1} Authenticating...}`)
 
   let details
   try {
-    const { body } = await clientRequest({
-      method: 'GET',
-      uri: formatAPIURL('/accounts/user/details'),
-      json: true,
-      headers: {
-        Authorization: `Bearer ${session}`
-      }
-    })
-    details = body
+    details = await apiRequest(
+      'GET',
+      formatAPIURL('/accounts/user/details')
+    )
   } catch (err) {
     E()
     E(formatError('Failed to fetch user info.', err))
@@ -140,7 +128,7 @@ async function signin (argv, email, password) {
 
   L(box('✓', 'Signed in successfully', COLORS.green))
 
-  await orgsCli(session, details)
+  await orgsCli(details)
 }
 
 function printHelp () {

@@ -1,9 +1,12 @@
 'use strict'
 
-const clientRequest = require('../lib/client-request')
-const { formatAPIURL, queryReadline } = require('../lib/util')
+const {
+  apiRequest,
+  formatAPIURL,
+  queryReadline
+} = require('../lib/util')
 const { helpHeader } = require('../lib/help')
-const { setValue, getValue, getTokens } = require('../lib/config')
+const { setValue, getValue } = require('../lib/config')
 const {
   COLORS,
   header,
@@ -28,19 +31,12 @@ async function orgs (argv, org) {
   L()
   L(header('Select your NodeSource organization'))
 
-  let { session } = getTokens()
-
   let details
   try {
-    const { body } = await clientRequest({
-      method: 'GET',
-      uri: formatAPIURL('/accounts/user/details'),
-      json: true,
-      headers: {
-        Authorization: `Bearer ${session}`
-      }
-    })
-    details = body
+    details = await apiRequest(
+      'GET',
+      formatAPIURL('/accounts/user/details')
+    )
   } catch (err) {
     E()
     E(formatError('Failed to fetch user info.'))
@@ -48,10 +44,10 @@ async function orgs (argv, org) {
     return
   }
 
-  await orgsCli(session, details, org)
+  await orgsCli(details, org)
 }
 
-async function orgsCli (session, details, org) {
+async function orgsCli (details, org) {
   const orgs = [ 'personal' ]
   for (let orgId in details.orgs) {
     orgs.push(details.orgs[orgId].name)

@@ -1,15 +1,16 @@
 'use strict'
 
-const { formatAPIURL, refreshSession } = require('../lib/util')
+const {
+  apiRequest,
+  formatAPIURL
+} = require('../lib/util')
 const { helpHeader } = require('../lib/help')
 const { getValue, setValue } = require('../lib/config')
 const whitelistReport = require('../lib/report/whitelist')
 const { reportFailMsg, reportSuccessMsg, SEVERITY_RMAP } = require('../lib/report/util')
-const clientRequest = require('../lib/client-request')
 const {
   COLORS,
   header,
-  line,
   formatError
 } = require('../lib/ncm-style')
 const chalk = require('chalk')
@@ -29,7 +30,6 @@ async function whitelist (argv) {
   }
 
   let { val: policy } = getValue('policyId')
-  let { val: token } = getValue('token')
   let { val: orgId } = getValue('orgId')
   let { val: orgName } = getValue('org')
 
@@ -39,32 +39,19 @@ async function whitelist (argv) {
 
   let policyData
   try {
-    let requestBody = JSON.stringify({
-      query: queries.policy,
-      variables: { orgId }
-    })
-    const { body } = await clientRequest({
-      method: 'POST',
-      uri: formatAPIURL(`/ncm2/api/v2/graphql`),
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      json: true,
-      body: requestBody
-    })
+    const body = await apiRequest(
+      'POST',
+      formatAPIURL(`/ncm2/api/v2/graphql`),
+      {
+        query: queries.policy,
+        variables: { orgId }
+      }
+    )
     policyData = body.data.policies[0]
   } catch (error) {
-    if (error.statusCode === 401) {
-      /* unauthorized -- refresh session */
-      L(line('!', 'Your session has expired.', COLORS.red))
-      await refreshSession()
-      // TODO(mster): retry
-    } else {
-      E()
-      E(formatError('Unable to fetch data.', error))
-      E()
-    }
+    E()
+    E(formatError('Unable to fetch policy data.', error))
+    E()
     process.exitCode = 1
     return
   }
@@ -94,31 +81,18 @@ async function whitelist (argv) {
     }
 
     try {
-      let requestBody = JSON.stringify({
-        query: queries[add ? 'add' : 'remove'],
-        variables: { policy, orgId, entries }
-      })
-      await clientRequest({
-        method: 'POST',
-        uri: formatAPIURL(`/ncm2/api/v2/graphql`),
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        json: true,
-        body: requestBody
-      })
+      await apiRequest(
+        'POST',
+        formatAPIURL(`/ncm2/api/v2/graphql`),
+        {
+          query: queries[add ? 'add' : 'remove'],
+          variables: { policy, orgId, entries }
+        }
+      )
     } catch (error) {
-      if (error.statusCode === 401) {
-        /* unauthorized -- refresh session */
-        L(line('!', 'Your session has expired.', COLORS.red))
-        await refreshSession()
-        // TODO(mster): retry
-      } else {
-        E()
-        E(formatError('Unable to fetch data.', error))
-        E()
-      }
+      E()
+      E(formatError('Unable to modify whitelist data.', error))
+      E()
       process.exitCode = 1
       return
     }
@@ -136,64 +110,38 @@ async function whitelist (argv) {
   async function whitelistList () {
     let whitelistData
     try {
-      let requestBody = JSON.stringify({
-        query: queries.list,
-        variables: { orgId }
-      })
-      const { body } = await clientRequest({
-        method: 'POST',
-        uri: formatAPIURL(`/ncm2/api/v2/graphql`),
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        json: true,
-        body: requestBody
-      })
+      const body = await apiRequest(
+        'POST',
+        formatAPIURL(`/ncm2/api/v2/graphql`),
+        {
+          query: queries.list,
+          variables: { orgId }
+        }
+      )
       whitelistData = body.data.policies[0]
     } catch (error) {
-      if (error.statusCode === 401) {
-        /* unauthorized -- refresh session */
-        L(line('!', 'Your session has expired.', COLORS.red))
-        await refreshSession()
-        // TODO(mster): retry
-      } else {
-        E()
-        E(formatError('Unable to fetch data.', error))
-        E()
-      }
+      E()
+      E(formatError('Unable to fetch policy data.', error))
+      E()
       process.exitCode = 1
       return
     }
 
     let pkgData
     try {
-      let requestBody = JSON.stringify({
-        query: queries.pkgVer,
-        variables: { pkgVers: whitelistData.whitelist }
-      })
-      const { body } = await clientRequest({
-        method: 'POST',
-        uri: formatAPIURL(`/ncm2/api/v2/graphql`),
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        json: true,
-        body: requestBody
-      })
+      const body = await apiRequest(
+        'POST',
+        formatAPIURL(`/ncm2/api/v2/graphql`),
+        {
+          query: queries.pkgVer,
+          variables: { pkgVers: whitelistData.whitelist }
+        }
+      )
       pkgData = body.data
     } catch (error) {
-      if (error.statusCode === 401) {
-        /* unauthorized -- refresh session */
-        L(line('!', 'Your session has expired.', COLORS.red))
-        await refreshSession()
-        // TODO(mster): retry
-      } else {
-        E()
-        E(formatError('Unable to fetch data.', error))
-        E()
-      }
+      E()
+      E(formatError('Unable to fetch whitelist data.', error))
+      E()
       process.exitCode = 1
       return
     }
