@@ -1,6 +1,5 @@
 'use strict'
 
-const { getTokens } = require('../lib/config')
 const {
   formatAPIURL,
   graphql
@@ -36,8 +35,6 @@ async function details (argv, arg1, arg2, arg3) {
     return
   }
 
-  const { session } = getTokens()
-
   let name
   let version
   if (!arg1) {
@@ -70,11 +67,6 @@ async function details (argv, arg1, arg2, arg3) {
     return
   }
 
-  const options = {
-    token: session,
-    url: formatAPIURL('/ncm2/api/v2/graphql')
-  }
-
   const vars = {
     name,
     version
@@ -84,7 +76,7 @@ async function details (argv, arg1, arg2, arg3) {
   let data
   try {
     data = await graphql(
-      options,
+      formatAPIURL('/ncm2/api/v2/graphql'),
       `query($name: String!, $version: String!) {
           packageVersion(name: $name, version: $version) {
             name

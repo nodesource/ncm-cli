@@ -1,8 +1,7 @@
 'use strict'
 
 const analyze = require('../lib/ncm-analyze-tree')
-const { getTokens } = require('../lib/config')
-const { formatAPIURL } = require('../lib/util')
+const { formatAPIURL, refreshSession } = require('../lib/util')
 const {
   jsonReport,
   outputReport,
@@ -37,17 +36,18 @@ async function report (argv, _dir) {
     return
   }
 
-  const { session } = getTokens()
-
   /* verify */
   const pkgScores = []
   let hasFailures = false
+
+  // analyze is parallelized between 'pages' of a size...
+  // ... so just always refresh before due to race conditions
+  await refreshSession()
 
   let data
   try {
     data = await analyze({
       dir,
-      token: session,
       url: formatAPIURL('/ncm2/api/v2/graphql')
     })
   } catch (err) {
