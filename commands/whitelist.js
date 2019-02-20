@@ -29,9 +29,9 @@ async function whitelist (argv) {
     return
   }
 
-  let { val: policy } = getValue('policyId')
-  let { val: orgId } = getValue('orgId')
-  let { val: orgName } = getValue('org')
+  const policy = getValue('policyId')
+  const orgId = getValue('orgId')
+  const orgName = getValue('org')
 
   L()
   L(header(`${orgName} Whitelisted Modules`))
