@@ -53,7 +53,7 @@ async function orgsCli (details, org) {
     orgs.push(details.orgs[orgId].name)
   }
 
-  const currentOrg = getValue('org').val
+  const currentOrg = getValue('org')
 
   if (typeof org !== 'string') {
     if (orgs.length === 1) {
