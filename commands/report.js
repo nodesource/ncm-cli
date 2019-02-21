@@ -1,5 +1,6 @@
 'use strict'
 
+const path = require('path')
 const analyze = require('../lib/ncm-analyze-tree')
 const { formatAPIURL, refreshSession } = require('../lib/util')
 const {
@@ -12,6 +13,7 @@ const shortReport = require('../lib/report/short')
 const { helpHeader } = require('../lib/help')
 const {
   COLORS,
+  header,
   failure,
   formatError
 } = require('../lib/ncm-style')
@@ -35,6 +37,10 @@ async function report (argv, _dir) {
     printHelp()
     return
   }
+
+  /* NCM-Cli Header */
+  L()
+  L(header(`${path.basename(dir)} Report`))
 
   /* verify */
   const pkgScores = []
