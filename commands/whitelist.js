@@ -7,10 +7,12 @@ const {
 const { helpHeader } = require('../lib/help')
 const { getValue, setValue } = require('../lib/config')
 const whitelistReport = require('../lib/report/whitelist')
-const { reportFailMsg, reportSuccessMsg, SEVERITY_RMAP } = require('../lib/report/util')
+const { SEVERITY_RMAP } = require('../lib/report/util')
 const {
   COLORS,
   header,
+  failure,
+  success,
   formatError
 } = require('../lib/ncm-style')
 const chalk = require('chalk')
@@ -35,7 +37,6 @@ async function whitelist (argv) {
 
   L()
   L(header(`${orgName} Whitelisted Modules`))
-  L()
 
   let policyData
   try {
@@ -73,9 +74,9 @@ async function whitelist (argv) {
     const entries = prepareInput(input)
 
     if (entries.length === 0) {
-      L()
-      reportFailMsg(`Unable to ${add ? 'add' : 'remove'} invalid package(s) from the whitelist.`)
-      L()
+      E()
+      E(failure(`Unable to ${add ? 'add' : 'remove'} invalid package(s) from the whitelist.`))
+      E()
       process.exitCode = 1
       return
     }
@@ -97,7 +98,9 @@ async function whitelist (argv) {
       return
     }
 
-    reportSuccessMsg(`Package(s) ${add ? 'added' : 'removed'} successfully.`)
+    L()
+    L(success(`Package(s) ${add ? 'added' : 'removed'} successfully.`))
+    L()
   } else if (!list && !add && !remove) {
     // TODO: interactive mode
     process.exitCode = 1
