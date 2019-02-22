@@ -1,6 +1,6 @@
 {
   "name": "ncm-cli",
-  "version": "0.0.0-beta.2",
+  "version": "0.0.0-beta.3",
   "license": "MIT",
   "description": "A command-line tool that works with the new NCM api to report quality scores for node_modules, fetch and display the policy set for an organization, and check for package compliance",
   "author": "NodeSource <npm@nodesource.com> (https://nodesource.com)",
