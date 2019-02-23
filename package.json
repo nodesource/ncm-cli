@@ -11,7 +11,9 @@
     "check-deps": "tools/check-deps.sh",
     "start": "bin/ncm-cli.js",
     "lint": "standard --verbose",
-    "test": "npm run -s lint"
+    "pretest": "npm run -s lint",
+    "test": "NCM_API=staging.api.nodesource.com NCM_TOKEN=cd6f6825-6b8e-4b1e-827c-6e6f57669d82 tap -J test/*.js",
+    "update-test-snapshots": "NCM_API=staging.api.nodesource.com NCM_TOKEN=cd6f6825-6b8e-4b1e-827c-6e6f57669d82 TAP_SNAPSHOT=1 tap -J test/*.js"
   },
   "bin": {
     "ncm-cli": "bin/ncm-cli.js"
@@ -29,6 +31,7 @@
   },
   "devDependencies": {
     "dependency-check": "^3.2.1",
-    "standard": "^12.0.1"
+    "standard": "^12.0.1",
+    "tap": "^12.5.3"
   }
 }
