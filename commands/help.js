@@ -16,6 +16,7 @@ const commands = [
   'config',
   'details',
   'help',
+  'install',
   'orgs',
   'report',
   'signin',

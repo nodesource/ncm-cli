@@ -31,6 +31,11 @@ Usage:
 
 [38;2;137;161;157mncm[39m [38;2;255;183;38mhelp[39m [3m(this message)[23m
 
+[38;2;137;161;157mncm[39m [38;2;255;183;38minstall[39m [38;2;102;204;187m<module> [npm options][39m
+[38;2;137;161;157mncm[39m [38;2;255;183;38minstall[39m [38;2;102;204;187m<module@version> [npm options][39m
+[38;2;137;161;157mncm[39m [38;2;255;183;38mi[39m [38;2;102;204;187m<module{@version}> [npm options][39m
+  [38;2;102;204;187m-d, --dir[39m [37mDirectory to check for dependency path[39m
+
 [38;2;137;161;157mncm[39m [38;2;255;183;38morgs[39m [3m(interactive)[23m
 [38;2;137;161;157mncm[39m [38;2;255;183;38morgs[39m [38;2;102;204;187m<orgname>[39m
 

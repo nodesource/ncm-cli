@@ -1,0 +1,95 @@
+'use strict'
+
+const { spawn } = require('child_process')
+const { getValue } = require('../lib/config')
+const { queryReadline } = require('../lib/util')
+const details = require('./details')
+const {
+  COLORS,
+  line,
+  failure
+} = require('../lib/ncm-style')
+const { helpHeader } = require('../lib/help')
+const chalk = require('chalk')
+const L = console.log
+
+module.exports = install
+module.exports.optionsList = optionsList
+
+async function install (argv, arg1, arg2, arg3) {
+  const childArgv = Array.from(argv)
+  let name
+  let version
+  if (!arg1) {
+    printHelp()
+    process.exitCode = 1
+    return
+  } else if (arg1.indexOf('@') > 0 && !arg2 && !arg3) {
+    childArgv.splice(childArgv.indexOf(arg1), 1)
+    ;[name, version] = arg1.split('@')
+  } else if (arg2 === '@' && arg3) {
+    name = arg1
+    version = arg3
+    childArgv.splice(childArgv.indexOf(arg1), 1)
+    childArgv.splice(childArgv.indexOf(arg2), 1)
+    childArgv.splice(childArgv.indexOf(arg3), 1)
+  } else if (arg1) {
+    name = arg1
+    version = arg2 || 'latest'
+    childArgv.splice(childArgv.indexOf(arg1), 1)
+    if (arg2) childArgv.splice(childArgv.indexOf(arg2), 1)
+  } else {
+    printHelp()
+    process.exitCode = 1
+    return
+  }
+
+  await details(argv, arg1, arg2, arg3)
+
+  const good = process.exitCode === 0 || process.exitCode === undefined
+
+  const confirm = good ? `${COLORS.green} (Y/n)` : `${COLORS.red} (y/N)`
+
+  L(line('|➔', chalk`Install this module? {${confirm}}`, COLORS.yellow))
+  L()
+
+  const choice = (await queryReadline(chalk`{${COLORS.light1} > }`)).trim().toLowerCase()
+
+  if ((good && choice === '') || choice === 'y') {
+    const args = [getValue('installCmd'), `${name}@${version}`, ...childArgv]
+    const bin = getValue('installBin')
+
+    L()
+    L(chalk`Running: {${COLORS.teal} ${bin} ${args.join(' ')}}`)
+    L()
+
+    const cp = spawn(bin, args, { stdio: 'inherit' })
+    cp.on('exit', code => {
+      process.exitCode = code
+    })
+  } else {
+    L()
+    L(failure(chalk`Did {bold not} install ${name}@${version}`))
+    L()
+  }
+}
+
+function printHelp () {
+  helpHeader(
+    'install',
+    chalk`ncm {${COLORS.yellow} install} {${COLORS.teal} <module\{@version\}> [options] [npm options]}`,
+    'ncm install <module{@version}> [options] [npm options]'
+  )
+
+  L(optionsList())
+  L()
+}
+
+function optionsList () {
+  return chalk`
+{${COLORS.light1} ncm} {${COLORS.yellow} install} {${COLORS.teal} <module> [npm options]}
+{${COLORS.light1} ncm} {${COLORS.yellow} install} {${COLORS.teal} <module@version> [npm options]}
+{${COLORS.light1} ncm} {${COLORS.yellow} i} {${COLORS.teal} <module\{@version\}> [npm options]}
+  {${COLORS.teal} -d, --dir} {white Directory to check for dependency path}
+  `.trim()
+}

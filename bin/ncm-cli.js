@@ -14,6 +14,8 @@ const pkg = require('../package.json')
 const commands = {
   config: require('../commands/config'),
   help: require('../commands/help'),
+  i: require('../commands/install'),
+  install: require('../commands/install'),
   orgs: require('../commands/orgs'),
   whitelist: require('../commands/whitelist'),
   signin: require('../commands/signin'),
