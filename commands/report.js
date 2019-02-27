@@ -103,7 +103,7 @@ async function report (argv, _dir) {
 
   pkgScores = moduleSort(pkgScores)
 
-  if (!json && !output && !long) shortReport(pkgScores, dir)
+  if (!json && !output && !long) shortReport(pkgScores, dir, argv)
   if (long) longReport(pkgScores, dir)
   if (json) jsonReport(pkgScores)
   if (output) outputReport(pkgScores, output)
