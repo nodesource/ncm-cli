@@ -6,7 +6,8 @@ const { formatAPIURL, refreshSession } = require('../lib/util')
 const {
   jsonReport,
   outputReport,
-  SEVERITY_RMAP
+  SEVERITY_RMAP,
+  moduleSort
 } = require('../lib/report/util')
 const longReport = require('../lib/report/long')
 const shortReport = require('../lib/report/short')
@@ -43,7 +44,7 @@ async function report (argv, _dir) {
   L(header(`${path.basename(dir)} Report`))
 
   /* verify */
-  const pkgScores = []
+  let pkgScores = []
   let hasFailures = false
 
   // analyze is parallelized between 'pages' of a size...
@@ -99,6 +100,8 @@ async function report (argv, _dir) {
     }
     pkgScores.push({ name, version, published, maxSeverity, failures, license, scores })
   }
+
+  pkgScores = moduleSort(pkgScores)
 
   if (!json && !output && !long) shortReport(pkgScores, dir)
   if (long) longReport(pkgScores, dir)

@@ -15,6 +15,7 @@ test('report output matches snapshot', (t) =>
     t.matchSnapshot(stdout, 'report-output')
     t.ok(/mock-project Report/.test(stdout))
     t.ok(/8 .+packages checked/.test(stdout))
+    t.ok(/chalk @ 2.4.2/.test(stdout))
     t.notOk(/has-flag @ 3.0.0/.test(stdout))
     t.end()
   })
