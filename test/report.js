@@ -27,7 +27,7 @@ test('report output matches snapshot', (t) =>
 )
 
 test('report --compliance output', (t) =>
-  exec(`node ${NCM_BIN} report --compliance --color=16m`, {
+  exec(`node ${NCM_BIN} report ${MOCK_PROJECT} --compliance --color=16m`, {
     env: Object.assign({ FORCE_COLOR: 3 }, process.env)
   }, (err, stdout, stderr) => {
     t.equal(err.code, 1)
@@ -35,12 +35,9 @@ test('report --compliance output', (t) =>
     t.matchSnapshot(stdout, 'report-output-compliance')
 
     const out = stdout.toString()
-    t.ok(/3 noncompliant modules found/.test(out))
-    t.ok(/spdx-exceptions @ 2.2.0/.test(out))
-    t.ok(/spdx-license-ids @ 3.0.2/.test(out))
-    t.ok(/tweetnacl @ 0.14.5/.test(out))
-    t.ok(/CC-BY-3.0/.test(out))
-    t.ok(/CC0-1.0/.test(out))
+    t.ok(/1 noncompliant modules found/.test(out))
+    t.ok(/left-pad @ 1.3.0/.test(out))
+    t.ok(/WTFPL/.test(out))
     t.ok(/0 security vulnerabilities found/.test(out))
     t.end()
   })
