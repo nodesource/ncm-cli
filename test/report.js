@@ -60,6 +60,25 @@ test('report -c output', (t) =>
   })
 )
 
+test('report --filter=compliance output', (t) => {
+  const cmd = `node ${NCM_BIN} report ${MOCK_PROJECT} ` +
+    '--filter=compliance --color=16m'
+  exec(cmd, {
+    env: Object.assign({ FORCE_COLOR: 3 }, process.env)
+  }, (err, stdout, stderr) => {
+    t.equal(err.code, 1)
+    t.notOk(stderr)
+    t.matchSnapshot(stdout, 'report-output-compliance')
+
+    const out = stdout.toString()
+    t.ok(/1 noncompliant modules found/.test(out))
+    t.ok(/left-pad @ 1.3.0/.test(out))
+    t.ok(/WTFPL/.test(out))
+    t.ok(/1 security vulnerabilities found/.test(out))
+    t.end()
+  })
+})
+
 test('report --security output', (t) =>
   exec(`node ${NCM_BIN} report ${MOCK_PROJECT} --security --color=16m`, {
     env: Object.assign({ FORCE_COLOR: 3 }, process.env)
