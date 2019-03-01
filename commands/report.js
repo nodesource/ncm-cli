@@ -49,7 +49,13 @@ async function report (argv, _dir) {
 
   // analyze is parallelized between 'pages' of a size...
   // ... so just always refresh before due to race conditions
-  await refreshSession()
+  if (!await refreshSession()) {
+    E()
+    E(formatError('Failed to pre-refresh session.'))
+    E()
+    process.exitCode = 1
+    return
+  }
 
   let data
   try {
