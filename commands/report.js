@@ -126,8 +126,8 @@ function optionsList () {
 {${COLORS.light1} ncm} {${COLORS.yellow} report}
 {${COLORS.light1} ncm} {${COLORS.yellow} report} {${COLORS.teal} <directory>}
   {${COLORS.teal} -l, --long}              {white Expanded output with module list}
-  {${COLORS.teal} --compliance}            {white Expanded output with compliance failures}
-  {${COLORS.teal} --security}              {white Expanded output with security failures}
+  {${COLORS.teal} -c --compliance}         {white Expanded output with compliance failures}
+  {${COLORS.teal} -s --security}           {white Expanded output with security failures}
   {${COLORS.teal} -j, --json}              {white Output report as JSON}
   {${COLORS.teal} -o, --output <filepath>} {white Write JSON report to file}
   `.trim()

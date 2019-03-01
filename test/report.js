@@ -43,8 +43,42 @@ test('report --compliance output', (t) =>
   })
 )
 
+test('report -c output', (t) =>
+  exec(`node ${NCM_BIN} report ${MOCK_PROJECT} -c --color=16m`, {
+    env: Object.assign({ FORCE_COLOR: 3 }, process.env)
+  }, (err, stdout, stderr) => {
+    t.equal(err.code, 1)
+    t.notOk(stderr)
+    t.matchSnapshot(stdout, 'report-output-compliance')
+
+    const out = stdout.toString()
+    t.ok(/1 noncompliant modules found/.test(out))
+    t.ok(/left-pad @ 1.3.0/.test(out))
+    t.ok(/WTFPL/.test(out))
+    t.ok(/1 security vulnerabilities found/.test(out))
+    t.end()
+  })
+)
+
 test('report --security output', (t) =>
   exec(`node ${NCM_BIN} report ${MOCK_PROJECT} --security --color=16m`, {
+    env: Object.assign({ FORCE_COLOR: 3 }, process.env)
+  }, (err, stdout, stderr) => {
+    t.equal(err.code, 1)
+    t.notOk(stderr)
+    t.matchSnapshot(stdout, 'report-output-security')
+
+    const out = stdout.toString()
+    t.ok(/1 noncompliant modules found/.test(out))
+    t.ok(/1 security vulnerabilities found/.test(out))
+    t.ok(/handlebars @ 4.0.5/.test(out))
+    t.ok(/1H/.test(out))
+    t.end()
+  })
+)
+
+test('report -s output', (t) =>
+  exec(`node ${NCM_BIN} report ${MOCK_PROJECT} -s --color=16m`, {
     env: Object.assign({ FORCE_COLOR: 3 }, process.env)
   }, (err, stdout, stderr) => {
     t.equal(err.code, 1)

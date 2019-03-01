@@ -38,8 +38,8 @@ Usage:
 [38;2;137;161;157mncm[39m [38;2;255;183;38mreport[39m
 [38;2;137;161;157mncm[39m [38;2;255;183;38mreport[39m [38;2;102;204;187m<directory>[39m
   [38;2;102;204;187m-l, --long[39m              [37mExpanded output with module list[39m
-  [38;2;102;204;187m--compliance[39m            [37mExpanded output with compliance failures[39m
-  [38;2;102;204;187m--security[39m              [37mExpanded output with security failures[39m
+  [38;2;102;204;187m-c --compliance[39m         [37mExpanded output with compliance failures[39m
+  [38;2;102;204;187m-s --security[39m           [37mExpanded output with security failures[39m
   [38;2;102;204;187m-j, --json[39m              [37mOutput report as JSON[39m
   [38;2;102;204;187m-o, --output <filepath>[39m [37mWrite JSON report to file[39m
 
