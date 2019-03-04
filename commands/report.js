@@ -129,7 +129,7 @@ function optionsList () {
   {${COLORS.teal} -c --compliance}         {white Expanded output with compliance failures}
   {${COLORS.teal} -s --security}           {white Expanded output with security failures}
   {${COLORS.teal} --filter=<value>        {white Expanded output with filtered module list.}}
-                            {white filters can be critical, high, medium or low}
+                            {white filters can be "critical", "high", "medium" or "low"}
   {${COLORS.teal} -j, --json}              {white Output report as JSON}
   {${COLORS.teal} -o, --output <filepath>} {white Write JSON report to file}
   `.trim()
