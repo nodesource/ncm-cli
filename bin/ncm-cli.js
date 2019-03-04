@@ -27,6 +27,8 @@ async function main () {
       dir: 'd',
       github: 'g',
       google: 'G',
+      compliance: 'c',
+      security: 's',
       help: 'h',
       json: 'j',
       long: 'l',

@@ -103,7 +103,7 @@ async function report (argv, _dir) {
 
   pkgScores = moduleSort(pkgScores)
 
-  if (!json && !output && !long) shortReport(pkgScores, dir)
+  if (!json && !output && !long) shortReport(pkgScores, dir, argv)
   if (long) longReport(pkgScores, dir)
   if (json) jsonReport(pkgScores)
   if (output) outputReport(pkgScores, output)
@@ -126,6 +126,8 @@ function optionsList () {
 {${COLORS.light1} ncm} {${COLORS.yellow} report}
 {${COLORS.light1} ncm} {${COLORS.yellow} report} {${COLORS.teal} <directory>}
   {${COLORS.teal} -l, --long}              {white Expanded output with module list}
+  {${COLORS.teal} -c --compliance}         {white Expanded output with compliance failures}
+  {${COLORS.teal} -s --security}           {white Expanded output with security failures}
   {${COLORS.teal} -j, --json}              {white Output report as JSON}
   {${COLORS.teal} -o, --output <filepath>} {white Write JSON report to file}
   `.trim()
