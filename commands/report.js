@@ -2,7 +2,8 @@
 
 const path = require('path')
 const analyze = require('../lib/ncm-analyze-tree')
-const { formatAPIURL, refreshSession } = require('../lib/util')
+const { formatAPIURL, graphql } = require('../lib/util')
+const config = require('../lib/config')
 const {
   jsonReport,
   outputReport,
@@ -43,19 +44,34 @@ async function report (argv, _dir) {
   L()
   L(header(`${path.basename(dir)} Report`))
 
+  const whitelist = new Set()
+  try {
+    const data = await graphql(
+      formatAPIURL('/ncm2/api/v2/graphql'),
+      `query($organizationId: String!) {
+        policies(organizationId: $organizationId) {
+          whitelist {
+            name
+            version
+          }
+        }
+      }`,
+      { organizationId: config.getValue('orgId') }
+    )
+    for (const policy of data.policies) {
+      for (const pkg of policy.whitelist) {
+        whitelist.add(`${pkg.name}@${pkg.version}`)
+      }
+    }
+  } catch (err) {
+    L()
+    L(formatError(`Unable to fetch whitelist`, err))
+    L()
+  }
+
   /* verify */
   let pkgScores = []
   let hasFailures = false
-
-  // analyze is parallelized between 'pages' of a size...
-  // ... so just always refresh before due to race conditions
-  if (!await refreshSession()) {
-    E()
-    E(formatError('Failed to pre-refresh session.'))
-    E()
-    process.exitCode = 1
-    return
-  }
 
   let data
   try {
@@ -109,8 +125,11 @@ async function report (argv, _dir) {
 
   pkgScores = moduleSort(pkgScores)
 
-  if (!json && !output && !long) shortReport(pkgScores, dir, argv)
-  if (long) longReport(pkgScores, dir, argv)
+  const whitelisted = pkgScores.filter(pkg => whitelist.has(`${pkg.name}@${pkg.version}`))
+  pkgScores = pkgScores.filter(pkg => !whitelist.has(`${pkg.name}@${pkg.version}`))
+
+  if (!json && !output && !long) shortReport(pkgScores, whitelisted, dir, argv)
+  if (long) longReport(pkgScores, whitelisted, dir, argv)
   if (json) jsonReport(pkgScores)
   if (output) outputReport(pkgScores, output)
   if (hasFailures) process.exitCode = 1
