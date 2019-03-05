@@ -13,10 +13,10 @@ exports[`test/report.js TAP report output matches snapshot > report-output 1`] =
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -29,11 +29,11 @@ exports[`test/report.js TAP report output matches snapshot > report-output 1`] =
 [38;2;137;161;157m-------------------------------------------------------------------------------------------------[39m
 [38;2;137;161;157m  Module Name                               Risk         License                 Security[39m
 [38;2;137;161;157m┌──────────────────────────────────────────┬────────────┬───────────────────────┬───────────────┐[39m
-[38;2;137;161;157m│[39m kind-of @ 3.2.2                          [38;2;137;161;157m│[39m [38;2;255;96;64m||||[39m [38;2;137;161;157mCrit[39m  [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m MIT                 [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m 0           [38;2;137;161;157m│[39m
 [38;2;137;161;157m│[39m handlebars @ 4.0.5                       [38;2;137;161;157m│[39m [38;2;255;139;64m|||[39m[38;2;76;88;89m|[39m [38;2;137;161;157mHigh[39m  [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m MIT                 [38;2;137;161;157m│[39m [38;2;255;96;64mX[39m [38;2;255;139;64m1H[39m          [38;2;137;161;157m│[39m
 [38;2;137;161;157m│[39m ms @ 0.7.1                               [38;2;137;161;157m│[39m [38;2;255;139;64m|||[39m[38;2;76;88;89m|[39m [38;2;137;161;157mHigh[39m  [38;2;137;161;157m│[39m [38;2;255;96;64mX[39m UNKNOWN             [38;2;137;161;157m│[39m [38;2;255;96;64mX[39m [38;2;137;161;157m1L[39m          [38;2;137;161;157m│[39m
 [38;2;137;161;157m│[39m uglify-js @ 2.8.29                       [38;2;137;161;157m│[39m [38;2;255;139;64m|||[39m[38;2;76;88;89m|[39m [38;2;137;161;157mHigh[39m  [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m BSD-2-Clause        [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m 0           [38;2;137;161;157m│[39m
 [38;2;137;161;157m│[39m brace-expansion @ 1.1.2                  [38;2;137;161;157m│[39m [38;2;255;183;38m||[39m[38;2;76;88;89m||[39m [38;2;137;161;157mMed [39m  [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m MIT                 [38;2;137;161;157m│[39m [38;2;255;96;64mX[39m [38;2;255;183;38m1M[39m          [38;2;137;161;157m│[39m
+[38;2;137;161;157m│[39m chalk @ 2.4.2                            [38;2;137;161;157m│[39m [38;2;255;183;38m||[39m[38;2;76;88;89m||[39m [38;2;137;161;157mMed [39m  [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m MIT                 [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m 0           [38;2;137;161;157m│[39m
 [38;2;137;161;157m└──────────────────────────────────────────┴────────────┴───────────────────────┴───────────────┘[39m
 
 `
@@ -46,10 +46,10 @@ exports[`test/report.js TAP report --compliance output > report-output-complianc
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -76,10 +76,10 @@ exports[`test/report.js TAP report -c output > report-output-compliance 1`] = `
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -106,10 +106,10 @@ exports[`test/report.js TAP report --filter=compliance output > report-output-co
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -136,10 +136,10 @@ exports[`test/report.js TAP report --security output > report-output-security 1`
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -168,10 +168,10 @@ exports[`test/report.js TAP report -s output > report-output-security 1`] = `
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -200,10 +200,10 @@ exports[`test/report.js TAP report --filter=security output > report-output-secu
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -232,10 +232,10 @@ exports[`test/report.js TAP report --filter=high --security output > report-outp
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -261,10 +261,10 @@ exports[`test/report.js TAP report --filter=high output > report-output-high-sec
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -290,10 +290,10 @@ exports[`test/report.js TAP report --filter=h output > report-output-high-securi
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -319,10 +319,10 @@ exports[`test/report.js TAP report --filter=high,security output > report-output
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -348,10 +348,10 @@ exports[`test/report.js TAP report --filter=medium --security output > report-ou
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -378,10 +378,10 @@ exports[`test/report.js TAP report --filter=m --security output > report-output-
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -408,10 +408,10 @@ exports[`test/report.js TAP report --filter=low --security output > report-outpu
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -440,10 +440,10 @@ exports[`test/report.js TAP report --filter=l --security output > report-output-
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -472,10 +472,10 @@ exports[`test/report.js TAP report output matches snapshot > long-report-output 
 
 37 [38;2;137;161;157mpackages checked[39m
 
-  [38;2;255;96;64m! 1[39m critical risk
+  [38;2;255;96;64m! 0[39m critical risk
     [38;2;255;139;64m3[39m high risk
     [38;2;255;183;38m7[39m medium risk
-    [38;2;137;161;157m12[39m low risk
+    [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
     [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
@@ -488,7 +488,6 @@ exports[`test/report.js TAP report output matches snapshot > long-report-output 
 [38;2;137;161;157m-------------------------------------------------------------------------------------------------[39m
 [38;2;137;161;157m  Module Name                               Risk         License                 Security[39m
 [38;2;137;161;157m┌──────────────────────────────────────────┬────────────┬───────────────────────┬───────────────┐[39m
-[38;2;137;161;157m│[39m kind-of @ 3.2.2                          [38;2;137;161;157m│[39m [38;2;255;96;64m||||[39m [38;2;137;161;157mCrit[39m  [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m MIT                 [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m 0           [38;2;137;161;157m│[39m
 [38;2;137;161;157m│[39m handlebars @ 4.0.5                       [38;2;137;161;157m│[39m [38;2;255;139;64m|||[39m[38;2;76;88;89m|[39m [38;2;137;161;157mHigh[39m  [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m MIT                 [38;2;137;161;157m│[39m [38;2;255;96;64mX[39m [38;2;255;139;64m1H[39m          [38;2;137;161;157m│[39m
 [38;2;137;161;157m│[39m ms @ 0.7.1                               [38;2;137;161;157m│[39m [38;2;255;139;64m|||[39m[38;2;76;88;89m|[39m [38;2;137;161;157mHigh[39m  [38;2;137;161;157m│[39m [38;2;255;96;64mX[39m UNKNOWN             [38;2;137;161;157m│[39m [38;2;255;96;64mX[39m [38;2;137;161;157m1L[39m          [38;2;137;161;157m│[39m
 [38;2;137;161;157m│[39m uglify-js @ 2.8.29                       [38;2;137;161;157m│[39m [38;2;255;139;64m|||[39m[38;2;76;88;89m|[39m [38;2;137;161;157mHigh[39m  [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m BSD-2-Clause        [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m 0           [38;2;137;161;157m│[39m
@@ -506,6 +505,7 @@ exports[`test/report.js TAP report output matches snapshot > long-report-output 
 [38;2;137;161;157m│[39m color-convert @ 1.9.3                    [38;2;137;161;157m│[39m [38;2;137;161;157m|[39m[38;2;76;88;89m|||[39m [38;2;137;161;157mLow [39m  [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m MIT                 [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m 0           [38;2;137;161;157m│[39m
 [38;2;137;161;157m│[39m concat-map @ 0.0.1                       [38;2;137;161;157m│[39m [38;2;137;161;157m|[39m[38;2;76;88;89m|||[39m [38;2;137;161;157mLow [39m  [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m MIT                 [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m 0           [38;2;137;161;157m│[39m
 [38;2;137;161;157m│[39m is-buffer @ 1.1.6                        [38;2;137;161;157m│[39m [38;2;137;161;157m|[39m[38;2;76;88;89m|||[39m [38;2;137;161;157mLow [39m  [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m MIT                 [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m 0           [38;2;137;161;157m│[39m
+[38;2;137;161;157m│[39m kind-of @ 3.2.2                          [38;2;137;161;157m│[39m [38;2;137;161;157m|[39m[38;2;76;88;89m|||[39m [38;2;137;161;157mLow [39m  [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m MIT                 [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m 0           [38;2;137;161;157m│[39m
 [38;2;137;161;157m│[39m optimist @ 0.6.1                         [38;2;137;161;157m│[39m [38;2;137;161;157m|[39m[38;2;76;88;89m|||[39m [38;2;137;161;157mLow [39m  [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m MIT                 [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m 0           [38;2;137;161;157m│[39m
 [38;2;137;161;157m│[39m source-map @ 0.4.4                       [38;2;137;161;157m│[39m [38;2;137;161;157m|[39m[38;2;76;88;89m|||[39m [38;2;137;161;157mLow [39m  [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m BSD-3-Clause        [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m 0           [38;2;137;161;157m│[39m
 [38;2;137;161;157m│[39m window-size @ 0.1.0                      [38;2;137;161;157m│[39m [38;2;137;161;157m|[39m[38;2;76;88;89m|||[39m [38;2;137;161;157mLow [39m  [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m MIT                 [38;2;137;161;157m│[39m [38;2;90;200;120m✓[39m 0           [38;2;137;161;157m│[39m
