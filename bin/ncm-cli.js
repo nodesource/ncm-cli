@@ -17,8 +17,7 @@ const commands = {
   signin: require('../commands/signin'),
   signout: require('../commands/signout'),
   report: require('../commands/report'),
-  details: require('../commands/details'),
-  watch: require('../commands/watch')
+  details: require('../commands/details')
 }
 
 async function main () {
