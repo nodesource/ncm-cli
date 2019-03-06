@@ -19,10 +19,10 @@ exports[`test/report.js TAP report output matches snapshot > report-output 1`] =
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  Top 5: Highest Risk Modules[39m
@@ -52,10 +52,10 @@ exports[`test/report.js TAP report --compliance output > report-output-complianc
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  null[39m
@@ -82,10 +82,10 @@ exports[`test/report.js TAP report -c output > report-output-compliance 1`] = `
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  null[39m
@@ -112,10 +112,10 @@ exports[`test/report.js TAP report --filter=compliance output > report-output-co
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  null[39m
@@ -142,10 +142,10 @@ exports[`test/report.js TAP report --security output > report-output-security 1`
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  null[39m
@@ -174,10 +174,10 @@ exports[`test/report.js TAP report -s output > report-output-security 1`] = `
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  null[39m
@@ -206,10 +206,10 @@ exports[`test/report.js TAP report --filter=security output > report-output-secu
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  null[39m
@@ -238,10 +238,10 @@ exports[`test/report.js TAP report --filter=high --security output > report-outp
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  null[39m
@@ -267,10 +267,10 @@ exports[`test/report.js TAP report --filter=high output > report-output-high-sec
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  null[39m
@@ -296,10 +296,10 @@ exports[`test/report.js TAP report --filter=h output > report-output-high-securi
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  null[39m
@@ -325,10 +325,10 @@ exports[`test/report.js TAP report --filter=high,security output > report-output
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  null[39m
@@ -354,10 +354,10 @@ exports[`test/report.js TAP report --filter=medium --security output > report-ou
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  null[39m
@@ -384,10 +384,10 @@ exports[`test/report.js TAP report --filter=m --security output > report-output-
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  null[39m
@@ -414,10 +414,10 @@ exports[`test/report.js TAP report --filter=low --security output > report-outpu
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  null[39m
@@ -446,10 +446,10 @@ exports[`test/report.js TAP report --filter=l --security output > report-output-
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  null[39m
@@ -478,10 +478,10 @@ exports[`test/report.js TAP report output matches snapshot > long-report-output 
     [38;2;137;161;157m13[39m low risk
 
   [38;2;255;96;64m![39m 4 security vulnerabilities found across 4 modules
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=security\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=security\` for a list[39m
 
   [38;2;255;96;64m![39m 2 noncompliant modules found
-    [38;2;102;204;187m|➔ Run \`ncm-cli report --filter=compliance\` for a list[39m
+    [38;2;102;204;187m|➔ Run \`ncm report --filter=compliance\` for a list[39m
 
 [38;2;137;161;157m─────────────────────────────────────────────────────────────────────────────────────────────────[39m
 [38;2;137;161;157m  Modules[39m

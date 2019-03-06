@@ -16,6 +16,7 @@
     "update-test-snapshots": "NCM_API=staging.api.nodesource.com NCM_TOKEN=cd6f6825-6b8e-4b1e-827c-6e6f57669d82 TAP_SNAPSHOT=1 tap -J test/*.js"
   },
   "bin": {
+    "ncm": "bin/ncm-cli.js",
     "ncm-cli": "bin/ncm-cli.js"
   },
   "keywords": [],
