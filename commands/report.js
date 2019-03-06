@@ -5,8 +5,6 @@ const analyze = require('../lib/ncm-analyze-tree')
 const { formatAPIURL, graphql } = require('../lib/util')
 const config = require('../lib/config')
 const {
-  jsonReport,
-  outputReport,
   SEVERITY_RMAP,
   moduleSort
 } = require('../lib/report/util')
@@ -28,8 +26,6 @@ module.exports.optionsList = optionsList
 
 async function report (argv, _dir) {
   const {
-    json,
-    output,
     long
   } = argv
   let { dir = _dir } = argv
@@ -128,10 +124,8 @@ async function report (argv, _dir) {
   const whitelisted = pkgScores.filter(pkg => whitelist.has(`${pkg.name}@${pkg.version}`))
   pkgScores = pkgScores.filter(pkg => !whitelist.has(`${pkg.name}@${pkg.version}`))
 
-  if (!json && !output && !long) shortReport(pkgScores, whitelisted, dir, argv)
+  if (!long) shortReport(pkgScores, whitelisted, dir, argv)
   if (long) longReport(pkgScores, whitelisted, dir, argv)
-  if (json) jsonReport(pkgScores)
-  if (output) outputReport(pkgScores, output)
   if (hasFailures) process.exitCode = 1
 }
 
@@ -153,9 +147,7 @@ function optionsList () {
   {${COLORS.teal} -l, --long}              {white Expanded output with module list}
   {${COLORS.teal} -c --compliance}         {white Expanded output with compliance failures}
   {${COLORS.teal} -s --security}           {white Expanded output with security failures}
-  {${COLORS.teal} --filter=<value>        {white Expanded output with filtered module list.}}
+  {${COLORS.teal} --filter=<value>         {white Expanded output with filtered module list}}
                             {white filters can be "critical", "high", "medium" or "low"}
-  {${COLORS.teal} -j, --json}              {white Output report as JSON}
-  {${COLORS.teal} -o, --output <filepath>} {white Write JSON report to file}
   `.trim()
 }
