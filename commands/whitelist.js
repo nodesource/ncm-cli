@@ -51,7 +51,7 @@ async function whitelist (argv) {
     policyData = body.data.policies[0]
   } catch (error) {
     E()
-    E(formatError('Unable to fetch policy data.', error))
+    E(formatError('Unable to fetch policy data. Have you run `ncm signin`?', error))
     E()
     process.exitCode = 1
     return

@@ -39,7 +39,7 @@ async function orgs (argv, org) {
     )
   } catch (err) {
     E()
-    E(formatError('Failed to fetch user info.'))
+    E(formatError('Failed to fetch user info. Have you run `ncm signin`?'))
     E()
     return
   }

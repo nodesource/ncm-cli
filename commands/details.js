@@ -102,7 +102,7 @@ async function details (argv, arg1, arg2, arg3) {
     )
   } catch (err) {
     E()
-    E(formatError('Failed to query NCM API', err))
+    E(formatError('Failed to query NCM API. Have you run `ncm signin`?', err))
     E()
     process.exitCode = 1
     return
@@ -110,7 +110,7 @@ async function details (argv, arg1, arg2, arg3) {
 
   if (!data) {
     E()
-    E(failure('Unable to fetch module details.'))
+    E(failure('Unable to fetch module details. Have you run `ncm signin`?'))
     E()
     process.exitCode = 1
     return

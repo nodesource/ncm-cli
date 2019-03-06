@@ -65,7 +65,7 @@ async function report (argv, _dir) {
     }
   } catch (err) {
     L()
-    L(formatError(`Unable to fetch whitelist`, err))
+    L(formatError(`Unable to fetch whitelist.`, err))
     L()
   }
 
@@ -86,7 +86,7 @@ async function report (argv, _dir) {
       E()
     } else {
       E()
-      E(formatError('Unable to fetch project report.', err))
+      E(formatError('Unable to fetch project report. Have you run `ncm signin`?', err))
       E()
     }
     process.exitCode = 1
