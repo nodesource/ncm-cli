@@ -29,9 +29,7 @@ async function main () {
       compliance: 'c',
       security: 's',
       help: 'h',
-      json: 'j',
       long: 'l',
-      output: 'o',
       org: 'O',
       report: 'r',
       version: 'v'
