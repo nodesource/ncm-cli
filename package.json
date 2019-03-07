@@ -12,8 +12,8 @@
     "start": "bin/ncm-cli.js",
     "lint": "standard --verbose",
     "pretest": "npm run -s lint",
-    "test": "NCM_API=https://staging.api.nodesource.com NCM_TOKEN=cd6f6825-6b8e-4b1e-827c-6e6f57669d82 tap -J test/*.js",
-    "update-test-snapshots": "NCM_API=staging.api.nodesource.com NCM_TOKEN=cd6f6825-6b8e-4b1e-827c-6e6f57669d82 TAP_SNAPSHOT=1 tap -J test/*.js"
+    "test": "tap -J test/*.js",
+    "update-test-snapshots": "TAP_SNAPSHOT=1 tap -J test/*.js"
   },
   "bin": {
     "ncm-cli": "bin/ncm-cli.js"
