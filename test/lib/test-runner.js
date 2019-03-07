@@ -6,131 +6,8 @@ const expressGraphql = require('express-graphql')
 const path = require('path')
 const exec = require('child_process').exec
 
+const mockPackages = require('./mock-packages.js')
 const NCM_BIN = path.join(__dirname, '..', '..', 'bin', 'ncm-cli.js')
-
-const npmPkg = {
-  name: 'npm',
-  version: '6.8.0',
-  published: true,
-  publishedAt: '2019-02-13T23:19:36.131Z',
-  description: 'a package manager for JavaScript',
-  author: 'audrey.e',
-  maintainers: [ 'audrey.e', 'fharper', 'iarna', 'isaacs', 'zkat' ],
-  keywords: [ 'install', 'modules', 'package manager', 'package.json' ],
-  scores:
-  [ { group: 'quality',
-     name: 'has-scm-info',
-     pass: true,
-     severity: 'NONE',
-     title:
-      'This package version has a git repository at git+https://github.com/npm/cli.git .',
-     data: null },
-   { group: 'quality',
-     name: 'scm-tagged-versions',
-     pass: true,
-     severity: 'NONE',
-     title: 'This package has 100% tagged non-prelease versions in git.',
-     data: null },
-   { group: 'compliance',
-     name: 'license',
-     pass: false,
-     severity: 'MEDIUM',
-     title:
-      'This package version license is unacceptable: "Artistic-2.0"',
-     data: { spdx: 'Artistic-2.0' } },
-   { group: 'quality',
-     name: 'readme-exists',
-     pass: true,
-     severity: 'NONE',
-     title: 'This package version has a README file.',
-     data: null },
-   { group: 'quality',
-     name: 'readme-size',
-     pass: true,
-     severity: 'NONE',
-     title: 'This package version has a README file of 4.7 kB.',
-     data: null },
-   { group: 'risk',
-     name: 'has-install-scripts',
-     pass: true,
-     severity: 'NONE',
-     title: 'This package version does not have install scripts.',
-     data: null },
-   { group: 'risk',
-     name: 'has-gyp-file',
-     pass: true,
-     severity: 'NONE',
-     title: 'This package version does not have a Gyp build file.',
-     data: null },
-   { group: 'risk',
-     name: 'uses-deprecated-node-apis',
-     pass: true,
-     severity: 'NONE',
-     title:
-      'This package version does not use any deprecated Node APIs.',
-     data: null },
-   { group: 'risk',
-     name: 'has-unsafe-regexps',
-     pass: true,
-     severity: 'NONE',
-     title:
-      'This package version does not have unsafe regular expressions.',
-     data: null },
-   { group: 'risk',
-     name: 'deprecated',
-     pass: true,
-     severity: 'NONE',
-     title: 'This package version is not deprecated.',
-     data: null },
-   { group: 'quality',
-     name: 'disk-usage-expanded-size',
-     pass: false,
-     severity: 'CRITICAL',
-     title: 'This package version\'s size on disk is 32.0 MB.',
-     data: null },
-   { group: 'quality',
-     name: 'disk-usage-file-count',
-     pass: false,
-     severity: 'MEDIUM',
-     title: 'This package has 4,028 file(s).',
-     data: null },
-   { group: 'quality',
-     name: 'disk-usage-dir-count',
-     pass: false,
-     severity: 'MEDIUM',
-     title: 'This package has 900 dir(s).',
-     data: null },
-   { group: 'risk',
-     name: 'missing-strict-mode',
-     pass: true,
-     severity: 'NONE',
-     title: 'This package version always uses strict mode.',
-     data: null },
-   { group: 'risk',
-     name: 'has-abandoned-promises',
-     pass: true,
-     severity: 'NONE',
-     title: 'This package version finalizes all detectable promises.',
-     data: null },
-   { group: 'risk',
-     name: 'uses-eval',
-     pass: true,
-     severity: 'NONE',
-     title: 'This package version does not use eval() or implied eval.',
-     data: null },
-   { group: 'risk',
-     name: 'has-lost-callback-errs',
-     pass: true,
-     severity: 'NONE',
-     title: 'This package version handles all callback errors.',
-     data: null } ] 
-}
-
-const mockData = {
-  packages: [
-    npmPkg
-  ]
-}
 
 NCMTestRunner.test = buildTester()
 
@@ -145,7 +22,9 @@ function NCMTestRunner(opts) {
 
 NCMTestRunner.prototype.bootstrap = function bootstrap(cb) {
   var self = this
-  const api = new NCMAPI(mockData)
+  const api = new NCMAPI({
+    packages: mockPackages
+  })
   const schema = graphql.buildSchema(`
     scalar JSON
     type Package {
@@ -178,13 +57,26 @@ NCMTestRunner.prototype.bootstrap = function bootstrap(cb) {
       keywords: [String!]!
       scores: [Score!]!
     }
+    input PackageVersionInput {
+      name: String
+      version: String
+    }
     type Query {
-      packages: [Package]
-      package(name: String): Package
+      packageVersions(
+        packageVersions: [PackageVersionInput!]!
+      ): [PackageVersion!]!
       packageVersion(name: String, version: String!): PackageVersion
     }
   `)
 
+  this.app.use('*', function (req, res, next) {
+    // console.log('req', {
+    //   method: req.method,
+    //   url: req.originalUrl,
+    //   body: req.body
+    // })
+    next()
+  })
 
   this.app.use('/', expressGraphql({
     schema: schema, 
@@ -200,8 +92,9 @@ NCMTestRunner.prototype.bootstrap = function bootstrap(cb) {
 }
 
 NCMTestRunner.prototype.exec = function _exec(cmd, cb) {
-  let execCmd = 'NCM_API=http://localhost:' + this.port + 
-    ' node ' + NCM_BIN + ' ' + cmd + ' --color=16m'
+  let execCmd = 'NCM_TOKEN=token NCM_API=http://localhost:' + 
+    this.port + ' node ' + NCM_BIN + ' ' + cmd + ' --color=16m'
+  // console.log('execCmd', execCmd)
   exec(execCmd, {
     env: Object.assign({ FORCE_COLOR: 3 }, process.env)
   }, cb)
@@ -228,6 +121,17 @@ NCMAPI.prototype.packageVersion = function packageVersion(params) {
   } else {
     throw new Error("duplicate module : " + name + "@" + version)
   }
+}
+
+NCMAPI.prototype.packageVersions = function packageVersions(params) {
+  let versions = params.packageVersions
+
+  let modules = this.mockData.packages.filter(function findPackage(p) {
+    return versions.some(function (v) {
+      return p.name === v.name && p.version === v.version
+    })
+  })
+  return modules
 }
 
 // TODO: refactor to use `tape` instead of `tap.test`
