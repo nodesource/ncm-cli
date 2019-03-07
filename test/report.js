@@ -21,7 +21,7 @@ TestRunner.test('report output matches snapshot', (runner, t) =>
 )
 
 TestRunner.test('report --compliance output', (runner, t) =>
-  runner.exec(`report ${MOCK_PROJECT} --compliance`, 
+  runner.exec(`report ${MOCK_PROJECT} --compliance`,
     (err, stdout, stderr) => {
       t.equal(err.code, 1)
       t.notOk(stderr)

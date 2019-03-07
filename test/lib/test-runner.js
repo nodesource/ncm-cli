@@ -13,14 +13,14 @@ NCMTestRunner.test = buildTester()
 
 module.exports = NCMTestRunner
 
-function NCMTestRunner(opts) {
+function NCMTestRunner (opts) {
   this.app = express()
 
   this.httpServer = null
   this.port = -1
 }
 
-NCMTestRunner.prototype.bootstrap = function bootstrap(cb) {
+NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
   var self = this
   const api = new NCMAPI({
     packages: mockPackages
@@ -79,20 +79,20 @@ NCMTestRunner.prototype.bootstrap = function bootstrap(cb) {
   })
 
   this.app.use('/', expressGraphql({
-    schema: schema, 
+    schema: schema,
     rootValue: api,
     graphiql: true
   }))
 
-  this.httpServer = this.app.listen(37969, function () {
+  this.httpServer = this.app.listen(0, function () {
     var addr = self.httpServer.address()
     self.port = addr.port
     cb()
   })
 }
 
-NCMTestRunner.prototype.exec = function _exec(cmd, cb) {
-  let execCmd = 'NCM_TOKEN=token NCM_API=http://localhost:' + 
+NCMTestRunner.prototype.exec = function _exec (cmd, cb) {
+  let execCmd = 'NCM_TOKEN=token NCM_API=http://localhost:' +
     this.port + ' node ' + NCM_BIN + ' ' + cmd + ' --color=16m'
   // console.log('execCmd', execCmd)
   exec(execCmd, {
@@ -100,33 +100,34 @@ NCMTestRunner.prototype.exec = function _exec(cmd, cb) {
   }, cb)
 }
 
-NCMTestRunner.prototype.close = function close(cb) {
+NCMTestRunner.prototype.close = function close (cb) {
   this.httpServer.close(cb)
 }
 
-function NCMAPI(mockData) {
-  this.mockData = mockData;
+function NCMAPI (mockData) {
+  this.mockData = mockData
 }
 
-NCMAPI.prototype.packageVersion = function packageVersion(params) {
-  let modules = this.mockData.packages.filter(function findPackage(p) {
+NCMAPI.prototype.packageVersion = function packageVersion (params) {
+  let modules = this.mockData.packages.filter(function findPackage (p) {
     return p.name === params.name &&
       p.version === params.version
   })
 
   if (modules.length === 0) {
-    return null;
+    return null
   } else if (modules.length === 1) {
     return modules[0]
   } else {
-    throw new Error("duplicate module : " + name + "@" + version)
+    throw new Error('duplicate module : ' + params.name +
+      '@' + params.version)
   }
 }
 
-NCMAPI.prototype.packageVersions = function packageVersions(params) {
+NCMAPI.prototype.packageVersions = function packageVersions (params) {
   let versions = params.packageVersions
 
-  let modules = this.mockData.packages.filter(function findPackage(p) {
+  let modules = this.mockData.packages.filter(function findPackage (p) {
     return versions.some(function (v) {
       return p.name === v.name && p.version === v.version
     })
@@ -135,23 +136,23 @@ NCMAPI.prototype.packageVersions = function packageVersions(params) {
 }
 
 // TODO: refactor to use `tape` instead of `tap.test`
-function buildTester() {
+function buildTester () {
   let tapeClusterRunner = tapeCluster(test, NCMTestRunner)
-  /*  because tap is more overengineered then tape we have to do a workaround 
+  /*  because tap is more overengineered then tape we have to do a workaround
       here to avoid `t.end()` being called multiple times :(
   */
-  return function tester(testName, options, fn) {
+  return function tester (testName, options, fn) {
     if (!fn && typeof options === 'function') {
-        fn = options;
-        options = {};
+      fn = options
+      options = {}
     }
 
     if (!fn) {
-        return testFn(testName);
+      return tapeClusterRunner(testName)
     }
 
-    tapeClusterRunner(testName, options, function onAssert(cluster, assert) {
-      // We have to do this call end only once workaround monkey patch to 
+    tapeClusterRunner(testName, options, function onAssert (cluster, assert) {
+      // We have to do this call end only once workaround monkey patch to
       // work around tap being implemented in a complicated way.
 
       // The alternative would be to create a pass-through `assert` instance
@@ -159,7 +160,7 @@ function buildTester() {
       // differently ...
       let once = false
       let _end = assert.end
-      assert.end = function onlyOnce() {
+      assert.end = function onlyOnce () {
         if (once) {
           return
         }
