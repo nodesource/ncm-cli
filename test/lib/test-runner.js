@@ -84,7 +84,7 @@ NCMTestRunner.prototype.bootstrap = function bootstrap(cb) {
     graphiql: true
   }))
 
-  this.httpServer = this.app.listen(0, function () {
+  this.httpServer = this.app.listen(37969, function () {
     var addr = self.httpServer.address()
     self.port = addr.port
     cb()
