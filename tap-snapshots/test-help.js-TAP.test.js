@@ -27,8 +27,6 @@ Usage:
 
 [38;2;137;161;157mncm[39m [38;2;255;183;38mdetails[39m [38;2;102;204;187m<module>[39m
 [38;2;137;161;157mncm[39m [38;2;255;183;38mdetails[39m [38;2;102;204;187m<module@version>[39m
-  [38;2;102;204;187m-j, --json[39m              [37mOutput module details as JSON[39m
-  [38;2;102;204;187m-o, --output <filepath>[39m [37mWrite JSON module details to file[39m
 
 [38;2;137;161;157mncm[39m [38;2;255;183;38mhelp[39m [3m(this message)[23m
 

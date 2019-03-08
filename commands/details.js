@@ -4,10 +4,6 @@ const {
   formatAPIURL,
   graphql
 } = require('../lib/util')
-const {
-  jsonReport,
-  outputReport
-} = require('../lib/report/util')
 const moduleReport = require('../lib/report/module')
 const {
   COLORS,
@@ -25,11 +21,6 @@ module.exports = details
 module.exports.optionsList = optionsList
 
 async function details (argv, arg1, arg2, arg3) {
-  const {
-    json,
-    output
-  } = argv
-
   if (argv.help) {
     printHelp()
     return
@@ -143,9 +134,7 @@ async function details (argv, arg1, arg2, arg3) {
     }
   }
 
-  if (!json && !output) moduleReport(report)
-  if (json) jsonReport(report)
-  if (output) outputReport(report, output)
+  moduleReport(report)
   if (hasFailures) process.exitCode = 1
 }
 
@@ -164,7 +153,5 @@ function optionsList () {
   return chalk`
 {${COLORS.light1} ncm} {${COLORS.yellow} details} {${COLORS.teal} <module>}
 {${COLORS.light1} ncm} {${COLORS.yellow} details} {${COLORS.teal} <module@version>}
-  {${COLORS.teal} -j, --json}              {white Output module details as JSON}
-  {${COLORS.teal} -o, --output <filepath>} {white Write JSON module details to file}
   `.trim()
 }
