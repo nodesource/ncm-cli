@@ -21,7 +21,6 @@ function NCMTestRunner (opts) {
 }
 
 NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
-  var self = this
   const api = new NCMAPI({
     packages: mockPackages
   })
@@ -84,9 +83,9 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
     graphiql: true
   }))
 
-  this.httpServer = this.app.listen(0, function () {
-    var addr = self.httpServer.address()
-    self.port = addr.port
+  this.httpServer = this.app.listen(0, () => {
+    var addr = this.httpServer.address()
+    this.port = addr.port
     cb()
   })
 }
