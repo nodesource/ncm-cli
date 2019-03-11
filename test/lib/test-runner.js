@@ -9,7 +9,7 @@ const exec = require('child_process').exec
 const mockPackages = require('./mock-packages.js')
 const NCM_BIN = path.join(__dirname, '..', '..', 'bin', 'ncm-cli.js')
 
-NCMTestRunner.test = buildTester()
+NCMTestRunner.test = tapeCluster(test, NCMTestRunner)
 
 module.exports = NCMTestRunner
 
@@ -133,41 +133,4 @@ NCMAPI.prototype.packageVersions = function packageVersions (params) {
     })
   })
   return modules
-}
-
-// TODO: refactor to use `tape` instead of `tap.test`
-function buildTester () {
-  let tapeClusterRunner = tapeCluster(test, NCMTestRunner)
-  /*  because tap is more overengineered then tape we have to do a workaround
-      here to avoid `t.end()` being called multiple times :(
-  */
-  return function tester (testName, options, fn) {
-    if (!fn && typeof options === 'function') {
-      fn = options
-      options = {}
-    }
-
-    if (!fn) {
-      return tapeClusterRunner(testName)
-    }
-
-    tapeClusterRunner(testName, options, function onAssert (cluster, assert) {
-      // We have to do this call end only once workaround monkey patch to
-      // work around tap being implemented in a complicated way.
-
-      // The alternative would be to create a pass-through `assert` instance
-      // that pass all methods through except it passes the end call through
-      // differently ...
-      let once = false
-      let _end = assert.end
-      assert.end = function onlyOnce () {
-        if (once) {
-          return
-        }
-        once = true
-        _end.apply(assert, arguments)
-      }
-      fn(cluster, assert)
-    })
-  }
 }
