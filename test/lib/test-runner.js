@@ -93,7 +93,6 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
 NCMTestRunner.prototype.exec = function _exec (cmd, cb) {
   let execCmd = 'NCM_TOKEN=token NCM_API=http://localhost:' +
     this.port + ' node ' + NCM_BIN + ' ' + cmd + ' --color=16m'
-  // console.log('execCmd', execCmd)
   exec(execCmd, {
     env: Object.assign({ FORCE_COLOR: 3 }, process.env)
   }, cb)
