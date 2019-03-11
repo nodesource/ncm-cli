@@ -56,6 +56,16 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
       keywords: [String!]!
       scores: [Score!]!
     }
+    type Policy {
+      id: String
+      name: String
+      organizationId: String
+      whitelist: [WhitelistEntry!]!
+    }
+    type WhitelistEntry {
+      name: String!
+      version: String!
+    }
     input PackageVersionInput {
       name: String
       version: String
@@ -65,6 +75,7 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
         packageVersions: [PackageVersionInput!]!
       ): [PackageVersion!]!
       packageVersion(name: String, version: String!): PackageVersion
+      policies(organizationId: String!): [Policy!]
     }
   `)
 
@@ -131,4 +142,8 @@ NCMAPI.prototype.packageVersions = function packageVersions (params) {
     })
   })
   return modules
+}
+
+NCMAPI.prototype.policies = function policies (params) {
+  return []
 }
