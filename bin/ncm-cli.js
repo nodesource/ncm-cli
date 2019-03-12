@@ -44,8 +44,7 @@ async function main () {
   }
 
   if (argv.version) {
-    const { version } = require('../package.json')
-    console.log(version)
+    console.log(pkg.version)
     return
   }
 
