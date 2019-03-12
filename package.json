@@ -9,6 +9,17 @@
     "Jeremiah Senkpiel <fishrock123@rocketmail.com> (https://github.com/Fishrock123)"
   ],
   "preferGlobal": true,
+  "keywords": [
+    "ncm",
+    "ncm-cli",
+    "nodesource",
+    "certified",
+    "module",
+    "modules",
+    "risk",
+    "report",
+    "score"
+  ],
   "repository": "nodesource/ncm-cli",
   "scripts": {
     "check-deps": "tools/check-deps.sh",
@@ -22,7 +33,6 @@
     "ncm": "bin/ncm-cli.js",
     "ncm-cli": "bin/ncm-cli.js"
   },
-  "keywords": [],
   "dependencies": {
     "chalk": "^2.4.1",
     "client-request": "^2.3.0",
