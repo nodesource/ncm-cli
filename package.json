@@ -8,6 +8,7 @@
     "Michael Sterpka <michael.sterpka@nodesource.com> (https://github.com/mster)",
     "Jeremiah Senkpiel <fishrock123@rocketmail.com> (https://github.com/Fishrock123)"
   ],
+  "repository": "nodesource/ncm-cli",
   "scripts": {
     "check-deps": "tools/check-deps.sh",
     "start": "bin/ncm-cli.js",
