@@ -38,7 +38,7 @@ Usage:
   [38;2;102;204;187m-l, --long[39m              [37mExpanded output with module list[39m
   [38;2;102;204;187m-c --compliance[39m         [37mExpanded output with compliance failures[39m
   [38;2;102;204;187m-s --security[39m           [37mExpanded output with security failures[39m
-  [38;2;102;204;187m--filter=<value>         [39m[38;2;102;204;187m[37mExpanded output with filtered module list[38;2;102;204;187m[39m
+  [38;2;102;204;187m--filter=<value>[39m        [37mExpanded output with filtered module list[39m
                             [37mfilters can be "critical", "high", "medium" or "low"[39m
 
 [38;2;137;161;157mncm[39m [38;2;255;183;38msignin[39m [3m(interactive)[23m
