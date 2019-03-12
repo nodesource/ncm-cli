@@ -1,6 +1,6 @@
 {
   "name": "ncm-cli",
-  "version": "0.0.0-beta.7",
+  "version": "1.0.0",
   "license": "Apache-2.0",
   "description": "Command-line tool for NodeSource Certified Modules 2.0",
   "author": "NodeSource <npm@nodesource.com> (https://nodesource.com)",
