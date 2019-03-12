@@ -185,14 +185,21 @@ function prepareInput (input) {
   const entries = []
 
   while (input.length > 0) {
-    const entry = input.shift()
+    const entry = input.shift().trim()
 
     if (entry.indexOf('@') > 0 &&
         semver.valid(entry.split('@')[1])
     ) {
       /* pkg@ver */
-      let [ name, version ] = entry.trim().split('@')
+      let [ name, version ] = entry.split('@')
       entries.push({ name, version })
+    } else if (entry[0] === '@' &&
+            Array.from(entry).filter(char => char === '@').length === 2 &&
+            semver.valid(entry.substring(1).split('@')[1])
+    ) {
+      /* @namespace/pkg@ver */
+      let [ name, version ] = entry.substring(1).split('@')
+      entries.push({ name: '@' + name, version })
     } else {
       if (entry.indexOf('@') < 0 &&
         semver.valid(input[0])
