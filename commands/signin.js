@@ -1,5 +1,6 @@
 'use strict'
 
+const clientRequest = require('../lib/client-request')
 const {
   apiRequest,
   formatAPIURL,
@@ -49,19 +50,23 @@ async function signin (argv, email, password) {
 
   if (SSO) {
     try {
-      const { url, nonce } = await apiRequest(
-        'GET',
-        formatAPIURL('/accounts/auth/social-signin-url', { source: SSO })
-      )
+      const { body: b1 } = await clientRequest({
+        method: 'GET',
+        uri: formatAPIURL('/accounts/auth/social-signin-url', { source: SSO }),
+        json: true
+      })
+      const { url, nonce } = b1
 
       L(line('|➔', 'Open the following very ugly URL:', COLORS.yellow))
       L()
       L(chalk`{${COLORS.blue} ${url}}`)
 
-      authData = await apiRequest(
-        'GET',
-        formatAPIURL('/accounts/auth/retrieve-session', { nonce })
-      )
+      const { body: b2 } = await clientRequest({
+        method: 'GET',
+        uri: formatAPIURL('/accounts/auth/retrieve-session', { nonce }),
+        json: true
+      })
+      authData = b2
     } catch (err) {
       E()
       E(formatError('Failed SSO Authentication.', err))
@@ -86,11 +91,13 @@ async function signin (argv, email, password) {
       const usrInfo = JSON.stringify({ email, password })
 
       try {
-        authData = await apiRequest(
-          'POST',
-          formatAPIURL('/accounts/auth/login'),
-          usrInfo
-        )
+        const { body } = await clientRequest({
+          method: 'POST',
+          uri: formatAPIURL('/accounts/auth/login'),
+          json: true,
+          body: usrInfo
+        })
+        authData = body
       } catch (err) {
         E()
         E(formatError('Failed Authentication.', err))
