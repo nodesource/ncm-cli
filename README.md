@@ -1,5 +1,7 @@
 # NCM-CLI
 
+https://travis-ci.org/nodesource/ncm-cli.svg?branch=master
+
 `ncm-cli` is a command-line tool for NodeSource Certified Modules 2.0, designed to make code quality, security, and compliance a breeze. Generate a custom project report, fetch compliance and security information, manage organizational whitelists, and inspect specific packages in greater detail -- all from the command-line.
 
 ## Installation
@@ -18,7 +20,7 @@ Usage:
 
  -h, --help    Display help for any command OR this message
  -v, --version Print ncm CLI version
- 
+
 ncm details <module>
 ncm details <module@version>
 
@@ -41,7 +43,7 @@ ncm signout
 `ncm-cli` supports three forms of authentication.
 
 ### 1. NodeSource Account:
-Sign-in interactively using your [NodeSource account](https://accounts.nodesource.com) email and password. 
+Sign-in interactively using your [NodeSource account](https://accounts.nodesource.com) email and password.
 
 ```
 $ ncm signin
@@ -162,13 +164,13 @@ $ ncm report --long
 The report feature also includes the ability to filter depending on specified criteria.
 
 ### Filter: Compliance
-To display only non-compliant packages, pass the `--compliance, -c` flag. 
+To display only non-compliant packages, pass the `--compliance, -c` flag.
 
 ### Filter: Security
 To display packages which contain at least one security vulnerability, pass the `--security, -s` flag.
 
 ### Filter: Vulnerability Severity
-You may also filter the report based on one or more severity levels. `ncm-cli` supports the following levels of severity: critical, high, medium, low. Passing the `--filter=` flag along with one or more of these filter parameters will result in a report that displays only packages that contain at least one such vulnerability. 
+You may also filter the report based on one or more severity levels. `ncm-cli` supports the following levels of severity: critical, high, medium, low. Passing the `--filter=` flag along with one or more of these filter parameters will result in a report that displays only packages that contain at least one such vulnerability.
 
 ```
 $ ncm report --filter=high,medium
@@ -203,7 +205,7 @@ $ ncm report --filter=high,medium
 
 ## `ncm details <module{@version}>`
 
-Returns a detailed report about a specific module with version. `ncm-cli` will default to using the `latest` version. 
+Returns a detailed report about a specific module with version. `ncm-cli` will default to using the `latest` version.
 
 ```
 $ ncm details client-request
@@ -245,7 +247,7 @@ Code Quality (does not affect risk score):
 
 ## `ncm whitelist`
 
-Display and modify your organization’s module whitelist. 
+Display and modify your organization’s module whitelist.
 
 ### `ncm whitelist --list`
 
@@ -271,11 +273,11 @@ $ ncm whitelist --list
 
 ### `ncm whitelist --add <module@version>`
 
-Add a module to your organization’s whitelist. 
+Add a module to your organization’s whitelist.
 
 ### `ncm whitelist --remove <module@version>`
 
-Remove a module to your organization’s whitelist. 
+Remove a module to your organization’s whitelist.
 
 ```
 $ ncm whitelist --remove qs@6.3.1
@@ -291,13 +293,13 @@ $ ncm whitelist --remove qs@6.3.1
 
 `ncm-cli` allows access to various configuration settings. For more information, use the help command: `ncm config --help`
 
-## `ncm help` 
+## `ncm help`
 
 Display the NodeSource Certified Modules help menu. For more information on a specific command, run `ncm <command> --help`.
 
 ## `ncm orgs <orgname>`
 
-Change your active organization interactively by entering the `orgs` command without passing an `<orgname>`. By passing an organization name, `ncm-cli` will switch the active organization without prompting for input. 
+Change your active organization interactively by entering the `orgs` command without passing an `<orgname>`. By passing an organization name, `ncm-cli` will switch the active organization without prompting for input.
 
 ```
 $ ncm orgs personal
@@ -313,4 +315,4 @@ $ ncm orgs personal
 
 Copyright 2019 NodeSource
 
-Licensed under the Apache License, Version 2.0, see the LICENSE file for details. 
+Licensed under the Apache License, Version 2.0, see the LICENSE file for details.
