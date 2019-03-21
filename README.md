@@ -1,6 +1,6 @@
 # NCM-CLI
 
-https://travis-ci.org/nodesource/ncm-cli.svg?branch=master
+[![Build Status](https://travis-ci.org/nodesource/ncm-cli.svg?branch=master)](https://travis-ci.org/nodesource/ncm-cli)
 
 `ncm-cli` is a command-line tool for NodeSource Certified Modules 2.0, designed to make code quality, security, and compliance a breeze. Generate a custom project report, fetch compliance and security information, manage organizational whitelists, and inspect specific packages in greater detail -- all from the command-line.
 
