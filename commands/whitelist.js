@@ -159,7 +159,7 @@ async function whitelist (argv) {
         if (!score.pass) {
           failures.push(score)
           if (score.group === 'risk') {
-            let riskSeverity = SEVERITY_RMAP.indexOf(score.severity[0] + score.severity.slice(1).toLowerCase())
+            let riskSeverity = SEVERITY_RMAP.indexOf(score.severity)
             if (riskSeverity > maxSeverity) maxSeverity = riskSeverity
           }
         }
