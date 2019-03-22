@@ -26,7 +26,7 @@
     "start": "bin/ncm-cli.js",
     "lint": "standard --verbose",
     "pretest": "npm run -s lint",
-    "test": "tap -J test/*.js",
+    "test": "tap -J --cov test/*.js ",
     "update-test-snapshots": "TAP_SNAPSHOT=1 tap -J test/*.js"
   },
   "bin": {
