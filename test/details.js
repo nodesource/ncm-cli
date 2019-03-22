@@ -14,3 +14,14 @@ NCMTestRunner.test('details output matches snapshot', (runner, t) => {
     t.end()
   })
 })
+
+NCMTestRunner.test('details dir output matches snapshot', (runner, t) => {
+  runner.exec('details chalk@2.4.2 --dir ./test/fixtures/mock-project', (err, stdout, stderr) => {
+    t.equal(err.code, 1)
+    t.notOk(stderr)
+    t.matchSnapshot(stdout, 'details-output-dir')
+    t.ok(/chalk @ 2.4.2/.test(stdout))
+
+    t.end()
+  })
+})
