@@ -3,7 +3,7 @@
 const NCMTestRunner = require('./lib/test-runner.js')
 
 NCMTestRunner.test('details output matches snapshot', (runner, t) => {
-  runner.exec('details npm@6.8.0', (err, stdout, stderr) => {
+  runner.exec('details npm @ 6.8.0', (err, stdout, stderr) => {
     t.equal(err.code, 1)
     t.notOk(stderr)
     t.matchSnapshot(stdout, 'details-output')
