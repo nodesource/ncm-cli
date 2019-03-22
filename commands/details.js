@@ -1,10 +1,12 @@
 'use strict'
 
+const path = require('path')
 const {
   formatAPIURL,
   graphql
 } = require('../lib/util')
 const moduleReport = require('../lib/report/module')
+const universalModuleTree = require('universal-module-tree')
 const {
   COLORS,
   header,
@@ -25,6 +27,8 @@ async function details (argv, arg1, arg2, arg3) {
     printHelp()
     return
   }
+  let { dir } = argv
+  if (!dir) dir = process.cwd()
 
   let name
   let version
@@ -46,9 +50,23 @@ async function details (argv, arg1, arg2, arg3) {
     return
   }
 
+  const tree = await universalModuleTree(dir)
+  const list = universalModuleTree.flatten(tree)
+  let requirePaths = []
+  for (const pkg of list) {
+    if (pkg.name === name && pkg.version === version) {
+      requirePaths = pkg.paths
+      break
+    }
+  }
+
   /* NCM-Cli Header */
   L()
-  L(header(`${name} @ ${version}`))
+  if (requirePaths.length > 0) {
+    L(header(`${name} @ ${version} (within ${path.basename(dir)})`))
+  } else {
+    L(header(`${name} @ ${version}`))
+  }
 
   if (!name || (version !== 'latest' && !semver.valid(version))) {
     E()
@@ -107,7 +125,7 @@ async function details (argv, arg1, arg2, arg3) {
     return
   }
 
-  let report = Object.assign({ failures: [] }, data.packageVersion)
+  let report = Object.assign({ failures: [], requirePaths }, data.packageVersion)
 
   if (!report.published) {
     E()

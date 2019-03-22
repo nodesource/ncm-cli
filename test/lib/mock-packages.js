@@ -121,6 +121,10 @@ module.exports =
   'version': '2.4.2',
   'published': true,
   'publishedAt': '2019-01-05T15:45:52.349Z',
+  description: 'Terminal string styling done right',
+  author: 'sindresorhus',
+  maintainers: [ 'qix', 'sindresorhus' ],
+  keywords: [ 'color', 'colour', 'colors' ],
   'scores': [
     {
       'group': 'risk',
