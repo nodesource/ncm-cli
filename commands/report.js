@@ -144,6 +144,7 @@ function optionsList () {
   return chalk`
 {${COLORS.light1} ncm} {${COLORS.yellow} report}
 {${COLORS.light1} ncm} {${COLORS.yellow} report} {${COLORS.teal} <directory>}
+  {${COLORS.teal} -d, --dir}               {white Another way to specify <directory>}
   {${COLORS.teal} -l, --long}              {white Expanded output with module list}
   {${COLORS.teal} -c --compliance}         {white Expanded output with compliance failures}
   {${COLORS.teal} -s --security}           {white Expanded output with security failures}

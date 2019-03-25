@@ -27,6 +27,7 @@ Usage:
 
 [38;2;137;161;157mncm[39m [38;2;255;183;38mdetails[39m [38;2;102;204;187m<module>[39m
 [38;2;137;161;157mncm[39m [38;2;255;183;38mdetails[39m [38;2;102;204;187m<module@version>[39m
+  [38;2;102;204;187m-d, --dir[39m [37mDirectory to check for dependency path[39m
 
 [38;2;137;161;157mncm[39m [38;2;255;183;38mhelp[39m [3m(this message)[23m
 
@@ -35,6 +36,7 @@ Usage:
 
 [38;2;137;161;157mncm[39m [38;2;255;183;38mreport[39m
 [38;2;137;161;157mncm[39m [38;2;255;183;38mreport[39m [38;2;102;204;187m<directory>[39m
+  [38;2;102;204;187m-d, --dir[39m               [37mAnother way to specify <directory>[39m
   [38;2;102;204;187m-l, --long[39m              [37mExpanded output with module list[39m
   [38;2;102;204;187m-c --compliance[39m         [37mExpanded output with compliance failures[39m
   [38;2;102;204;187m-s --security[39m           [37mExpanded output with security failures[39m

@@ -171,5 +171,6 @@ function optionsList () {
   return chalk`
 {${COLORS.light1} ncm} {${COLORS.yellow} details} {${COLORS.teal} <module>}
 {${COLORS.light1} ncm} {${COLORS.yellow} details} {${COLORS.teal} <module@version>}
+  {${COLORS.teal} -d, --dir} {white Directory to check for dependency path}
   `.trim()
 }
