@@ -50,14 +50,18 @@ async function details (argv, arg1, arg2, arg3) {
     return
   }
 
-  const tree = await universalModuleTree(dir)
-  const list = universalModuleTree.flatten(tree)
   let requirePaths = []
-  for (const pkg of list) {
-    if (pkg.name === name && pkg.version === version) {
-      requirePaths = pkg.paths
-      break
+  try {
+    const tree = await universalModuleTree(dir)
+    const list = universalModuleTree.flatten(tree)
+    for (const pkg of list) {
+      if (pkg.name === name && pkg.version === version) {
+        requirePaths = pkg.paths
+        break
+      }
     }
+  } catch (err) {
+    if (err.code !== 'ENOENT') throw err
   }
 
   /* NCM-Cli Header */
