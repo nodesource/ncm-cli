@@ -1,3 +1,9 @@
+1.1.0 / 2018-03-26
+==================
+
+* Added dependency path visualization to `details`
+* Documented `-d`/`--dir` option
+
 1.0.3 / 2018-03-22
 ==================
 
