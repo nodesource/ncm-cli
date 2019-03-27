@@ -88,7 +88,14 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
     next()
   })
 
-  this.app.use('/', expressGraphql({
+  this.app.use('/accounts/user/details', function (req, res, next) {
+    res.send({})
+    res.statusCode = 200
+
+    next()
+  })
+
+  this.app.use('/ncm2/api/v2/graphql', expressGraphql({
     schema: schema,
     rootValue: api,
     graphiql: true
