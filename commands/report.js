@@ -2,7 +2,11 @@
 
 const path = require('path')
 const analyze = require('../lib/ncm-analyze-tree')
-const { formatAPIURL, graphql } = require('../lib/util')
+const {
+  apiRequest,
+  formatAPIURL,
+  graphql
+} = require('../lib/util')
 const config = require('../lib/config')
 const {
   SEVERITY_RMAP,
@@ -40,6 +44,24 @@ async function report (argv, _dir) {
   L()
   L(header(`${path.basename(dir)} Report`))
 
+  let orgId = config.getValue('orgId')
+
+  try {
+    const details = await apiRequest(
+      'GET',
+      formatAPIURL('/accounts/user/details')
+    )
+    if (typeof details.orgId === 'string') {
+      orgId = details.orgId
+    }
+  } catch (err) {
+    E()
+    E(formatError('Failed to fetch user info.', err))
+    E()
+    process.exitCode = 1
+    return
+  }
+
   const whitelist = new Set()
   try {
     const data = await graphql(
@@ -52,7 +74,7 @@ async function report (argv, _dir) {
           }
         }
       }`,
-      { organizationId: config.getValue('orgId') }
+      { organizationId: orgId }
     )
     for (const policy of data.policies) {
       for (const pkg of policy.whitelist) {

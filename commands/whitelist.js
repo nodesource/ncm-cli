@@ -32,8 +32,25 @@ async function whitelist (argv) {
   }
 
   const policy = getValue('policyId')
-  const orgId = getValue('orgId')
-  const orgName = getValue('org')
+  let orgId = getValue('orgId')
+  let orgName = getValue('org')
+
+  try {
+    const details = await apiRequest(
+      'GET',
+      formatAPIURL('/accounts/user/details')
+    )
+    if (typeof details.orgId === 'string') {
+      orgId = details.orgId
+      orgName = details.orgName || '(From NCM_TOKEN)'
+    }
+  } catch (err) {
+    E()
+    E(formatError('Failed to fetch user info.', err))
+    E()
+    process.exitCode = 1
+    return
+  }
 
   L()
   L(header(`${orgName} Whitelisted Modules`))
