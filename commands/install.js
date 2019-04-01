@@ -2,7 +2,7 @@
 
 const { spawn } = require('child_process')
 const { getValue } = require('../lib/config')
-const { queryReadline } = require('../lib/util')
+const { queryReadline, reversedSplit } = require('../lib/util')
 const details = require('./details')
 const {
   COLORS,
@@ -24,9 +24,9 @@ async function install (argv, arg1, arg2, arg3) {
     printHelp()
     process.exitCode = 1
     return
-  } else if (arg1.indexOf('@') > 0 && !arg2 && !arg3) {
+  } else if (arg1.lastIndexOf('@') > 0 && !arg2 && !arg3) {
     childArgv.splice(childArgv.indexOf(arg1), 1)
-    ;[name, version] = arg1.split('@')
+    ;[name, version] = reversedSplit(arg1, /@(?!$)/)
   } else if (arg2 === '@' && arg3) {
     name = arg1
     version = arg3
