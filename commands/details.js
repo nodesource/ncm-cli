@@ -3,7 +3,8 @@
 const path = require('path')
 const {
   formatAPIURL,
-  graphql
+  graphql,
+  reversedSplit
 } = require('../lib/util')
 const moduleReport = require('../lib/report/module')
 const universalModuleTree = require('universal-module-tree')
@@ -36,8 +37,8 @@ async function details (argv, arg1, arg2, arg3) {
     printHelp()
     process.exitCode = 1
     return
-  } else if (arg1.indexOf('@') > 0 && !arg2 && !arg3) {
-    ;[name, version] = arg1.split('@')
+  } else if (arg1.lastIndexOf('@') > 0 && !arg2 && !arg3) {
+    ;[name, version] = reversedSplit(arg1, /@(?!$)/)
   } else if (arg2 === '@' && arg3) {
     name = arg1
     version = arg3
