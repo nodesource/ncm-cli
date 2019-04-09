@@ -13,15 +13,14 @@ module.exports = help
 module.exports.optionsList = optionsList
 
 const commands = [
-  'config',
-  'details',
-  'help',
-  'install',
-  'orgs',
   'report',
+  'details',
+  'install',
+  'whitelist',
   'signin',
   'signout',
-  'whitelist'
+  'orgs',
+  'config'
 ].map(name => {
   return require(`./${name}`)
 })
