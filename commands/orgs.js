@@ -123,8 +123,16 @@ async function orgsCli (details, org) {
 function printHelp () {
   helpHeader(
     'orgs',
-    chalk`ncm {${COLORS.yellow} orgs} {${COLORS.teal} [<orgname>] [options]}`,
-    'ncm orgs [<orgname>] [options]'
+    chalk`{${COLORS.light1} ncm} {${COLORS.yellow} orgs} {${COLORS.teal} [<orgname>] [options]}`,
+    'ncm orgs [<orgname>] [options]',
+    chalk`
+Change your active NodeSource organization, which impacts the whitelist.
+Defaults to an interactive prompt.
+
+By passing an {${COLORS.teal} <orgname>}, the interactive part may be skipped.
+
+Input is {italic case sensitive}.
+    `
   )
 
   L(optionsList())

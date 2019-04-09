@@ -77,8 +77,14 @@ async function install (argv, arg1, arg2, arg3) {
 function printHelp () {
   helpHeader(
     'install',
-    chalk`ncm {${COLORS.yellow} install} {${COLORS.teal} <module\{@version\}> [options] [npm options]}`,
-    'ncm install <module{@version}> [options] [npm options]'
+    chalk`{${COLORS.light1} ncm} {${COLORS.yellow} install} {${COLORS.teal} <module\{@version\}> [options] [npm options]}`,
+    'ncm install <module{@version}> [options] [npm options]',
+    chalk`
+Runs and displays {${COLORS.light1} "ncm details <module\{@version\}>"} with an interactive confirmation prompt.
+If confirmed, attempts to run {${COLORS.light1} "npm install <module\{@version\}>"} with any additional options provided.
+
+{italic The config keys {${COLORS.yellow} installBin} and {${COLORS.yellow} installCmd} can adjust this to work with other package installers if necessary.}
+    `
   )
 
   L(optionsList())
@@ -87,8 +93,7 @@ function printHelp () {
 
 function optionsList () {
   return chalk`
-{${COLORS.light1} ncm} {${COLORS.yellow} install} {${COLORS.teal} <module> [npm options]}
-{${COLORS.light1} ncm} {${COLORS.yellow} install} {${COLORS.teal} <module@version> [npm options]}
+{${COLORS.light1} ncm} {${COLORS.yellow} install} {${COLORS.teal} <module\{@version\}> [npm options]}
 {${COLORS.light1} ncm} {${COLORS.yellow} i} {${COLORS.teal} <module\{@version\}> [npm options]}
   {${COLORS.teal} -d, --dir} {white Directory to check for dependency path}
   `.trim()

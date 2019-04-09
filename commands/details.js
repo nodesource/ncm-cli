@@ -164,8 +164,13 @@ async function details (argv, arg1, arg2, arg3) {
 function printHelp () {
   helpHeader(
     'details',
-    chalk`ncm {${COLORS.yellow} details} {${COLORS.teal} <module\{@version\}> [options]}`,
-    'ncm details <module{@version}> [options]'
+    chalk`{${COLORS.light1} ncm} {${COLORS.yellow} details} {${COLORS.teal} <module\{@version\}> [options]}`,
+    'ncm details <module{@version}> [options]',
+    chalk`
+Returns a detailed report about a specific module version.
+
+Defaults to using the {${COLORS.teal} "latest"} version as published to npm if no {${COLORS.teal} "version"} is provided.
+    `
   )
 
   L(optionsList())
@@ -174,8 +179,7 @@ function printHelp () {
 
 function optionsList () {
   return chalk`
-{${COLORS.light1} ncm} {${COLORS.yellow} details} {${COLORS.teal} <module>}
-{${COLORS.light1} ncm} {${COLORS.yellow} details} {${COLORS.teal} <module@version>}
+{${COLORS.light1} ncm} {${COLORS.yellow} details} {${COLORS.teal} <module\{@version\}>}
   {${COLORS.teal} -d, --dir} {white Directory to check for dependency path}
   `.trim()
 }

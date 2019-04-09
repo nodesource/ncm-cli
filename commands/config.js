@@ -136,14 +136,23 @@ function printHelp () {
   helpHeader(
     'config',
     chalk`ncm {${COLORS.yellow} config} {${COLORS.teal} <action>}`,
-    'ncm config <action>'
+    'ncm config <action>',
+    `
+Adjust ncm-cli configuration and local storage.
+    `
   )
 
-  L(optionsList())
+  L(extendedOptionsList())
   L()
 }
 
 function optionsList () {
+  return chalk`
+{${COLORS.light1} ncm} {${COLORS.yellow} config <action>} {${COLORS.teal} <key> <value>}
+  `.trim()
+}
+
+function extendedOptionsList () {
   return chalk`
 {${COLORS.light1} ncm} {${COLORS.yellow} config list}
 {${COLORS.light1} ncm} {${COLORS.yellow} config reset}

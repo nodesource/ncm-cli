@@ -21,8 +21,12 @@ async function signout (argv) {
 function printHelp () {
   helpHeader(
     'signout',
-    chalk`ncm {${COLORS.yellow} signout}`,
-    'ncm signout'
+    chalk`{${COLORS.light1} ncm} {${COLORS.yellow} signout}`,
+    'ncm signout',
+    `
+Sign out.
+Has no impact on CI token usage.
+    `
   )
 
   L(optionsList())
