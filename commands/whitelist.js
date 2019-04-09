@@ -312,8 +312,13 @@ const queries = {
 function printHelp () {
   helpHeader(
     'whitelist',
-    chalk`ncm {${COLORS.yellow} whitelist} {${COLORS.teal} <option>}`,
-    'ncm whitelist [option]'
+    chalk`{${COLORS.light1} ncm} {${COLORS.yellow} whitelist} {${COLORS.teal} <option>}`,
+    'ncm whitelist [option]',
+    `
+Display or modify your NodeSource organization’s module whitelist.
+
+Public modules are listed alongside their risk score, license compliance, and security summary.
+    `
   )
 
   L(optionsList())

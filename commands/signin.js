@@ -141,8 +141,15 @@ async function signin (argv, email, password) {
 function printHelp () {
   helpHeader(
     'signin',
-    chalk`ncm {${COLORS.yellow} signin} {${COLORS.teal} [options]}`,
-    'ncm signin [options]'
+    chalk`{${COLORS.light1} ncm} {${COLORS.yellow} signin} {${COLORS.teal} [options]}`,
+    'ncm signin [options]',
+    chalk`
+Sign-in interactively using your NodeSource account email and password.
+Alternatively, sign-in via single-sign-on by specifiying an option.
+
+For more information on organization selection, see {${COLORS.light1} "ncm orgs --help"}.
+See the readme for information on authentication via CI tokens.
+    `
   )
 
   L(optionsList())
