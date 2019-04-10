@@ -12,7 +12,7 @@ const L = console.log
 module.exports = help
 module.exports.optionsList = optionsList
 
-const commands = [
+const commandNames = [
   'report',
   'details',
   'install',
@@ -21,11 +21,20 @@ const commands = [
   'signout',
   'orgs',
   'config'
-].map(name => {
+]
+
+const commands = commandNames.map(name => {
   return require(`./${name}`)
 })
 
-async function help () {
+async function help (_, arg1) {
+  // Support for "ncm help <command>"
+  const cmdIdx = commandNames.indexOf(arg1)
+  if (cmdIdx > -1) {
+    commands[cmdIdx]({ help: true })
+    return
+  }
+
   L()
   L(header('NodeSource Certified Modules CLI Help'))
   L()
