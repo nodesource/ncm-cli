@@ -4,7 +4,12 @@ const graphql = require('graphql')
 const express = require('express')
 const expressGraphql = require('express-graphql')
 const path = require('path')
-const exec = require('child_process').exec
+const { exec } = require('child_process')
+const util = require('util')
+
+const execP = util.promisify(exec)
+
+const { reversedSplit } = require('../../lib/util')
 
 const mockPackages = require('./mock-packages.js')
 const NCM_BIN = path.join(__dirname, '..', '..', 'bin', 'ncm-cli.js')
@@ -66,6 +71,10 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
       name: String!
       version: String!
     }
+    input WhitelistEntryInput {
+      name: String!
+      version: String!
+    }
     input PackageVersionInput {
       name: String
       version: String
@@ -76,6 +85,18 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
       ): [PackageVersion!]!
       packageVersion(name: String, version: String!): PackageVersion
       policies(organizationId: String!): [Policy!]
+    }
+    type Mutation {
+      addWhitelistEntries(
+        organizationId: String!,
+        policyId: String!,
+        whitelistEntries: [WhitelistEntryInput!]!
+        ): [WhitelistEntry!]!
+      deleteWhitelistEntries(
+        organizationId: String!,
+        policyId: String!,
+        whitelistEntries: [WhitelistEntryInput!]!
+        ): [WhitelistEntry!]!
     }
   `)
 
@@ -89,7 +110,7 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
   })
 
   this.app.use('/accounts/user/details', function (req, res, next) {
-    res.send({})
+    res.send({ orgId: 'sample-org-id' })
     res.statusCode = 200
 
     next()
@@ -116,12 +137,29 @@ NCMTestRunner.prototype.exec = function _exec (cmd, cb) {
   }, cb)
 }
 
+NCMTestRunner.prototype.execP = function _exec (cmd) {
+  let execCmd = 'NCM_TOKEN=token NCM_API=http://localhost:' +
+    this.port + ' node ' + NCM_BIN + ' ' + cmd + ' --color=16m'
+  return execP(execCmd, {
+    env: Object.assign({ FORCE_COLOR: 3 }, process.env)
+  })
+}
+
 NCMTestRunner.prototype.close = function close (cb) {
   this.httpServer.close(cb)
 }
 
 function NCMAPI (mockData) {
   this.mockData = mockData
+
+  this._policies = [{
+    id: 'sample-policy-id',
+    name: 'default',
+    organizationId: 'sample-org-id',
+    whitelist: new Set([
+      'debug@2.2.0'
+    ])
+  }]
 }
 
 NCMAPI.prototype.packageVersion = function packageVersion (params) {
@@ -152,5 +190,39 @@ NCMAPI.prototype.packageVersions = function packageVersions (params) {
 }
 
 NCMAPI.prototype.policies = function policies (params) {
-  return []
+  const { id, name, organizationId, whitelist } = this._policies[0]
+  if (organizationId !== params.organizationId) return []
+  return [{
+    id,
+    name,
+    organizationId,
+    whitelist: [...whitelist.values()].map(pkgver => {
+      let [name, version] = reversedSplit(pkgver, /@(?!$)/)
+      return { name, version }
+    })
+  }]
+}
+
+NCMAPI.prototype.addWhitelistEntries = function addWhitelistEntries (params) {
+  const entries = params.whitelistEntries
+  const policy = this._policies[0]
+  if (policy.organizationId !== params.organizationId) return []
+
+  for (const { name, version } of entries) {
+    policy.whitelist.add(name + '@' + version)
+  }
+
+  return entries
+}
+
+NCMAPI.prototype.deleteWhitelistEntries = function deleteWhitelistEntries (params) {
+  const entries = params.whitelistEntries
+  const policy = this._policies[0]
+  if (policy.organizationId !== params.organizationId) return []
+
+  for (const { name, version } of entries) {
+    policy.whitelist.delete(name + '@' + version)
+  }
+
+  return entries
 }
