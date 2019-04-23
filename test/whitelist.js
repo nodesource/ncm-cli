@@ -8,7 +8,7 @@ NCMTestRunner.test('whitelist updates properly', async (runner, t) => {
       `whitelist --add ansi-styles@3.2.1`,
       { env: Object.assign({ FORCE_COLOR: 3 }, process.env) }
     )
-    t.notOk(stderr)
+    t.equal(stderr, '')
     t.matchSnapshot(stdout, 'add-output')
 
     const out = stdout.toString()
@@ -19,7 +19,7 @@ NCMTestRunner.test('whitelist updates properly', async (runner, t) => {
       `whitelist --list`,
       { env: Object.assign({ FORCE_COLOR: 3 }, process.env) }
     )
-    t.notOk(stderr)
+    t.equal(stderr, '')
     t.matchSnapshot(stdout, 'list-added-output')
 
     const out = stdout.toString()
@@ -31,7 +31,7 @@ NCMTestRunner.test('whitelist updates properly', async (runner, t) => {
       `whitelist --remove ansi-styles@3.2.1`,
       { env: Object.assign({ FORCE_COLOR: 3 }, process.env) }
     )
-    t.notOk(stderr)
+    t.equal(stderr, '')
     t.matchSnapshot(stdout, 'remove-output')
 
     const out = stdout.toString()
@@ -42,7 +42,7 @@ NCMTestRunner.test('whitelist updates properly', async (runner, t) => {
       `whitelist --list`,
       { env: Object.assign({ FORCE_COLOR: 3 }, process.env) }
     )
-    t.notOk(stderr)
+    t.equal(stderr, '')
     t.matchSnapshot(stdout, 'list-removed-output')
 
     const out = stdout.toString()
