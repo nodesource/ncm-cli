@@ -3,3 +3,4 @@ test/fixtures/*/node_modules
 .DS_Store
 .vscode/
 .nyc_output
+.tmp
