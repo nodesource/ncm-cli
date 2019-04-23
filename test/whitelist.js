@@ -12,7 +12,7 @@ NCMTestRunner.test('whitelist updates properly', async (runner, t) => {
     t.matchSnapshot(stdout, 'add-output')
 
     const out = stdout.toString()
-    t.ok(/Package\(s\) added successfully./.test(out))
+    t.match(out, /Package\(s\) added successfully./)
   }
   {
     const { stdout, stderr } = await runner.execP(
@@ -23,8 +23,8 @@ NCMTestRunner.test('whitelist updates properly', async (runner, t) => {
     t.matchSnapshot(stdout, 'list-added-output')
 
     const out = stdout.toString()
-    t.ok(/debug @ 2.2.0/.test(out))
-    t.ok(/ansi-styles @ 3.2.1/.test(out))
+    t.match(out, /debug @ 2.2.0/)
+    t.match(out, /ansi-styles @ 3.2.1/)
   }
   {
     const { stdout, stderr } = await runner.execP(
@@ -35,7 +35,7 @@ NCMTestRunner.test('whitelist updates properly', async (runner, t) => {
     t.matchSnapshot(stdout, 'remove-output')
 
     const out = stdout.toString()
-    t.ok(/Package\(s\) removed successfully/.test(out))
+    t.match(out, /Package\(s\) removed successfully/)
   }
   {
     const { stdout, stderr } = await runner.execP(
@@ -46,7 +46,7 @@ NCMTestRunner.test('whitelist updates properly', async (runner, t) => {
     t.matchSnapshot(stdout, 'list-removed-output')
 
     const out = stdout.toString()
-    t.ok(/debug @ 2.2.0/.test(out))
-    t.notOk(/ansi-styles @ 3.2.1/.test(out))
+    t.match(out, /debug @ 2.2.0/)
+    t.notMatch(out, /ansi-styles @ 3.2.1/)
   }
 })

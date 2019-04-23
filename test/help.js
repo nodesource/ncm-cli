@@ -11,10 +11,10 @@ test('help output matches help snapshot', (t) =>
     env: Object.assign({ FORCE_COLOR: 3 }, process.env)
   }, (err, stdout, stderr) => {
     t.equal(err, null)
-    t.strictSame(stderr, '')
+    t.equal(stderr, '')
     t.matchSnapshot(stdout, 'help-output')
-    t.ok(/NodeSource Certified Modules CLI Help/.test(stdout))
-    t.ok(/Usage:/.test(stdout))
+    t.match(stdout, /NodeSource Certified Modules CLI Help/)
+    t.match(stdout, /Usage:/)
     t.end()
   })
 )
