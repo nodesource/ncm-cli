@@ -7,9 +7,9 @@ NCMTestRunner.test('details output matches snapshot', (runner, t) => {
     t.equal(err.code, 1)
     t.equal(stderr, '')
     t.matchSnapshot(stdout, 'details-output')
-    t.ok(/npm @ 6.8.0/.test(stdout))
-    t.ok(/No Security Vulnerabilities/.test(stdout))
-    t.ok(/Noncompliant license: Artistic-2.0/.test(stdout))
+    t.match(stdout, /npm @ 6.8.0/)
+    t.match(stdout, /No Security Vulnerabilities/)
+    t.match(stdout, /Noncompliant license: Artistic-2.0/)
 
     t.end()
   })
@@ -20,7 +20,7 @@ NCMTestRunner.test('details dir output matches snapshot', (runner, t) => {
     t.equal(err.code, 1)
     t.equal(stderr, '')
     t.matchSnapshot(stdout, 'details-output-dir')
-    t.ok(/chalk @ 2.4.2/.test(stdout))
+    t.match(stdout, /chalk @ 2.4.2/)
 
     t.end()
   })
