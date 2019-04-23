@@ -17,7 +17,7 @@ module.exports = install
 module.exports.optionsList = optionsList
 
 async function install (argv, arg1, arg2, arg3) {
-  const childArgv = Array.from(argv)
+  const childArgv = Array.from(process.argv.slice(3))
   let name
   let version
   if (!arg1) {
