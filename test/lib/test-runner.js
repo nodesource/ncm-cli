@@ -129,19 +129,19 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
   })
 }
 
-NCMTestRunner.prototype.exec = function _exec (cmd, cb) {
+NCMTestRunner.prototype.exec = function _exec (cmd, cb, env = {}) {
   let execCmd = 'NCM_TOKEN=token NCM_API=http://localhost:' +
     this.port + ' node ' + NCM_BIN + ' ' + cmd + ' --color=16m'
   exec(execCmd, {
-    env: Object.assign({ FORCE_COLOR: 3 }, process.env)
+    env: Object.assign({ FORCE_COLOR: 3 }, env, process.env)
   }, cb)
 }
 
-NCMTestRunner.prototype.execP = function _exec (cmd) {
+NCMTestRunner.prototype.execP = function _exec (cmd, env = {}) {
   let execCmd = 'NCM_TOKEN=token NCM_API=http://localhost:' +
     this.port + ' node ' + NCM_BIN + ' ' + cmd + ' --color=16m'
   return execP(execCmd, {
-    env: Object.assign({ FORCE_COLOR: 3 }, process.env)
+    env: Object.assign({ FORCE_COLOR: 3 }, env, process.env)
   })
 }
 
