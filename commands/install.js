@@ -53,7 +53,14 @@ async function install (argv, arg1, arg2, arg3) {
   L(line('|➔', chalk`Install this module? {${confirm}}`, COLORS.yellow))
   L()
 
-  const choice = (await queryReadline(chalk`{${COLORS.light1} > }`)).trim().toLowerCase()
+  let choice
+  if (argv.force) {
+    choice = 'y'
+  } else if (process.stdin.isTTY) {
+    choice = (await queryReadline(chalk`{${COLORS.light1} > }`)).trim().toLowerCase()
+  } else {
+    choice = good ? 'y' : 'n'
+  }
 
   if ((good && choice === '') || choice === 'y') {
     const args = [getValue('installCmd'), `${name}@${version}`, ...childArgv]
