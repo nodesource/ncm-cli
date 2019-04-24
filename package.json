@@ -52,7 +52,7 @@
     "express-graphql": "^0.7.1",
     "graphql": "^14.1.1",
     "standard": "^12.0.1",
-    "tap": "^12.6.3",
+    "tap": "^13.0.0-rc.30",
     "tape-cluster": "^3.0.0"
   }
 }
