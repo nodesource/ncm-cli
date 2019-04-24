@@ -1,3 +1,13 @@
+1.2.0 / 2018-04-24
+==================
+
+* Added `install` command, which runs `details`, and then runs `npm install` on a confirmation.
+* Added descriptive text to `<command> --help` output.
+* Added `help <command>` as an alias to `<command> --help`.
+* Fixed `NCM_TOKEN` functionality when making whitelist api requests.
+* Fixed `details` parsing `@scope/module@version` input.
+* Reworked Readme documentation.
+
 1.1.0 / 2018-03-26
 ==================
 
