@@ -10,6 +10,7 @@ process.on('unhandledRejection', function (err) {
 const parseArgs = require('minimist')
 const updateNotifier = require('update-notifier')
 const pkg = require('../package.json')
+const fs = require('fs')
 
 const commands = {
   config: require('../commands/config'),
@@ -40,9 +41,16 @@ async function main () {
     }
   })
 
-  let [ command = 'help', ...subargs ] = argv._
+  let [ command = 'report', ...subargs ] = argv._
   if (!Object.keys(commands).includes(command)) {
-    command = 'help'
+    try {
+      // alias `ncm DIR` to `ncm report DIR`
+      fs.statSync(command)
+      subargs.unshift(command)
+      command = 'report'
+    } catch (_) {
+      command = 'help'
+    }
   }
 
   if (argv.version) {

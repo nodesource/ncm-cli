@@ -18,6 +18,21 @@ TestRunner.test('report output matches snapshot', (runner, t) =>
   })
 )
 
+TestRunner.test('report is default command', (runner, t) =>
+  runner.exec(`${MOCK_PROJECT}`, (err, stdout, stderr) => {
+    t.equal(err.code, 1)
+    t.equal(stderr, '')
+    t.matchSnapshot(stdout, 'report-output')
+    t.match(stdout, /mock-project Report/)
+    t.match(stdout, /36 .+packages checked/)
+    t.match(stdout, /handlebars @ 4.0.5/)
+    t.notMatch(stdout, /has-flag @ 3.0.0/)
+    t.match(stdout, /2 noncompliant modules found/)
+    t.match(stdout, /3 security vulnerabilities found/)
+    t.end()
+  })
+)
+
 TestRunner.test('report --compliance output', (runner, t) =>
   runner.exec(`report ${MOCK_PROJECT} --compliance`,
     (err, stdout, stderr) => {
