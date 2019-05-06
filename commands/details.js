@@ -65,14 +65,6 @@ async function details (argv, arg1, arg2, arg3) {
     if (err.code !== 'ENOENT') throw err
   }
 
-  /* NCM-Cli Header */
-  L()
-  if (requirePaths.length > 0) {
-    L(header(`${name} @ ${version} (within ${path.basename(dir)})`))
-  } else {
-    L(header(`${name} @ ${version}`))
-  }
-
   if (!name || (version !== 'latest' && !semver.valid(version))) {
     E()
     E(failure(`Unrecognized module syntax: ${argv._.slice(1).join('')}`))
@@ -131,6 +123,15 @@ async function details (argv, arg1, arg2, arg3) {
   }
 
   let report = Object.assign({ failures: [], requirePaths }, data.packageVersion)
+
+  /* NCM-Cli Header */
+  // later than usual so we can pick up the actual version.
+  L()
+  if (requirePaths.length > 0) {
+    L(header(`${name} @ ${report.version || version} (within ${path.basename(dir)})`))
+  } else {
+    L(header(`${name} @ ${report.version || version}`))
+  }
 
   if (!report.published) {
     E()
