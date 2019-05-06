@@ -23,6 +23,16 @@ function NCMTestRunner (opts) {
 
   this.httpServer = null
   this.port = -1
+
+  const self = this
+
+  this.env = {
+    FORCE_COLOR: 3,
+    NCM_TOKEN: 'token',
+    get NCM_API () {
+      return `http://localhost:${self.port}`
+    }
+  }
 }
 
 NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
@@ -130,18 +140,26 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
 }
 
 NCMTestRunner.prototype.exec = function _exec (cmd, cb, env = {}) {
-  let execCmd = 'NCM_TOKEN=token NCM_API=http://localhost:' +
-    this.port + ' node ' + NCM_BIN + ' ' + cmd + ' --color=16m'
+  const execCmd = [
+    process.execPath,
+    NCM_BIN,
+    cmd,
+    '--color=16m'
+  ].join(' ')
   exec(execCmd, {
-    env: Object.assign({ FORCE_COLOR: 3 }, env, process.env)
+    env: Object.assign({}, this.env, env, process.env)
   }, cb)
 }
 
 NCMTestRunner.prototype.execP = function _exec (cmd, env = {}) {
-  let execCmd = 'NCM_TOKEN=token NCM_API=http://localhost:' +
-    this.port + ' node ' + NCM_BIN + ' ' + cmd + ' --color=16m'
+  const execCmd = [
+    process.execPath,
+    NCM_BIN,
+    cmd,
+    '--color=16m'
+  ].join(' ')
   return execP(execCmd, {
-    env: Object.assign({ FORCE_COLOR: 3 }, env, process.env)
+    env: Object.assign({}, this.env, env, process.env)
   })
 }
 
@@ -225,4 +243,11 @@ NCMAPI.prototype.deleteWhitelistEntries = function deleteWhitelistEntries (param
   }
 
   return entries
+}
+
+if (require.main === module) {
+  const mockServer = new NCMTestRunner()
+  mockServer.bootstrap(_ => {
+    console.log(`Mock ncm api server started at 127.0.0.1:${mockServer.port}`)
+  })
 }
