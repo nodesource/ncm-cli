@@ -1,3 +1,9 @@
+1.3.0 / 2019-05-09
+==================
+
+* Added support for `http{s}_proxy` env vars for all network requests.
+* Fixed version display in `details` when checking the `latest` version.
+
 1.2.0 / 2019-04-24
 ==================
 
