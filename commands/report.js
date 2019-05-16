@@ -56,7 +56,7 @@ async function report (argv, _dir) {
     }
   } catch (err) {
     E()
-    E(formatError('Failed to fetch user info.', err))
+    E(formatError('Failed to fetch user info. Have you run `ncm signin`?', err))
     E()
     process.exitCode = 1
     return
@@ -100,11 +100,12 @@ async function report (argv, _dir) {
   } catch (err) {
     if (err.code === 'ENOENT') {
       E()
-      E(failure(`Unable to find project at: ${dir}`))
+      E(failure(err.message))
+      E(formatError(`Unable to read project at: ${dir}`, err))
       E()
     } else {
       E()
-      E(formatError('Unable to fetch project report. Have you run `ncm signin`?', err))
+      E(formatError(`Unable to analyze project. ${err.message}.`, err))
       E()
     }
     process.exitCode = 1
