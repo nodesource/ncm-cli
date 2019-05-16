@@ -46,7 +46,7 @@ async function whitelist (argv) {
     }
   } catch (err) {
     E()
-    E(formatError('Failed to fetch user info.', err))
+    E(formatError('Failed to fetch user info. Have you run `ncm signin`?', err))
     E()
     process.exitCode = 1
     return
@@ -68,7 +68,7 @@ async function whitelist (argv) {
     policyData = body.data.policies[0]
   } catch (error) {
     E()
-    E(formatError('Unable to fetch policy data. Have you run `ncm signin`?', error))
+    E(formatError('Unable to fetch policy data.', error))
     E()
     process.exitCode = 1
     return
