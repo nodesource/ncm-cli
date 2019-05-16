@@ -1,3 +1,9 @@
+1.3.1 / 2019-05-16
+==================
+
+* Ensured `analyze()` error messages are always printed in `report`.
+* Support for `DEBUG=ncm` error debugging.
+
 1.3.0 / 2019-05-09
 ==================
 
