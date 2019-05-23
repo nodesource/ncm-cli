@@ -112,7 +112,7 @@ async function report (argv, _dir) {
     return
   }
 
-  for (const { name, version, scores, published } of data) {
+  for (let { name, version, scores, published } of data) {
     let maxSeverity = 0
     let license
     const failures = []
@@ -139,7 +139,20 @@ async function report (argv, _dir) {
         license = score
       }
     }
-    pkgScores.push({ name, version, published, maxSeverity, failures, license, scores })
+
+    if (!version) {
+      version = '0.0.0-UNKNOWN-VERSION'
+    }
+
+    pkgScores.push({
+      name,
+      version,
+      published,
+      maxSeverity,
+      failures,
+      license,
+      scores
+    })
   }
 
   pkgScores = moduleSort(pkgScores)
