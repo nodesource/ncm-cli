@@ -113,6 +113,10 @@ async function report (argv, _dir) {
   }
 
   for (const { name, version, scores, published } of data) {
+    if (!version) {
+      continue
+    }
+
     let maxSeverity = 0
     let license
     const failures = []
