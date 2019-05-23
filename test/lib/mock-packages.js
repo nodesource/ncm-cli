@@ -27,7 +27,7 @@ module.exports =
     pass: false,
     severity: 'MEDIUM',
     title:
-      'This package version license is unacceptable: "Artistic-2.0"',
+      'This package version license is unacceptable: \'Artistic-2.0\'',
     data: { spdx: 'Artistic-2.0' } },
   { group: 'quality',
     name: 'readme-exists',
@@ -155,7 +155,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 48.0 kB.",
+      'title': 'This package version\'s size on disk is 48.0 kB.',
       'data': null
     },
     {
@@ -203,7 +203,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -282,7 +282,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 20.0 kB.",
+      'title': 'This package version\'s size on disk is 20.0 kB.',
       'data': null
     },
     {
@@ -354,7 +354,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -492,7 +492,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -502,7 +502,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 48.0 kB.",
+      'title': 'This package version\'s size on disk is 48.0 kB.',
       'data': null
     },
     {
@@ -558,7 +558,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in index.js:1:1.",
+      'title': 'This package version doesn\'t use strict mode in index.js:1:1.',
       'data': {
         'locations': [
           'index.js:1:1',
@@ -596,7 +596,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 36.0 kB.",
+      'title': 'This package version\'s size on disk is 36.0 kB.',
       'data': null
     },
     {
@@ -684,7 +684,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -734,7 +734,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 20.0 kB.",
+      'title': 'This package version\'s size on disk is 20.0 kB.',
       'data': null
     },
     {
@@ -814,7 +814,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -928,7 +928,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 24.0 kB.",
+      'title': 'This package version\'s size on disk is 24.0 kB.',
       'data': null
     },
     {
@@ -992,7 +992,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -1050,7 +1050,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 20.0 kB.",
+      'title': 'This package version\'s size on disk is 20.0 kB.',
       'data': null
     },
     {
@@ -1122,7 +1122,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -1188,7 +1188,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'MEDIUM',
-      'title': "This package version's size on disk is 60.0 kB.",
+      'title': 'This package version\'s size on disk is 60.0 kB.',
       'data': null
     },
     {
@@ -1220,7 +1220,7 @@ module.exports =
       'name': 'uses-deprecated-node-apis',
       'pass': false,
       'severity': 'MEDIUM',
-      'title': "This package version uses a deprecated Node API at node.js:164:20 — 'fs.SyncWriteStream' was deprecated since v4.0.0.",
+      'title': 'This package version uses a deprecated Node API at node.js:164:20 — \'fs.SyncWriteStream\' was deprecated since v4.0.0.',
       'data': {
         'locations': [
           'node.js:164:20'
@@ -1256,7 +1256,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -1298,7 +1298,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in node.js:6:1.",
+      'title': 'This package version doesn\'t use strict mode in node.js:6:1.',
       'data': {
         'locations': [
           'node.js:6:1',
@@ -1365,7 +1365,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 28.0 kB.",
+      'title': 'This package version\'s size on disk is 28.0 kB.',
       'data': null
     },
     {
@@ -1467,7 +1467,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in index.js:5:1.",
+      'title': 'This package version doesn\'t use strict mode in index.js:5:1.',
       'data': {
         'locations': [
           'index.js:5:1'
@@ -1508,7 +1508,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'CRITICAL',
-      'title': "This package version's size on disk is 2.7 MB.",
+      'title': 'This package version\'s size on disk is 2.7 MB.',
       'data': null
     },
     {
@@ -1572,7 +1572,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -1606,7 +1606,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in lib/index.js:7:1.",
+      'title': 'This package version doesn\'t use strict mode in lib/index.js:7:1.',
       'data': {
         'locations': [
           'lib/index.js:7:1',
@@ -1635,7 +1635,7 @@ module.exports =
       'name': 'uses-deprecated-node-apis',
       'pass': false,
       'severity': 'MEDIUM',
-      'title': "This package version uses a deprecated Node API at lib/index.js:22:39 — 'require.extensions' was deprecated since v0.12.0. Use compiling them ahead of time instead.",
+      'title': 'This package version uses a deprecated Node API at lib/index.js:22:39 — \'require.extensions\' was deprecated since v0.12.0. Use compiling them ahead of time instead.',
       'data': {
         'locations': [
           'lib/index.js:22:39',
@@ -1686,7 +1686,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'HIGH',
-      'title': "This package version's size on disk is 184.0 kB.",
+      'title': 'This package version\'s size on disk is 184.0 kB.',
       'data': null
     },
     {
@@ -1758,7 +1758,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -1800,7 +1800,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in lib/async.js:8:1.",
+      'title': 'This package version doesn\'t use strict mode in lib/async.js:8:1.',
       'data': {
         'locations': [
           'lib/async.js:8:1'
@@ -1868,7 +1868,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'HIGH',
-      'title': "This package version's size on disk is 160.0 kB.",
+      'title': 'This package version\'s size on disk is 160.0 kB.',
       'data': null
     },
     {
@@ -1908,7 +1908,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in index.js:1:1.",
+      'title': 'This package version doesn\'t use strict mode in index.js:1:1.',
       'data': {
         'locations': [
           'index.js:1:1'
@@ -1936,7 +1936,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT/X11"',
+      'title': 'This package version license is acceptable: \'MIT/X11\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -1986,7 +1986,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'MEDIUM',
-      'title': "This package version's size on disk is 84.0 kB.",
+      'title': 'This package version\'s size on disk is 84.0 kB.',
       'data': null
     },
     {
@@ -2066,7 +2066,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -2105,7 +2105,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in index.js:1:1.",
+      'title': 'This package version doesn\'t use strict mode in index.js:1:1.',
       'data': {
         'locations': [
           'index.js:1:1'
@@ -2125,7 +2125,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in index.js:1:1.",
+      'title': 'This package version doesn\'t use strict mode in index.js:1:1.',
       'data': {
         'locations': [
           'index.js:1:1'
@@ -2225,7 +2225,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'MEDIUM',
-      'title': "This package version's size on disk is 72.0 kB.",
+      'title': 'This package version\'s size on disk is 72.0 kB.',
       'data': null
     },
     {
@@ -2257,7 +2257,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -2331,7 +2331,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'HIGH',
-      'title': "This package version's size on disk is 196.0 kB.",
+      'title': 'This package version\'s size on disk is 196.0 kB.',
       'data': null
     },
     {
@@ -2379,7 +2379,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "BSD-3-Clause"',
+      'title': 'This package version license is acceptable: \'BSD-3-Clause\'',
       'data': {
         'spdx': 'BSD-3-Clause'
       }
@@ -2405,7 +2405,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in lib/source-map.js:6:1.",
+      'title': 'This package version doesn\'t use strict mode in lib/source-map.js:6:1.',
       'data': {
         'locations': [
           'lib/source-map.js:6:1'
@@ -2433,7 +2433,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 36.0 kB.",
+      'title': 'This package version\'s size on disk is 36.0 kB.',
       'data': null
     },
     {
@@ -2513,7 +2513,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "BSD-3-Clause OR MIT"',
+      'title': 'This package version license is acceptable: \'BSD-3-Clause OR MIT\'',
       'data': {
         'spdx': 'BSD-3-Clause OR MIT'
       }
@@ -2523,7 +2523,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in amdefine.js:22:5.",
+      'title': 'This package version doesn\'t use strict mode in amdefine.js:22:5.',
       'data': {
         'locations': [
           'amdefine.js:22:5'
@@ -2599,7 +2599,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'HIGH',
-      'title': "This package version's size on disk is 660.0 kB.",
+      'title': 'This package version\'s size on disk is 660.0 kB.',
       'data': null
     },
     {
@@ -2675,7 +2675,7 @@ module.exports =
       'name': 'uses-deprecated-node-apis',
       'pass': false,
       'severity': 'MEDIUM',
-      'title': "This package version uses a deprecated Node API at tools/node.js:44:23 — 'new Buffer()' was deprecated since v6.0.0. Use 'Buffer.alloc()' or 'Buffer.from()' instead.",
+      'title': 'This package version uses a deprecated Node API at tools/node.js:44:23 — \'new Buffer()\' was deprecated since v6.0.0. Use \'Buffer.alloc()\' or \'Buffer.from()\' instead.',
       'data': {
         'locations': [
           'tools/node.js:44:23',
@@ -2688,7 +2688,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "BSD-2-Clause"',
+      'title': 'This package version license is acceptable: \'BSD-2-Clause\'',
       'data': {
         'spdx': 'BSD-2-Clause'
       }
@@ -2698,7 +2698,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in tools/node.js:2:1.",
+      'title': 'This package version doesn\'t use strict mode in tools/node.js:2:1.',
       'data': {
         'locations': [
           'tools/node.js:2:1'
@@ -2730,7 +2730,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'HIGH',
-      'title': "This package version's size on disk is 800.0 kB.",
+      'title': 'This package version\'s size on disk is 800.0 kB.',
       'data': null
     },
     {
@@ -2839,7 +2839,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "BSD-3-Clause"',
+      'title': 'This package version license is acceptable: \'BSD-3-Clause\'',
       'data': {
         'spdx': 'BSD-3-Clause'
       }
@@ -2865,7 +2865,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in source-map.js:6:1.",
+      'title': 'This package version doesn\'t use strict mode in source-map.js:6:1.',
       'data': {
         'locations': [
           'source-map.js:6:1',
@@ -2961,7 +2961,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 36.0 kB.",
+      'title': 'This package version\'s size on disk is 36.0 kB.',
       'data': null
     },
     {
@@ -3017,7 +3017,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -3035,7 +3035,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'HIGH',
-      'title': "This package version's size on disk is 132.0 kB.",
+      'title': 'This package version\'s size on disk is 132.0 kB.',
       'data': null
     },
     {
@@ -3144,7 +3144,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -3170,7 +3170,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in index.js:1:1.",
+      'title': 'This package version doesn\'t use strict mode in index.js:1:1.',
       'data': {
         'locations': [
           'index.js:1:1',
@@ -3250,7 +3250,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 20.0 kB.",
+      'title': 'This package version\'s size on disk is 20.0 kB.',
       'data': null
     },
     {
@@ -3282,7 +3282,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -3340,7 +3340,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "ISC"',
+      'title': 'This package version license is acceptable: \'ISC\'',
       'data': {
         'spdx': 'ISC'
       }
@@ -3366,7 +3366,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'MEDIUM',
-      'title': "This package version's size on disk is 52.0 kB.",
+      'title': 'This package version\'s size on disk is 52.0 kB.',
       'data': null
     },
     {
@@ -3470,7 +3470,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in index.js:1:1.",
+      'title': 'This package version doesn\'t use strict mode in index.js:1:1.',
       'data': {
         'locations': [
           'index.js:1:1'
@@ -3490,7 +3490,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 24.0 kB.",
+      'title': 'This package version\'s size on disk is 24.0 kB.',
       'data': null
     },
     {
@@ -3578,7 +3578,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -3652,7 +3652,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 24.0 kB.",
+      'title': 'This package version\'s size on disk is 24.0 kB.',
       'data': null
     },
     {
@@ -3700,7 +3700,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -3814,7 +3814,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 24.0 kB.",
+      'title': 'This package version\'s size on disk is 24.0 kB.',
       'data': null
     },
     {
@@ -3886,7 +3886,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -3912,7 +3912,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in index.js:1:1.",
+      'title': 'This package version doesn\'t use strict mode in index.js:1:1.',
       'data': {
         'locations': [
           'index.js:1:1'
@@ -3932,7 +3932,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 28.0 kB.",
+      'title': 'This package version\'s size on disk is 28.0 kB.',
       'data': null
     },
     {
@@ -4020,7 +4020,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -4062,7 +4062,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in index.js:10:1.",
+      'title': 'This package version doesn\'t use strict mode in index.js:10:1.',
       'data': {
         'locations': [
           'index.js:10:1'
@@ -4170,7 +4170,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 20.0 kB.",
+      'title': 'This package version\'s size on disk is 20.0 kB.',
       'data': null
     },
     {
@@ -4194,7 +4194,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: {"url":"https://github.com/jonschlinkert/longest/blob/master/LICENSE","type":"MIT"}',
+      'title': 'This package version license is acceptable: {\'url\':\'https://github.com/jonschlinkert/longest/blob/master/LICENSE\',\'type\':\'MIT\'}',
       'data': {
         'spdx': 'MIT'
       }
@@ -4252,7 +4252,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 24.0 kB.",
+      'title': 'This package version\'s size on disk is 24.0 kB.',
       'data': null
     },
     {
@@ -4332,7 +4332,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -4398,7 +4398,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 20.0 kB.",
+      'title': 'This package version\'s size on disk is 20.0 kB.',
       'data': null
     },
     {
@@ -4470,7 +4470,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -4600,7 +4600,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 20.0 kB.",
+      'title': 'This package version\'s size on disk is 20.0 kB.',
       'data': null
     },
     {
@@ -4648,7 +4648,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -4666,7 +4666,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in index.js:1:1.",
+      'title': 'This package version doesn\'t use strict mode in index.js:1:1.',
       'data': {
         'locations': [
           'index.js:1:1'
@@ -4702,7 +4702,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'MEDIUM',
-      'title': "This package version's size on disk is 72.0 kB.",
+      'title': 'This package version\'s size on disk is 72.0 kB.',
       'data': null
     },
     {
@@ -4798,7 +4798,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT/X11"',
+      'title': 'This package version license is acceptable: \'MIT/X11\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -4832,7 +4832,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 20.0 kB.",
+      'title': 'This package version\'s size on disk is 20.0 kB.',
       'data': null
     },
     {
@@ -4904,7 +4904,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -5034,7 +5034,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 20.0 kB.",
+      'title': 'This package version\'s size on disk is 20.0 kB.',
       'data': null
     },
     {
@@ -5082,7 +5082,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in index.js:9:1.",
+      'title': 'This package version doesn\'t use strict mode in index.js:9:1.',
       'data': {
         'locations': [
           'index.js:9:1'
@@ -5094,7 +5094,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: {"url":"https://github.com/jonschlinkert/window-size/blob/master/LICENSE-MIT","type":"MIT"}',
+      'title': 'This package version license is acceptable: {\'url\':\'https://github.com/jonschlinkert/window-size/blob/master/LICENSE-MIT\',\'type\':\'MIT\'}',
       'data': {
         'spdx': 'MIT'
       }
@@ -5160,7 +5160,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 28.0 kB.",
+      'title': 'This package version\'s size on disk is 28.0 kB.',
       'data': null
     },
     {
@@ -5192,7 +5192,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -5202,7 +5202,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in index.js:1:1.",
+      'title': 'This package version doesn\'t use strict mode in index.js:1:1.',
       'data': {
         'locations': [
           'index.js:1:1'
@@ -5297,7 +5297,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 44.0 kB.",
+      'title': 'This package version\'s size on disk is 44.0 kB.',
       'data': null
     },
     {
@@ -5369,7 +5369,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -5379,7 +5379,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in index.js:1:1.",
+      'title': 'This package version doesn\'t use strict mode in index.js:1:1.',
       'data': {
         'locations': [
           'index.js:1:1'
@@ -5431,7 +5431,7 @@ module.exports =
       'name': 'missing-strict-mode',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version doesn't use strict mode in index.js:1:1.",
+      'title': 'This package version doesn\'t use strict mode in index.js:1:1.',
       'data': {
         'locations': [
           'index.js:1:1'
@@ -5443,7 +5443,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 40.0 kB.",
+      'title': 'This package version\'s size on disk is 40.0 kB.',
       'data': null
     },
     {
@@ -5523,7 +5523,7 @@ module.exports =
       'name': 'license',
       'pass': true,
       'severity': 'NONE',
-      'title': 'This package version license is acceptable: "MIT"',
+      'title': 'This package version license is acceptable: \'MIT\'',
       'data': {
         'spdx': 'MIT'
       }
@@ -5621,7 +5621,7 @@ module.exports =
       'name': 'disk-usage-expanded-size',
       'pass': false,
       'severity': 'LOW',
-      'title': "This package version's size on disk is 48.0 kB.",
+      'title': 'This package version\'s size on disk is 48.0 kB.',
       'data': null
     },
     {
@@ -5669,7 +5669,7 @@ module.exports =
       'name': 'license',
       'pass': false,
       'severity': 'MEDIUM',
-      'title': 'This package version license is unacceptable: "WTFPL"',
+      'title': 'This package version license is unacceptable: \'WTFPL\'',
       'data': {
         'spdx': 'WTFPL'
       }
@@ -5712,6 +5712,297 @@ module.exports =
       'pass': false,
       'severity': 'MEDIUM',
       'title': 'This package has 40% tagged non-prelease versions in git.',
+      'data': null
+    }
+  ]
+},
+{
+  'name': 'is-path-in-cwd',
+  'version': null,
+  'published': false,
+  'publishedAt': null,
+  'scores': []
+},
+{
+  'name': 'is-path-inside',
+  'version': '2.1.0',
+  'published': true,
+  'publishedAt': '2019-04-15T16:33:19.419Z',
+  'scores': [
+    {
+      'group': 'compliance',
+      'name': 'license',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version license is acceptable: \'MIT\'',
+      'data': {
+        'spdx': 'MIT'
+      }
+    },
+    {
+      'group': 'risk',
+      'name': 'has-lost-callback-errs',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version handles all callback errors.',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'deprecated',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version is not deprecated.',
+      'data': null
+    },
+    {
+      'group': 'quality',
+      'name': 'has-scm-info',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version has a git repository at git+https://github.com/sindresorhus/is-path-inside.git .',
+      'data': null
+    },
+    {
+      'group': 'quality',
+      'name': 'scm-tagged-versions',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package has 100% tagged non-prelease versions in git.',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'has-abandoned-promises',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version finalizes all detectable promises.',
+      'data': null
+    },
+    {
+      'group': 'quality',
+      'name': 'readme-exists',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version has a README file.',
+      'data': null
+    },
+    {
+      'group': 'quality',
+      'name': 'readme-size',
+      'pass': false,
+      'severity': 'LOW',
+      'title': 'This package version has a README file of 591 B.',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'has-install-scripts',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version does not have install scripts.',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'has-gyp-file',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version does not have a Gyp build file.',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'uses-eval',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version does not use eval() or implied eval.',
+      'data': null
+    },
+    {
+      'group': 'quality',
+      'name': 'disk-usage-expanded-size',
+      'pass': false,
+      'severity': 'LOW',
+      'title': 'This package version\'s size on disk is 24.0 kB.',
+      'data': null
+    },
+    {
+      'group': 'quality',
+      'name': 'disk-usage-file-count',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package has 5 file(s).',
+      'data': null
+    },
+    {
+      'group': 'quality',
+      'name': 'disk-usage-dir-count',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package has 1 dir(s).',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'has-unsafe-regexps',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version does not have unsafe regular expressions.',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'uses-deprecated-node-apis',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version does not use any deprecated Node APIs.',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'missing-strict-mode',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version always uses strict mode.',
+      'data': null
+    }
+  ]
+},
+{
+  'name': 'path-is-inside',
+  'version': '1.0.2',
+  'published': true,
+  'publishedAt': '2016-09-10T23:35:10.802Z',
+  'scores': [
+    {
+      'group': 'risk',
+      'name': 'deprecated',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version is not deprecated.',
+      'data': null
+    },
+    {
+      'group': 'compliance',
+      'name': 'license',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version license is acceptable: \'(WTFPL OR MIT)\'',
+      'data': {
+        'spdx': '(WTFPL OR MIT)'
+      }
+    },
+    {
+      'group': 'quality',
+      'name': 'has-scm-info',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version has a git repository at git+https://github.com/domenic/path-is-inside.git .',
+      'data': null
+    },
+    {
+      'group': 'quality',
+      'name': 'scm-tagged-versions',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package has 67% tagged non-prelease versions in git.',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'uses-eval',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version does not use eval() or implied eval.',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'has-abandoned-promises',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version finalizes all detectable promises.',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'has-lost-callback-errs',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version handles all callback errors.',
+      'data': null
+    },
+    {
+      'group': 'quality',
+      'name': 'readme-exists',
+      'pass': false,
+      'severity': 'MEDIUM',
+      'title': 'This package version does not have a README file.',
+      'data': null
+    },
+    {
+      'group': 'quality',
+      'name': 'disk-usage-expanded-size',
+      'pass': false,
+      'severity': 'LOW',
+      'title': 'This package version\'s size on disk is 20.0 kB.',
+      'data': null
+    },
+    {
+      'group': 'quality',
+      'name': 'disk-usage-file-count',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package has 3 file(s).',
+      'data': null
+    },
+    {
+      'group': 'quality',
+      'name': 'disk-usage-dir-count',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package has 2 dir(s).',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'has-install-scripts',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version does not have install scripts.',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'has-gyp-file',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version does not have a Gyp build file.',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'has-unsafe-regexps',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version does not have unsafe regular expressions.',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'missing-strict-mode',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version always uses strict mode.',
+      'data': null
+    },
+    {
+      'group': 'risk',
+      'name': 'uses-deprecated-node-apis',
+      'pass': true,
+      'severity': 'NONE',
+      'title': 'This package version does not use any deprecated Node APIs.',
       'data': null
     }
   ]

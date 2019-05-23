@@ -2,6 +2,7 @@
 
 const TestRunner = require('./lib/test-runner.js')
 const MOCK_PROJECT = '--dir=./test/fixtures/mock-project'
+const POISONED_PROJECT = '--dir=./test/fixtures/poisoned-project'
 
 TestRunner.test('report output matches snapshot', (runner, t) =>
   runner.exec(`report ${MOCK_PROJECT}`, (err, stdout, stderr) => {
@@ -303,3 +304,16 @@ TestRunner.test('report output matches snapshot', (runner, t) =>
     t.end()
   })
 )
+
+TestRunner.test('report with poisoned project', (runner, t) => {
+  let cmd = `report --long ${POISONED_PROJECT}`
+  runner.exec(cmd, (err, stdout, stderr) => {
+    t.equal(err.code, 1)
+    t.equal(stderr, '')
+    t.matchSnapshot(stdout, 'long-report-poisoned-output')
+    t.match(stdout, /poisoned-project Report/)
+    t.match(stdout, /left-pad @ 1.3.0/)
+    t.match(stdout, /is-path-in-cwd… @ 0.0.0-UNKNOWN-VERSION/)
+    t.end()
+  })
+})
