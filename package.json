@@ -26,7 +26,8 @@
     "start": "bin/ncm-cli.js",
     "lint": "standard --verbose",
     "pretest": "npm run -s lint",
-    "test": "tap -J --cov test/*.js",
+    "test": "npm run -s test-only",
+    "test-only": "tap -J --cov test/*.js",
     "posttest": "rimraf test/.tmp",
     "update-test-snapshots": "TAP_SNAPSHOT=1 tap -J test/*.js"
   },
