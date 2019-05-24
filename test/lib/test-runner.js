@@ -201,6 +201,11 @@ NCMAPI.prototype.packageVersions = function packageVersions (params) {
 
   let modules = this.mockData.packages.filter(function findPackage (p) {
     return versions.some(function (v) {
+      // For this module return the bad data object
+      if (v.name === p.name && p.name === 'is-path-in-cwd') {
+        return true
+      }
+
       return p.name === v.name && p.version === v.version
     })
   })

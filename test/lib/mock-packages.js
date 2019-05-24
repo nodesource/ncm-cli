@@ -5715,4 +5715,295 @@ module.exports =
       'data': null
     }
   ]
+},
+{
+  "name": "is-path-in-cwd",
+  "version": null,
+  "published": false,
+  "publishedAt": null,
+  "scores": []
+},
+{
+  "name": "is-path-inside",
+  "version": "2.1.0",
+  "published": true,
+  "publishedAt": "2019-04-15T16:33:19.419Z",
+  "scores": [
+    {
+      "group": "compliance",
+      "name": "license",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version license is acceptable: \"MIT\"",
+      "data": {
+        "spdx": "MIT"
+      }
+    },
+    {
+      "group": "risk",
+      "name": "has-lost-callback-errs",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version handles all callback errors.",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "deprecated",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version is not deprecated.",
+      "data": null
+    },
+    {
+      "group": "quality",
+      "name": "has-scm-info",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version has a git repository at git+https://github.com/sindresorhus/is-path-inside.git .",
+      "data": null
+    },
+    {
+      "group": "quality",
+      "name": "scm-tagged-versions",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package has 100% tagged non-prelease versions in git.",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "has-abandoned-promises",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version finalizes all detectable promises.",
+      "data": null
+    },
+    {
+      "group": "quality",
+      "name": "readme-exists",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version has a README file.",
+      "data": null
+    },
+    {
+      "group": "quality",
+      "name": "readme-size",
+      "pass": false,
+      "severity": "LOW",
+      "title": "This package version has a README file of 591 B.",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "has-install-scripts",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version does not have install scripts.",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "has-gyp-file",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version does not have a Gyp build file.",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "uses-eval",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version does not use eval() or implied eval.",
+      "data": null
+    },
+    {
+      "group": "quality",
+      "name": "disk-usage-expanded-size",
+      "pass": false,
+      "severity": "LOW",
+      "title": "This package version's size on disk is 24.0 kB.",
+      "data": null
+    },
+    {
+      "group": "quality",
+      "name": "disk-usage-file-count",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package has 5 file(s).",
+      "data": null
+    },
+    {
+      "group": "quality",
+      "name": "disk-usage-dir-count",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package has 1 dir(s).",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "has-unsafe-regexps",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version does not have unsafe regular expressions.",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "uses-deprecated-node-apis",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version does not use any deprecated Node APIs.",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "missing-strict-mode",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version always uses strict mode.",
+      "data": null
+    }
+  ]
+},
+{
+  "name": "path-is-inside",
+  "version": "1.0.2",
+  "published": true,
+  "publishedAt": "2016-09-10T23:35:10.802Z",
+  "scores": [
+    {
+      "group": "risk",
+      "name": "deprecated",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version is not deprecated.",
+      "data": null
+    },
+    {
+      "group": "compliance",
+      "name": "license",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version license is acceptable: \"(WTFPL OR MIT)\"",
+      "data": {
+        "spdx": "(WTFPL OR MIT)"
+      }
+    },
+    {
+      "group": "quality",
+      "name": "has-scm-info",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version has a git repository at git+https://github.com/domenic/path-is-inside.git .",
+      "data": null
+    },
+    {
+      "group": "quality",
+      "name": "scm-tagged-versions",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package has 67% tagged non-prelease versions in git.",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "uses-eval",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version does not use eval() or implied eval.",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "has-abandoned-promises",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version finalizes all detectable promises.",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "has-lost-callback-errs",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version handles all callback errors.",
+      "data": null
+    },
+    {
+      "group": "quality",
+      "name": "readme-exists",
+      "pass": false,
+      "severity": "MEDIUM",
+      "title": "This package version does not have a README file.",
+      "data": null
+    },
+    {
+      "group": "quality",
+      "name": "disk-usage-expanded-size",
+      "pass": false,
+      "severity": "LOW",
+      "title": "This package version's size on disk is 20.0 kB.",
+      "data": null
+    },
+    {
+      "group": "quality",
+      "name": "disk-usage-file-count",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package has 3 file(s).",
+      "data": null
+    },
+    {
+      "group": "quality",
+      "name": "disk-usage-dir-count",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package has 2 dir(s).",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "has-install-scripts",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version does not have install scripts.",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "has-gyp-file",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version does not have a Gyp build file.",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "has-unsafe-regexps",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version does not have unsafe regular expressions.",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "missing-strict-mode",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version always uses strict mode.",
+      "data": null
+    },
+    {
+      "group": "risk",
+      "name": "uses-deprecated-node-apis",
+      "pass": true,
+      "severity": "NONE",
+      "title": "This package version does not use any deprecated Node APIs.",
+      "data": null
+    }
+  ]
 }]
