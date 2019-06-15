@@ -12,6 +12,7 @@ const {
 const { helpHeader } = require('../lib/help')
 const chalk = require('chalk')
 const L = console.log
+const E = console.error
 
 module.exports = install
 module.exports.optionsList = optionsList
@@ -71,6 +72,11 @@ async function install (argv, arg1, arg2, arg3) {
     L()
 
     const cp = spawn(bin, args, { stdio: 'inherit' })
+    cp.on('error', error => {
+      E()
+      E(chalk`{COLORS.red ${error}}`)
+      E()
+    })
     cp.on('exit', code => {
       process.exitCode = code
     })
