@@ -39,6 +39,7 @@
     "chalk": "^2.4.1",
     "client-request": "^2.3.0",
     "configstore": "^4.0.0",
+    "cross-spawn": "^6.0.5",
     "debug": "^4.1.1",
     "events.once": "^2.0.2",
     "minimist": "^1.2.0",
