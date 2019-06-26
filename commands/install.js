@@ -1,6 +1,7 @@
 'use strict'
 
-const { spawn } = require('child_process')
+// In order to work around windows shell issues...
+const spawn = require('cross-spawn')
 const { getValue } = require('../lib/config')
 const { queryReadline, reversedSplit } = require('../lib/util')
 const details = require('./details')
