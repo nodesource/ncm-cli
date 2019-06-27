@@ -1,3 +1,10 @@
+1.3.3 / 2019-06-27
+==================
+
+* Better Windows support for `install`.
+* Fixed handling of npm errors during `install`.
+* Fixed organization selection for orgs which are expired trials.
+
 1.3.2 / 2019-05-26
 ==================
 
