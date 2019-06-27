@@ -50,6 +50,7 @@ async function orgs (argv, org) {
 async function orgsCli (details, org) {
   const orgs = [ 'personal' ]
   for (let orgId in details.orgs) {
+    if (details.orgs[orgId].expired === true) return
     orgs.push(details.orgs[orgId].name)
   }
 
