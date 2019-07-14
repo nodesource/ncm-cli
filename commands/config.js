@@ -108,7 +108,7 @@ async function config (argv, action, key, value) {
     case 'list':
       const { unhide } = argv
 
-      for (let key of keyNames) {
+      for (const key of keyNames) {
         let val = getValue(key)
 
         if (val.trim() === '') {

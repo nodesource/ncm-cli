@@ -122,7 +122,7 @@ async function details (argv, arg1, arg2, arg3) {
     return
   }
 
-  let report = Object.assign({ failures: [], requirePaths }, data.packageVersion)
+  const report = Object.assign({ failures: [], requirePaths }, data.packageVersion)
 
   /* NCM-Cli Header */
   // later than usual so we can pick up the actual version.

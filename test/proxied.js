@@ -33,7 +33,7 @@ NCMTestRunner.test('api requests respect ENV proxy settings', async (runner, t) 
   })
 
   // Have the proxy server ipc us its port
-  const [ procPort ] = await once(proc, 'message')
+  const [procPort] = await once(proc, 'message')
 
   try {
     await runner.execP('details npm @ 6.8.0', {

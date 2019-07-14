@@ -87,7 +87,7 @@ async function whitelist (argv) {
   if (list && typeof list === 'boolean') {
     whitelistList()
   } else if (add || remove) {
-    const input = add ? [ add, ...argv._.slice(1) ] : [ remove, ...argv._.slice(1) ]
+    const input = add ? [add, ...argv._.slice(1)] : [remove, ...argv._.slice(1)]
     const entries = prepareInput(input)
 
     if (entries.length === 0) {
@@ -176,7 +176,7 @@ async function whitelist (argv) {
         if (!score.pass) {
           failures.push(score)
           if (score.group === 'risk') {
-            let riskSeverity = SEVERITY_RMAP.indexOf(score.severity)
+            const riskSeverity = SEVERITY_RMAP.indexOf(score.severity)
             if (riskSeverity > maxSeverity) maxSeverity = riskSeverity
           }
         }
@@ -208,14 +208,14 @@ function prepareInput (input) {
         semver.valid(entry.split('@')[1])
     ) {
       /* pkg@ver */
-      let [ name, version ] = entry.split('@')
+      const [name, version] = entry.split('@')
       entries.push({ name, version })
     } else if (entry[0] === '@' &&
             Array.from(entry).filter(char => char === '@').length === 2 &&
             semver.valid(entry.substring(1).split('@')[1])
     ) {
       /* @namespace/pkg@ver */
-      let [ name, version ] = entry.substring(1).split('@')
+      const [name, version] = entry.substring(1).split('@')
       entries.push({ name: '@' + name, version })
     } else {
       if (entry.indexOf('@') < 0 &&
