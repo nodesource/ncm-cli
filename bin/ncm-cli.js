@@ -40,7 +40,7 @@ async function main () {
     }
   })
 
-  let [ command = 'help', ...subargs ] = argv._
+  let [command = 'help', ...subargs] = argv._
   if (!Object.keys(commands).includes(command)) {
     command = 'help'
   }

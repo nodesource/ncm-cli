@@ -127,7 +127,7 @@ TestRunner.test('report --filter=security output', (runner, t) =>
 )
 
 TestRunner.test('report --filter=high --security output', (runner, t) => {
-  let cmd = `report ${MOCK_PROJECT} --filter=high --security`
+  const cmd = `report ${MOCK_PROJECT} --filter=high --security`
   runner.exec(cmd, (err, stdout, stderr) => {
     t.equal(err.code, 1)
     t.equal(stderr, '')
@@ -148,7 +148,7 @@ TestRunner.test('report --filter=high --security output', (runner, t) => {
 })
 
 TestRunner.test('report --filter=high output', (runner, t) => {
-  let cmd = `report ${MOCK_PROJECT} --filter=high`
+  const cmd = `report ${MOCK_PROJECT} --filter=high`
   runner.exec(cmd, (err, stdout, stderr) => {
     t.equal(err.code, 1)
     t.equal(stderr, '')
@@ -169,7 +169,7 @@ TestRunner.test('report --filter=high output', (runner, t) => {
 })
 
 TestRunner.test('report --filter=h output', (runner, t) => {
-  let cmd = `report ${MOCK_PROJECT} --filter=h --color=16m`
+  const cmd = `report ${MOCK_PROJECT} --filter=h --color=16m`
   runner.exec(cmd, (err, stdout, stderr) => {
     t.equal(err.code, 1)
     t.equal(stderr, '')
@@ -190,7 +190,7 @@ TestRunner.test('report --filter=h output', (runner, t) => {
 })
 
 TestRunner.test('report --filter=high,security output', (runner, t) => {
-  let cmd = `report ${MOCK_PROJECT} --filter=high,security`
+  const cmd = `report ${MOCK_PROJECT} --filter=high,security`
   runner.exec(cmd, (err, stdout, stderr) => {
     t.equal(err.code, 1)
     t.equal(stderr, '')
@@ -211,7 +211,7 @@ TestRunner.test('report --filter=high,security output', (runner, t) => {
 })
 
 TestRunner.test('report --filter=medium --security output', (runner, t) => {
-  let cmd = `report ${MOCK_PROJECT} --filter=medium --security`
+  const cmd = `report ${MOCK_PROJECT} --filter=medium --security`
   runner.exec(cmd, (err, stdout, stderr) => {
     t.equal(err.code, 1)
     t.equal(stderr, '')
@@ -232,7 +232,7 @@ TestRunner.test('report --filter=medium --security output', (runner, t) => {
 })
 
 TestRunner.test('report --filter=m --security output', (runner, t) => {
-  let cmd = `report ${MOCK_PROJECT} --filter=m --security`
+  const cmd = `report ${MOCK_PROJECT} --filter=m --security`
   runner.exec(cmd, (err, stdout, stderr) => {
     t.equal(err.code, 1)
     t.equal(stderr, '')
@@ -253,7 +253,7 @@ TestRunner.test('report --filter=m --security output', (runner, t) => {
 })
 
 TestRunner.test('report --filter=low --security output', (runner, t) => {
-  let cmd = `report ${MOCK_PROJECT} --filter=low --security`
+  const cmd = `report ${MOCK_PROJECT} --filter=low --security`
   runner.exec(cmd, (err, stdout, stderr) => {
     t.equal(err.code, 1)
     t.equal(stderr, '')
@@ -274,7 +274,7 @@ TestRunner.test('report --filter=low --security output', (runner, t) => {
 })
 
 TestRunner.test('report --filter=l --security output', (runner, t) => {
-  let cmd = `report ${MOCK_PROJECT} --filter=l --security`
+  const cmd = `report ${MOCK_PROJECT} --filter=l --security`
   runner.exec(cmd, (err, stdout, stderr) => {
     t.equal(err.code, 1)
     t.equal(stderr, '')
@@ -306,7 +306,7 @@ TestRunner.test('report output matches snapshot', (runner, t) =>
 )
 
 TestRunner.test('report with poisoned project', (runner, t) => {
-  let cmd = `report --long ${POISONED_PROJECT}`
+  const cmd = `report --long ${POISONED_PROJECT}`
   runner.exec(cmd, (err, stdout, stderr) => {
     t.equal(err.code, 1)
     t.equal(stderr, '')

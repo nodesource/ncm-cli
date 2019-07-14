@@ -76,17 +76,14 @@ async function signin (argv, email, password) {
     }
   } else {
     while (!authData) {
-      let email
-      let password
-
       L(line('|➔', 'Enter your NodeSource credentials:', COLORS.yellow))
       L()
 
       L(line('?', 'Email:', COLORS.red))
-      email = (await queryReadline(chalk`{${COLORS.light1} > }`)).trim()
+      const email = (await queryReadline(chalk`{${COLORS.light1} > }`)).trim()
       L()
       L(line('?', 'Password:', COLORS.red))
-      password = (await queryReadlineHidden(chalk`{${COLORS.light1} > }`)).trim()
+      const password = (await queryReadlineHidden(chalk`{${COLORS.light1} > }`)).trim()
 
       const usrInfo = JSON.stringify({ email, password })
 

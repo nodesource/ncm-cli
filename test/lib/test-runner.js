@@ -181,7 +181,7 @@ function NCMAPI (mockData) {
 }
 
 NCMAPI.prototype.packageVersion = function packageVersion (params) {
-  let modules = this.mockData.packages.filter(function findPackage (p) {
+  const modules = this.mockData.packages.filter(function findPackage (p) {
     return p.name === params.name &&
       p.version === params.version
   })
@@ -197,9 +197,9 @@ NCMAPI.prototype.packageVersion = function packageVersion (params) {
 }
 
 NCMAPI.prototype.packageVersions = function packageVersions (params) {
-  let versions = params.packageVersions
+  const versions = params.packageVersions
 
-  let modules = this.mockData.packages.filter(function findPackage (p) {
+  const modules = this.mockData.packages.filter(function findPackage (p) {
     return versions.some(function (v) {
       // For this module return the bad data object
       if (v.name === p.name && p.name === 'is-path-in-cwd') {
@@ -220,7 +220,7 @@ NCMAPI.prototype.policies = function policies (params) {
     name,
     organizationId,
     whitelist: [...whitelist.values()].map(pkgver => {
-      let [name, version] = reversedSplit(pkgver, /@(?!$)/)
+      const [name, version] = reversedSplit(pkgver, /@(?!$)/)
       return { name, version }
     })
   }]
