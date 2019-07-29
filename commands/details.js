@@ -62,7 +62,7 @@ async function details (argv, arg1, arg2, arg3) {
       }
     }
   } catch (err) {
-    if (err.code !== 'ENOENT') throw err
+    if (err.code !== 'ENOENT' && err.code !== 'ERR_ASSERTION') throw err
   }
 
   if (!name || (version !== 'latest' && !semver.valid(version))) {
