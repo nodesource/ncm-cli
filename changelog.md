@@ -1,3 +1,10 @@
+1.3.4 / 2019-07-30
+==================
+
+* Added automatic retry for http request timeouts.
+* Fixed handling of local dependency checking errors during `details`.
+* Fixed and improved line-wrapping for `details` output.
+
 1.3.3 / 2019-06-27
 ==================
 
