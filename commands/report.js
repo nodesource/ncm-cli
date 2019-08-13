@@ -14,6 +14,7 @@ const {
 } = require('../lib/report/util')
 const longReport = require('../lib/report/long')
 const shortReport = require('../lib/report/short')
+const htmlReport = require('../lib/report/html')
 const { helpHeader } = require('../lib/help')
 const {
   COLORS,
@@ -30,7 +31,8 @@ module.exports.optionsList = optionsList
 
 async function report (argv, _dir) {
   const {
-    long
+    long,
+    html
   } = argv
   let { dir = _dir } = argv
   if (!dir) dir = process.cwd()
@@ -162,6 +164,7 @@ async function report (argv, _dir) {
 
   if (!long) shortReport(pkgScores, whitelisted, dir, argv)
   if (long) longReport(pkgScores, whitelisted, dir, argv)
+  if (html) htmlReport(pkgScores, whitelisted, dir, html, argv)
   if (hasFailures) process.exitCode = 1
 }
 
