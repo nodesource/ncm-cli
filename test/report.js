@@ -313,7 +313,7 @@ TestRunner.test('report with poisoned project', (runner, t) => {
     t.matchSnapshot(stdout, 'long-report-poisoned-output')
     t.match(stdout, /poisoned-project Report/)
     t.match(stdout, /left-pad @ 1.3.0/)
-    t.match(stdout, /is-path-in-cwd… @ 0.0.0-UNKNOWN-VERSION/)
+    t.match(stdout, /is-pa… @ 0.0.0-UNKNOWN-VERSION/)
     t.end()
   })
 })
