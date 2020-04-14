@@ -53,7 +53,7 @@ async function config (argv, action, key, value) {
       L()
       break
 
-    case 'get':
+    case 'get': {
       if (!key) {
         printHelp()
         process.exitCode = 1
@@ -71,6 +71,7 @@ async function config (argv, action, key, value) {
       L(val)
       L()
       break
+    }
 
     case 'del':
       if (!key) {
@@ -89,7 +90,7 @@ async function config (argv, action, key, value) {
       L()
       break
 
-    case 'reset':
+    case 'reset': {
       resetState()
 
       L(box('!', 'Are you sure you want to reset all config? (y/N)', COLORS.orange))
@@ -101,11 +102,12 @@ async function config (argv, action, key, value) {
         process.exitCode = 1
         return
       }
-      L(success(`All config was reset.`))
+      L(success('All config was reset.'))
       L()
       break
+    }
 
-    case 'list':
+    case 'list': {
       const { unhide } = argv
 
       for (const key of keyNames) {
@@ -124,6 +126,7 @@ async function config (argv, action, key, value) {
       }
       L()
       break
+    }
 
     default:
       printHelp()

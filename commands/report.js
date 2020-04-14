@@ -15,6 +15,7 @@ const {
 const longReport = require('../lib/report/long')
 const shortReport = require('../lib/report/short')
 const { helpHeader } = require('../lib/help')
+const GitHubActionCheck = require('../lib/report/github-action')
 const {
   COLORS,
   header,
@@ -24,6 +25,8 @@ const {
 const chalk = require('chalk')
 const L = console.log
 const E = console.error
+const githubMode = process.env.IS_GITHUB_ACTION
+const isTest = process.env.NODE_ENV === 'testing'
 
 module.exports = report
 module.exports.optionsList = optionsList
@@ -83,7 +86,7 @@ async function report (argv, _dir) {
     }
   } catch (err) {
     L()
-    L(formatError(`Unable to fetch whitelist.`, err))
+    L(formatError('Unable to fetch whitelist.', err))
     L()
   }
 
@@ -162,7 +165,14 @@ async function report (argv, _dir) {
 
   if (!long) shortReport(pkgScores, whitelisted, dir, argv)
   if (long) longReport(pkgScores, whitelisted, dir, argv)
-  if (hasFailures) process.exitCode = 1
+
+  if (githubMode && !isTest) {
+    await GitHubActionCheck(pkgScores, whitelisted, hasFailures)
+  }
+
+  if (hasFailures) {
+    process.exitCode = 1
+  }
 }
 
 function printHelp () {

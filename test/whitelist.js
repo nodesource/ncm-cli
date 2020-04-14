@@ -5,7 +5,7 @@ const NCMTestRunner = require('./lib/test-runner.js')
 NCMTestRunner.test('whitelist updates properly', async (runner, t) => {
   {
     const { stdout, stderr } = await runner.execP(
-      `whitelist --add ansi-styles@3.2.1`,
+      'whitelist --add ansi-styles@3.2.1',
       { env: Object.assign({ FORCE_COLOR: 3 }, process.env) }
     )
     t.equal(stderr, '')
@@ -16,7 +16,7 @@ NCMTestRunner.test('whitelist updates properly', async (runner, t) => {
   }
   {
     const { stdout, stderr } = await runner.execP(
-      `whitelist --list`,
+      'whitelist --list',
       { env: Object.assign({ FORCE_COLOR: 3 }, process.env) }
     )
     t.equal(stderr, '')
@@ -28,7 +28,7 @@ NCMTestRunner.test('whitelist updates properly', async (runner, t) => {
   }
   {
     const { stdout, stderr } = await runner.execP(
-      `whitelist --remove ansi-styles@3.2.1`,
+      'whitelist --remove ansi-styles@3.2.1',
       { env: Object.assign({ FORCE_COLOR: 3 }, process.env) }
     )
     t.equal(stderr, '')
@@ -39,7 +39,7 @@ NCMTestRunner.test('whitelist updates properly', async (runner, t) => {
   }
   {
     const { stdout, stderr } = await runner.execP(
-      `whitelist --list`,
+      'whitelist --list',
       { env: Object.assign({ FORCE_COLOR: 3 }, process.env) }
     )
     t.equal(stderr, '')
