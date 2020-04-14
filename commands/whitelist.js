@@ -59,7 +59,7 @@ async function whitelist (argv) {
   try {
     const body = await apiRequest(
       'POST',
-      formatAPIURL(`/ncm2/api/v2/graphql`),
+      formatAPIURL('/ncm2/api/v2/graphql'),
       {
         query: queries.policy,
         variables: { orgId }
@@ -101,7 +101,7 @@ async function whitelist (argv) {
     try {
       await apiRequest(
         'POST',
-        formatAPIURL(`/ncm2/api/v2/graphql`),
+        formatAPIURL('/ncm2/api/v2/graphql'),
         {
           query: queries[add ? 'add' : 'remove'],
           variables: { policy, orgId, entries }
@@ -132,7 +132,7 @@ async function whitelist (argv) {
     try {
       const body = await apiRequest(
         'POST',
-        formatAPIURL(`/ncm2/api/v2/graphql`),
+        formatAPIURL('/ncm2/api/v2/graphql'),
         {
           query: queries.list,
           variables: { orgId }
@@ -151,7 +151,7 @@ async function whitelist (argv) {
     try {
       const body = await apiRequest(
         'POST',
-        formatAPIURL(`/ncm2/api/v2/graphql`),
+        formatAPIURL('/ncm2/api/v2/graphql'),
         {
           query: queries.pkgVer,
           variables: { pkgVers: whitelistData.whitelist }

@@ -5,7 +5,7 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`test/report.js TAP report --compliance output > report-output-compliance 1`] = `
+exports['test/report.js TAP report --compliance output > report-output-compliance 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -40,7 +40,7 @@ exports[`test/report.js TAP report --compliance output > report-output-complianc
 
 `
 
-exports[`test/report.js TAP report --filter=compliance output > report-output-compliance 1`] = `
+exports['test/report.js TAP report --filter=compliance output > report-output-compliance 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -75,7 +75,7 @@ exports[`test/report.js TAP report --filter=compliance output > report-output-co
 
 `
 
-exports[`test/report.js TAP report --filter=h output > report-output-high-security 1`] = `
+exports['test/report.js TAP report --filter=h output > report-output-high-security 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -110,7 +110,7 @@ exports[`test/report.js TAP report --filter=h output > report-output-high-securi
 
 `
 
-exports[`test/report.js TAP report --filter=high --security output > report-output-high-security 1`] = `
+exports['test/report.js TAP report --filter=high --security output > report-output-high-security 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -144,7 +144,7 @@ exports[`test/report.js TAP report --filter=high --security output > report-outp
 
 `
 
-exports[`test/report.js TAP report --filter=high output > report-output-high-security 1`] = `
+exports['test/report.js TAP report --filter=high output > report-output-high-security 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -179,7 +179,7 @@ exports[`test/report.js TAP report --filter=high output > report-output-high-sec
 
 `
 
-exports[`test/report.js TAP report --filter=high,security output > report-output-high-security 1`] = `
+exports['test/report.js TAP report --filter=high,security output > report-output-high-security 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -213,7 +213,7 @@ exports[`test/report.js TAP report --filter=high,security output > report-output
 
 `
 
-exports[`test/report.js TAP report --filter=l --security output > report-output-med-security 1`] = `
+exports['test/report.js TAP report --filter=l --security output > report-output-med-security 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -253,7 +253,7 @@ exports[`test/report.js TAP report --filter=l --security output > report-output-
 
 `
 
-exports[`test/report.js TAP report --filter=low --security output > report-output-med-security 1`] = `
+exports['test/report.js TAP report --filter=low --security output > report-output-med-security 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -293,7 +293,7 @@ exports[`test/report.js TAP report --filter=low --security output > report-outpu
 
 `
 
-exports[`test/report.js TAP report --filter=m --security output > report-output-med-security 1`] = `
+exports['test/report.js TAP report --filter=m --security output > report-output-med-security 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -328,7 +328,7 @@ exports[`test/report.js TAP report --filter=m --security output > report-output-
 
 `
 
-exports[`test/report.js TAP report --filter=medium --security output > report-output-med-security 1`] = `
+exports['test/report.js TAP report --filter=medium --security output > report-output-med-security 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -363,7 +363,7 @@ exports[`test/report.js TAP report --filter=medium --security output > report-ou
 
 `
 
-exports[`test/report.js TAP report --filter=security output > report-output-security 1`] = `
+exports['test/report.js TAP report --filter=security output > report-output-security 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -403,7 +403,7 @@ exports[`test/report.js TAP report --filter=security output > report-output-secu
 
 `
 
-exports[`test/report.js TAP report --security output > report-output-security 1`] = `
+exports['test/report.js TAP report --security output > report-output-security 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -443,7 +443,7 @@ exports[`test/report.js TAP report --security output > report-output-security 1`
 
 `
 
-exports[`test/report.js TAP report -c output > report-output-compliance 1`] = `
+exports['test/report.js TAP report -c output > report-output-compliance 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -478,7 +478,7 @@ exports[`test/report.js TAP report -c output > report-output-compliance 1`] = `
 
 `
 
-exports[`test/report.js TAP report -s output > report-output-security 1`] = `
+exports['test/report.js TAP report -s output > report-output-security 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -518,7 +518,7 @@ exports[`test/report.js TAP report -s output > report-output-security 1`] = `
 
 `
 
-exports[`test/report.js TAP report output matches snapshot > long-report-output 1`] = `
+exports['test/report.js TAP report output matches snapshot > long-report-output 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -589,7 +589,7 @@ exports[`test/report.js TAP report output matches snapshot > long-report-output 
 
 `
 
-exports[`test/report.js TAP report output matches snapshot > report-output 1`] = `
+exports['test/report.js TAP report output matches snapshot > report-output 1'] = `
 
 [38;2;137;161;157m╔═════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mmock-project Report[39m [38;2;137;161;157m║[39m
@@ -625,7 +625,7 @@ exports[`test/report.js TAP report output matches snapshot > report-output 1`] =
 
 `
 
-exports[`test/report.js TAP report with poisoned project > long-report-poisoned-output 1`] = `
+exports['test/report.js TAP report with poisoned project > long-report-poisoned-output 1'] = `
 
 [38;2;137;161;157m╔═════════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mpoisoned-project Report[39m [38;2;137;161;157m║[39m

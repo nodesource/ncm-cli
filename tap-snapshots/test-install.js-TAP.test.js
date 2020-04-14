@@ -5,21 +5,21 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`test/install.js TAP install output matches snapshot > config-set-output 1`] = `
+exports['test/install.js TAP install output matches snapshot > config-set-output 1'] = `
 [38;2;90;200;120m✓[39m <installBin> has been set to:
 test/lib/install-mock-bin.js
 
 
 `
 
-exports[`test/install.js TAP install output matches snapshot > install-output 1`] = `
+exports['test/install.js TAP install output matches snapshot > install-output 1'] = `
 
 [38;2;137;161;157m╔═════════════╗[39m
 [38;2;137;161;157m║[39m [37mnpm @ 6.8.0[39m [38;2;137;161;157m║[39m
 [38;2;137;161;157m╚═════════════╝[39m
 
 [38;2;255;183;38m┌──────┬─────────────┐[39m
-[38;2;255;183;38m│ [38;2;255;183;38m||[38;2;255;183;38m[38;2;76;88;89m||[38;2;255;183;38m │[39m [37mMedium Risk[39m [38;2;255;183;38m│[39m
+[38;2;255;183;38m│ [38;2;255;183;38m||[39m[38;2;255;183;38m[38;2;76;88;89m||[39m[38;2;255;183;38m │[39m [37mMedium Risk[39m [38;2;255;183;38m│[39m
 [38;2;255;183;38m└──────┴─────────────┘[39m
 
 [1mSecurity Risk:[22m
