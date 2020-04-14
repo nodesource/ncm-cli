@@ -29,6 +29,8 @@ function NCMTestRunner (opts) {
   this.env = {
     FORCE_COLOR: 3,
     NCM_TOKEN: 'token',
+    IS_GITHUB_ACTION: true,
+    NODE_ENV: 'testing',
     get NCM_API () {
       return `http://localhost:${self.port}`
     }
@@ -121,6 +123,13 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
 
   this.app.use('/accounts/user/details', function (req, res, next) {
     res.send({ orgId: 'sample-org-id' })
+    res.statusCode = 200
+
+    next()
+  })
+
+  this.app.use('/github/context', function (req, res, next) {
+    res.send({ token: 'GGGGiiiiOOOO11112222' })
     res.statusCode = 200
 
     next()
