@@ -1,6 +1,6 @@
 'use strict'
 
-const test = require('tape')
+const { test } = require('tap')
 const sinon = require('sinon')
 
 const core = require('@actions/core')
