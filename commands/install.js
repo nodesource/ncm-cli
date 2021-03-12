@@ -77,11 +77,8 @@ const filterPkgs = (pkgs) => {
   return [...clean]
 }
 
-const scannerLog = () => {
-  L()
-  L(chalk`Scanning npm dependency substitution vulnerabilities before installing...`)
-  L()
-}
+const scannerLog = () =>
+  L(chalk`[NCM::SECURITY] Scanning npm dependency substitution vulnerabilities...`)
 
 async function install (argv, arg1, arg2, arg3) {
   const childArgv = Array.from(process.argv.slice(3))
@@ -101,16 +98,19 @@ async function install (argv, arg1, arg2, arg3) {
           if (!name) continue
           if (name.includes('/')) continue
 
+          L(`[NCM::SECURITY] Verifying the package "${name}"`)
+
           const { body: { versions = {} } } = await clientRequest({
             method: 'GET',
             uri: `${privateRegistryUrl}${name}`,
             json: true,
             opted: true
           })
-          if (!Object.keys(versions).length) continue
+          let verLen = Object.keys(versions).length
+          if (!verLen) continue
 
-          const { url: privateRepoUrl } = versions[(Object.keys(versions)[0])].repository
-          if (!privateRepoUrl) continue
+          const { integrity: privateIntegrity } = versions[(Object.keys(versions)[verLen - 1])].dist
+          if (!privateIntegrity) continue
 
           const { body: { versions: pubVers = {} } } = await clientRequest({
             method: 'GET',
@@ -118,23 +118,28 @@ async function install (argv, arg1, arg2, arg3) {
             json: true,
             opted: true
           })
-          if (!Object.keys(pubVers).length) continue
+          verLen = Object.keys(pubVers).length
+          if (!verLen) continue
 
-          const { url: pubRepoUrl } = versions[(Object.keys(versions)[0])].repository
-          if (!pubRepoUrl) continue
-          if (privateRepoUrl !== pubRepoUrl) {
-            E(chalk.red(`[ERROR] "${name}" is vulnerable to npm substitution attacks. Please use scopes for the internal packages and try again`))
+          const { integrity: publicIntegrity } = pubVers[(Object.keys(pubVers)[verLen - 1])].dist
+
+          if (!publicIntegrity) continue
+          if (privateIntegrity !== publicIntegrity) {
+            E(chalk.red(`[NCM::SECURITY ISSUE DETECTED] "${name}" is vulnerable to npm substitution attacks. Use scopes for the internal packages to fix this`))
             process.exit(1)
           }
-        } catch (_) {} // TODO: err handler
+        } catch (_err) {
+          E(_err)
+        }
       }
-    } catch (err) {} // TODO: err handler
+    } catch (err) {
+      E(err)
+    }
 
-    L()
-    L(chalk`Passed. Now installing...`)
+    L(chalk`[NCM::SECURITY] Passed. Now installing...`)
     L()
 
-    const args = [getValue('installCmd'), null, ...childArgv]
+    const args = [getValue('installCmd'), '', ...childArgv]
     const bin = getValue('installBin')
     const cp = spawn(bin, args, { stdio: 'inherit' })
 
@@ -167,6 +172,41 @@ async function install (argv, arg1, arg2, arg3) {
     return
   }
 
+  try {
+    scannerLog()
+
+    if (!name.includes('/')) {
+      const { body: { versions = {} } } = await clientRequest({
+        method: 'GET',
+        uri: `${privateRegistryUrl}${name}`,
+        json: true,
+        opted: true
+      })
+      let verLen = Object.keys(versions).length
+      if (verLen) {
+        const { integrity: privateIntegrity } = versions[(Object.keys(versions)[verLen - 1])].dist
+        if (privateIntegrity) {
+          const { body: { versions: pubVers = {} } } = await clientRequest({
+            method: 'GET',
+            uri: `${publicRegistryUrl}${name}`,
+            json: true,
+            opted: true
+          })
+          verLen = Object.keys(pubVers).length
+          if (verLen) {
+            const { integrity: publicIntegrity } = pubVers[(Object.keys(pubVers)[verLen - 1])].dist
+            if (publicIntegrity && (privateIntegrity !== publicIntegrity)) {
+              E(chalk.red(`[NCM::SECURITY ISSUE DETECTED] "${name}@${version}" is vulnerable to npm substitution attacks. Use scopes for the internal packages to fix this`))
+              process.exit(1)
+            }
+          }
+        }
+      }
+    }
+  } catch (err) {
+    E(err)
+  }
+
   await details(argv, arg1, arg2, arg3)
 
   const good = process.exitCode === 0 || process.exitCode === undefined
@@ -186,39 +226,6 @@ async function install (argv, arg1, arg2, arg3) {
   }
 
   if ((good && choice === '') || choice === 'y') {
-    scannerLog()
-
-    try {
-      if (!name.includes('/')) {
-        const { body: { versions = {} } } = await clientRequest({
-          method: 'GET',
-          uri: `${privateRegistryUrl}${name}`,
-          json: true,
-          opted: true
-        })
-        if (Object.keys(versions).length) {
-          const { url: privateRepoUrl } = versions[(Object.keys(versions)[0])].repository
-          if (privateRepoUrl) {
-            const { body: { versions: pubVers = {} } } = await clientRequest({
-              method: 'GET',
-              uri: `${publicRegistryUrl}${name}`,
-              json: true,
-              opted: true
-            })
-            if (Object.keys(pubVers).length) {
-              const { url: pubRepoUrl } = versions[(Object.keys(versions)[0])].repository
-              if (pubRepoUrl && (privateRepoUrl !== pubRepoUrl)) {
-                E(chalk.red(`[ERROR] "${name}@${version}" is vulnerable to npm substitution attacks. Please use scopes for the internal packages and try again`))
-                process.exitCode = 1
-              }
-            }
-          }
-        }
-      }
-    } catch (err) {
-      // TODO: err handler
-    }
-
     const args = [getValue('installCmd'), `${name}@${version}`, ...childArgv]
     const bin = getValue('installBin')
 
