@@ -115,6 +115,23 @@ async function report (argv, _dir) {
     return
   }
 
+  const {
+    name: pkgName,
+    version: pkgVersion
+  } = require(path.join(__dirname, '..', 'package.json'))
+
+  let nestedPkgName, nestedPkgVersion
+  try {
+    const {
+      name: _nestedPkgName,
+      version: _nestedPkgVersion
+    } = require(`${dir}/package.json`)
+    nestedPkgName = _nestedPkgName
+    nestedPkgVersion = _nestedPkgVersion
+  } catch (_) {}
+
+  const isNested = pkgName === nestedPkgName && pkgVersion === nestedPkgVersion
+
   for (let { name, version, scores, published } of data) {
     let maxSeverity = 0
     let license
@@ -145,6 +162,10 @@ async function report (argv, _dir) {
 
     if (!version) {
       version = '0.0.0-UNKNOWN-VERSION'
+    }
+
+    if (isNested && !!maxSeverity) {
+      continue
     }
 
     pkgScores.push({
