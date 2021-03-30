@@ -1,3 +1,11 @@
+1.4.0 / 2021-03-24
+==================
+
+* Ensured the prevention of npm substitution attacks during `install`.
+* Added Github actions integration.
+* Fixed handling of metadata during `report`
+* Dependency updates.
+
 1.3.4 / 2019-07-30
 ==================
 
