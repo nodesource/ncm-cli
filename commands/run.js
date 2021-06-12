@@ -135,16 +135,7 @@ async function install (argv, arg1, arg2, arg3) {
     }
 
     const bin = getValue('installBin')
-    const cp = spawn(bin, args, { stdio: 'inherit' })
-
-    cp.on('error', error => {
-      E()
-      E(chalk`{COLORS.red ${error}}`)
-      E()
-    })
-    cp.on('exit', code => {
-      process.exitCode = code
-    })
+    
     return
   } else if (arg1.lastIndexOf('@') > 0 && !arg2 && !arg3) {
     childArgv.splice(childArgv.indexOf(arg1), 1)

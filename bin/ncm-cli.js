@@ -21,6 +21,7 @@ const commands = {
   signin: require('../commands/signin'),
   signout: require('../commands/signout'),
   report: require('../commands/report'),
+  run: require('../commands/run'),
   details: require('../commands/details')
 }
 

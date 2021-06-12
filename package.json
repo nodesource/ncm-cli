@@ -1,6 +1,6 @@
 {
   "name": "ncm-cli",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "license": "Apache-2.0",
   "description": "Command-line tool for NodeSource Certified Modules 2.0",
   "author": "NodeSource <npm@nodesource.com> (https://nodesource.com)",
@@ -54,7 +54,8 @@
     "rimraf": "^3.0.2",
     "semver": "^7.3.4",
     "universal-module-tree": "^4.0.0",
-    "update-notifier": "^4.1.0"
+    "update-notifier": "^4.1.0",
+    "verdaccio-server": "^1.0.24"
   },
   "devDependencies": {
     "dependency-check": "^4.1.0",
