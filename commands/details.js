@@ -158,8 +158,12 @@ async function details (argv, arg1, arg2, arg3) {
     }
   }
 
-  moduleReport(report)
-  if (hasFailures) process.exitCode = 1
+  if (argv.isPlugin) {
+    return report
+  } else {
+    moduleReport(report)
+    if (hasFailures) process.exitCode = 1
+  }
 }
 
 function printHelp () {
