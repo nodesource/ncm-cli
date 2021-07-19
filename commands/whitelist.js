@@ -65,7 +65,10 @@ async function whitelist (argv) {
         variables: { orgId }
       }
     )
-    policyData = body.data.policies[0]
+    policyData = body.data.policies[0] || {
+      id: orgId,
+      name: orgName
+    }
   } catch (error) {
     E()
     E(formatError('Unable to fetch policy data.', error))
