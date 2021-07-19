@@ -113,6 +113,8 @@ async function config (argv, action, key, value) {
       for (const key of keyNames) {
         let val = getValue(key)
 
+        if (Array.isArray(val)) val = JSON.stringify(val)
+
         if (val.trim() === '') {
           val = chalk`{italic {${COLORS.light1} (empty)}}`
         } else if (/token/i.test(key) && !unhide) {
