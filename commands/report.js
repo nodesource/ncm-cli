@@ -8,6 +8,7 @@ const {
   graphql
 } = require('../lib/util')
 const config = require('../lib/config')
+const score = require('../lib/report/score')
 const {
   SEVERITY_RMAP,
   moduleSort
@@ -183,6 +184,7 @@ async function report (argv, _dir) {
 
   const whitelisted = pkgScores.filter(pkg => whitelist.has(`${pkg.name}@${pkg.version}`))
   pkgScores = pkgScores.filter(pkg => !whitelist.has(`${pkg.name}@${pkg.version}`))
+    .map(pkgScore => ({ ...pkgScore, score: score(pkgScore.scores) }))
 
   if (!long) shortReport(pkgScores, whitelisted, dir, argv)
   if (long) longReport(pkgScores, whitelisted, dir, argv)
