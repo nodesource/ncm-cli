@@ -16,6 +16,7 @@ const {
   formatError
 } = require('../lib/ncm-style')
 const chalk = require('chalk')
+const score = require('../lib/report/score')
 
 const L = console.log
 const E = console.error
@@ -193,10 +194,10 @@ async function whitelist (argv) {
         scores,
         license,
         failures,
-        maxSeverity
+        maxSeverity,
+        score: score(scores)
       })
     })
-
     whitelistReport(report, orgName)
   }
 }

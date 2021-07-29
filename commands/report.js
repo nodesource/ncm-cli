@@ -183,6 +183,7 @@ async function report (argv, _dir) {
   pkgScores = moduleSort(pkgScores)
 
   const whitelisted = pkgScores.filter(pkg => whitelist.has(`${pkg.name}@${pkg.version}`))
+    .map(pkgScore => ({ ...pkgScore, score: score(pkgScore.scores) }))
   pkgScores = pkgScores.filter(pkg => !whitelist.has(`${pkg.name}@${pkg.version}`))
     .map(pkgScore => ({ ...pkgScore, score: score(pkgScore.scores) }))
 
