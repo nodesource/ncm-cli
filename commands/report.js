@@ -162,7 +162,8 @@ async function report (argv, _dir) {
     }
 
     if (!version) {
-      version = '0.0.0-UNKNOWN-VERSION'
+      // skip unknown version to make the report consistent
+      continue
     }
 
     if (isNested && !!maxSeverity) {
