@@ -172,10 +172,11 @@ async function whitelist (argv) {
 
     // prepare whitelist package data
     const report = []
-    pkgData.packageVersions.forEach(({ name, version, published, scores }, index) => {
+    pkgData.packageVersions.forEach(({ name, version, published, scores = [] }, index) => {
       const failures = []
       let maxSeverity = 0
       let license
+      if (!version || !scores.length) return
       for (const score of scores) {
         if (!score.pass) {
           failures.push(score)
@@ -195,7 +196,7 @@ async function whitelist (argv) {
         license,
         failures,
         maxSeverity,
-        score: score(scores)
+        quantitativeScore: score(scores)
       })
     })
     whitelistReport(report, orgName)

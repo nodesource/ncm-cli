@@ -36,7 +36,8 @@ async function main () {
       long: 'l',
       org: 'O',
       report: 'r',
-      version: 'v'
+      version: 'v',
+      json: 'j'
     }
   })
 

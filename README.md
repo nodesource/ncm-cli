@@ -147,6 +147,9 @@ Reports may be filtered based on any of the following flags:
 - `--compliance, -c` - only display non-compliant packages.
 - `--security, -s` - only display packages with vulnerabilities.
 
+## Options
+
+- `--json, -j` - Formats the report in JSON (disabled by default)
 
 ## `ncm details <module{@version}>`
 
