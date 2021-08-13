@@ -34,7 +34,8 @@ module.exports.optionsList = optionsList
 
 async function report (argv, _dir) {
   const {
-    long
+    long,
+    json
   } = argv
   let { dir = _dir } = argv
   if (!dir) dir = process.cwd()
@@ -44,9 +45,11 @@ async function report (argv, _dir) {
     return
   }
 
-  /* NCM-Cli Header */
-  L()
-  L(header(`${path.basename(dir)} Report`))
+  if (!json) {
+    /* NCM-Cli Header */
+    L()
+    L(header(`${path.basename(dir)} Report`))
+  }
 
   let orgId = config.getValue('orgId')
 
@@ -184,10 +187,11 @@ async function report (argv, _dir) {
   pkgScores = moduleSort(pkgScores)
 
   const whitelisted = pkgScores.filter(pkg => whitelist.has(`${pkg.name}@${pkg.version}`))
-    .map(pkgScore => ({ ...pkgScore, score: score(pkgScore.scores) }))
+    .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores) }))
   pkgScores = pkgScores.filter(pkg => !whitelist.has(`${pkg.name}@${pkg.version}`))
-    .map(pkgScore => ({ ...pkgScore, score: score(pkgScore.scores) }))
+    .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores) }))
 
+  if (json) return L(JSON.stringify(pkgScores, null, 2))
   if (!long) shortReport(pkgScores, whitelisted, dir, argv)
   if (long) longReport(pkgScores, whitelisted, dir, argv)
 
