@@ -175,8 +175,11 @@ async function whitelist (argv) {
     pkgData.packageVersions.forEach(({ name, version, published, scores = [] }, index) => {
       const failures = []
       let maxSeverity = 0
-      let license
-      if (!version || !scores.length) return
+      let license = {}
+      if (!version) return
+      if (scores.license == null) {
+        score.license = { pass: false }
+      }
       for (const score of scores) {
         if (!score.pass) {
           failures.push(score)
@@ -187,6 +190,10 @@ async function whitelist (argv) {
         }
         if (score.name === 'license') license = score
       }
+
+      const getLicenseScore = ({ pass }) => !pass ? 0 : null
+      if (getLicenseScore(license) === 0) maxSeverity = 4
+
       report.push({
         name,
         /* def response is null, replace with the user specified version */
@@ -196,7 +203,7 @@ async function whitelist (argv) {
         license,
         failures,
         maxSeverity,
-        quantitativeScore: score(scores)
+        quantitativeScore: score(scores, maxSeverity)
       })
     })
     whitelistReport(report, orgName)
