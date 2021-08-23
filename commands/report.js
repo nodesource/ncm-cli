@@ -138,7 +138,7 @@ async function report (argv, _dir) {
 
   for (let { name, version, scores, published } of data) {
     let maxSeverity = 0
-    let license
+    let license = {}
     const failures = []
 
     for (const score of scores) {
@@ -173,6 +173,9 @@ async function report (argv, _dir) {
       continue
     }
 
+    const getLicenseScore = ({ pass }) => !pass ? 0 : null
+    if (getLicenseScore(license) === 0) maxSeverity = 4
+
     pkgScores.push({
       name,
       version,
@@ -187,9 +190,9 @@ async function report (argv, _dir) {
   pkgScores = moduleSort(pkgScores)
 
   const whitelisted = pkgScores.filter(pkg => whitelist.has(`${pkg.name}@${pkg.version}`))
-    .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores) }))
+    .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores, pkgScore.maxSeverity) }))
   pkgScores = pkgScores.filter(pkg => !whitelist.has(`${pkg.name}@${pkg.version}`))
-    .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores) }))
+    .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores, pkgScore.maxSeverity) }))
 
   if (json) return L(JSON.stringify(pkgScores, null, 2))
   if (!long) shortReport(pkgScores, whitelisted, dir, argv)
