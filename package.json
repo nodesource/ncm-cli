@@ -48,7 +48,7 @@
     "events.once": "^2.0.2",
     "minimist": "^1.2.5",
     "p-defer": "^3.0.0",
-    "proxy-agent": "^4.0.1",
+    "proxy-agent": "^5.0.0",
     "proxy-from-env": "^1.1.0",
     "rc": "^1.2.8",
     "rimraf": "^3.0.2",
