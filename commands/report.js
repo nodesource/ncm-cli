@@ -136,7 +136,7 @@ async function report (argv, _dir) {
 
   const isNested = pkgName === nestedPkgName && pkgVersion === nestedPkgVersion
 
-  for (let { name, version, scores, published } of data) {
+  for (const { name, version, scores, published } of data) {
     let maxSeverity = 0
     let license = {}
     const failures = []

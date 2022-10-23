@@ -136,13 +136,13 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
   })
 
   this.app.use('/ncm2/api/v2/graphql', expressGraphql({
-    schema: schema,
+    schema,
     rootValue: api,
     graphiql: true
   }))
 
   this.httpServer = this.app.listen(0, () => {
-    var addr = this.httpServer.address()
+    const addr = this.httpServer.address()
     this.port = addr.port
     cb()
   })
