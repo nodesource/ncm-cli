@@ -5,7 +5,7 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports['test/help.js TAP help output matches help snapshot > help-output 1'] = `
+exports[`test/help.js TAP help output matches help snapshot > help-output 1`] = `
 
 [38;2;137;161;157m╔═══════════════════════════════════════╗[39m
 [38;2;137;161;157m║[39m [37mNodeSource Certified Modules CLI Help[39m [38;2;137;161;157m║[39m
