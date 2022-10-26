@@ -54,7 +54,7 @@
     "rimraf": "^3.0.2",
     "semver": "^7.3.4",
     "universal-module-tree": "^4.0.0",
-    "update-notifier": "^5.1.0"
+    "update-notifier": "^6.0.2"
   },
   "devDependencies": {
     "dependency-check": "^4.1.0",
