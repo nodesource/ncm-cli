@@ -11,6 +11,7 @@ const config = require('../lib/config')
 const score = require('../lib/report/score')
 const {
   SEVERITY_RMAP,
+  SEVERITY_RMAP_NPM,
   moduleSort
 } = require('../lib/report/util')
 const longReport = require('../lib/report/long')
@@ -28,6 +29,7 @@ const L = console.log
 const E = console.error
 const githubMode = process.env.IS_GITHUB_ACTION
 const isTest = process.env.NODE_ENV === 'testing'
+const { spawnSync } = require('child_process')
 
 module.exports = report
 module.exports.optionsList = optionsList
@@ -193,6 +195,47 @@ async function report (argv, _dir) {
     .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores, pkgScore.maxSeverity) }))
   pkgScores = pkgScores.filter(pkg => !whitelist.has(`${pkg.name}@${pkg.version}`))
     .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores, pkgScore.maxSeverity) }))
+
+  const npmAudit = () => {
+    return new Promise((resolve, reject) => {
+      const npmAuditProcess = spawnSync('npm', ['audit', '--json'], { cwd: dir })
+      if (npmAuditProcess.error) {
+        return reject(npmAuditProcess.error)
+      }
+
+      resolve(npmAuditProcess.stdout.toString())
+    })
+  }
+
+  let npmAuditData = '{}'
+  try {
+    npmAuditData = await npmAudit()
+  } catch (err) {
+    E()
+    E(formatError('Failed to run "npm audit"', err))
+    E()
+    process.exitCode = 1
+  }
+
+  try {
+    const npmAuditJson = JSON.parse(npmAuditData) || {}
+    if (npmAuditJson.advisories) {
+      for (const advisory of Object.values(npmAuditJson.advisories)) {
+        const { version } = advisory.findings ? (advisory.findings[0] || {}) : {}
+        const { module_name: name, severity = 'NONE' } = advisory
+        const maxSeverity = SEVERITY_RMAP_NPM.indexOf(severity.toUpperCase())
+        pkgScores.push({
+          name,
+          version,
+          published: true,
+          maxSeverity,
+          failures: [],
+          license: {},
+          scores: []
+        })
+      }
+    }
+  } catch (err) { } // intentional noop
 
   if (json) return L(JSON.stringify(pkgScores, null, 2))
   if (!long) shortReport(pkgScores, whitelisted, dir, argv)
