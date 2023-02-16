@@ -231,7 +231,8 @@ async function report (argv, _dir) {
           maxSeverity,
           failures: [],
           license: {},
-          scores: []
+          scores: [],
+          auditScore: maxSeverity
         })
       }
     }
