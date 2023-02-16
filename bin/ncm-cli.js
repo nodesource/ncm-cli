@@ -8,7 +8,6 @@ process.on('unhandledRejection', function (err) {
 })
 
 const parseArgs = require('minimist')
-const updateNotifier = require('update-notifier')
 const pkg = require('../package.json')
 
 const commands = {
@@ -52,8 +51,6 @@ async function main () {
   }
 
   await commands[command](argv, ...subargs)
-
-  updateNotifier({ pkg }).notify()
 }
 
 // invoke main
