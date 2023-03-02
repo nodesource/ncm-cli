@@ -2,10 +2,12 @@
 
 'use strict'
 
-process.on('unhandledRejection', function (err) {
+function handleError(err){
   console.error(err)
   process.exit(1)
-})
+}
+
+process.on('unhandledRejection', handleError)
 
 const parseArgs = require('minimist')
 const pkg = require('../package.json')
@@ -39,6 +41,11 @@ async function main () {
       json: 'j'
     }
   })
+  
+
+  if(typeof argv.dir !== 'string'){
+    handleError('ERR_INVALID_ARG_TYPE: --dir or -d must to be a string')
+  }
 
   let [command = 'help', ...subargs] = argv._
   if (!Object.keys(commands).includes(command)) {
