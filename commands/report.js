@@ -28,7 +28,6 @@ const {
   formatError
 } = require('../lib/ncm-style')
 const chalk = require('chalk')
-const { start } = require('repl')
 const L = console.log
 const E = console.error
 const githubMode = process.env.IS_GITHUB_ACTION
@@ -205,7 +204,6 @@ async function report (argv, _dir) {
     pkgScores.forEach(pkg => {
       if (pkg.maxSeverity !== 0) {
         const start = findPkgVerFromLock(fs.readFileSync(path.join(dir, 'package-lock.json'), 'utf8'), pkg.name, pkg.version)
-        console.log(start)
         ret.push({
           "message": `Package ${pkg.name}@${pkg.version} is vulnerable.`,
           "path": "package-lock.json",
