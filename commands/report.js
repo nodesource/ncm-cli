@@ -215,7 +215,7 @@ async function report (argv, _dir) {
           "message": `${pkg.name}@${pkg.version} is vulnerable. \n ${JSON.stringify(pkg)}`,
           "path": isLock ? "package-lock.json" : "package.json",
           "line": { "start": start, "end": start },
-          "level": "error"
+          "level": "failure"
         })
       }
     })
