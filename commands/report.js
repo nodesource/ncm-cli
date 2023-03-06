@@ -2,8 +2,6 @@
 
 const path = require('path')
 const fs = require('fs')
-const { promisify } = require('util')
-const readFile = promisify(fs.readFile)
 
 const analyze = require('../lib/ncm-analyze-tree')
 const {
@@ -212,10 +210,10 @@ async function report (argv, _dir) {
           start = findPkgVerFromLock(pkgLock, pkg.name, pkg.version)
         }
         ret.push({
-          "message": `${pkg.name}@${pkg.version} is vulnerable. \n ${JSON.stringify(pkg)}`,
-          "path": isLock ? "package-lock.json" : "package.json",
-          "line": { "start": start, "end": start },
-          "level": "failure"
+          message: `${pkg.name}@${pkg.version} is vulnerable. \n ${JSON.stringify(pkg)}`,
+          path: isLock ? 'package-lock.json' : 'package.json',
+          line: { start, end: start },
+          level: 'failure'
         })
       }
     })
