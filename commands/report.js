@@ -50,7 +50,7 @@ async function report (argv, _dir) {
     return
   }
 
-  if (!json) {
+  if (!json && !gate) {
     /* NCM-Cli Header */
     L()
     L(header(`${path.basename(dir)} Report`))
