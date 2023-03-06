@@ -212,10 +212,10 @@ async function report (argv, _dir) {
           start = findPkgVerFromLock(pkgLock, pkg.name, pkg.version)
         }
         ret.push({
-          "message": `Package ${pkg.name}@${pkg.version} is vulnerable.`,
+          "message": `${pkg.name}@${pkg.version} is vulnerable. \n ${JSON.stringify(pkg)}`,
           "path": isLock ? "package-lock.json" : "package.json",
           "line": { "start": start, "end": start },
-          "level": "warning"
+          "level": "error"
         })
       }
     })
