@@ -1,6 +1,10 @@
 'use strict'
 
 const path = require('path')
+const fs = require('fs')
+const { promisify } = require('util')
+const readFile = promisify(fs.readFile)
+
 const analyze = require('../lib/ncm-analyze-tree')
 const {
   apiRequest,
@@ -24,6 +28,7 @@ const {
   formatError
 } = require('../lib/ncm-style')
 const chalk = require('chalk')
+const { start } = require('repl')
 const L = console.log
 const E = console.error
 const githubMode = process.env.IS_GITHUB_ACTION
@@ -35,7 +40,8 @@ module.exports.optionsList = optionsList
 async function report (argv, _dir) {
   const {
     long,
-    json
+    json,
+    gate
   } = argv
   let { dir = _dir } = argv
   if (!dir) dir = process.cwd()
@@ -193,6 +199,45 @@ async function report (argv, _dir) {
     .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores, pkgScore.maxSeverity) }))
   pkgScores = pkgScores.filter(pkg => !whitelist.has(`${pkg.name}@${pkg.version}`))
     .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores, pkgScore.maxSeverity) }))
+
+  if (gate) {
+    const ret = []
+    pkgScores.forEach(pkg => {
+      if (pkg.maxSeverity !== 0) {
+        const start = findPkgVerFromLock(fs.readFileSync(path.join(dir, 'package-lock.json'), 'utf8'), pkg.name, pkg.version)
+        console.log(start)
+        ret.push({
+          "message": `Package ${pkg.name}@${pkg.version} is vulnerable.`,
+          "path": "package-lock.json",
+          "line": { "start": start, "end": start },
+          "level": "warning"
+        })
+      }
+    })
+    return L(JSON.stringify(ret, null, 2))
+  }
+
+  function findPkgVerFromLock (lock, pkg, ver) {
+    try {
+      const searchTerms = `"${pkg}": {
+        "version": "${ver}"`
+      const terms = searchTerms.split('\n').map(term => term.trim())
+      const lines = lock.split('\n')
+      const matches = []
+      lines.forEach((line, lineNumber) => {
+        if (terms.some(term => line.includes(term))) {
+          if (matches.length && matches[0] === lineNumber) {
+            matches.push(lineNumber + 1)
+          } else if (!matches.length) {
+            matches.push(lineNumber + 1)
+          }
+        }
+      })
+      return matches[matches.length - 1]
+    } catch (err) {
+      return -1
+    }
+  }
 
   if (json) return L(JSON.stringify(pkgScores, null, 2))
   if (!long) shortReport(pkgScores, whitelisted, dir, argv)
