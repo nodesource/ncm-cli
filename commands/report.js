@@ -201,18 +201,37 @@ async function report (argv, _dir) {
 
   if (gate) {
     const ret = []
+    const pkgLock = fs.readFileSync(path.join(dir, 'package-lock.json'), 'utf8')
+    const pkgJson = fs.readFileSync(path.join(dir, 'package.json'), 'utf8')
     pkgScores.forEach(pkg => {
       if (pkg.maxSeverity !== 0) {
-        const start = findPkgVerFromLock(fs.readFileSync(path.join(dir, 'package-lock.json'), 'utf8'), pkg.name, pkg.version)
+        let isLock = false
+        let start = findPkgFromJson(pkgJson, pkg.name)
+        if (start <= 0) {
+          isLock = true
+          start = findPkgVerFromLock(pkgLock, pkg.name, pkg.version)
+        }
         ret.push({
           "message": `Package ${pkg.name}@${pkg.version} is vulnerable.`,
-          "path": "package-lock.json",
+          "path": isLock ? "package-lock.json" : "package.json",
           "line": { "start": start, "end": start },
           "level": "warning"
         })
       }
     })
     return L(JSON.stringify(ret, null, 2))
+  }
+
+  function findPkgFromJson (json, pkg) {
+    const lines = json.split('\n')
+
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].includes(pkg)) {
+        return i + 1
+      }
+    }
+
+    return -1
   }
 
   function findPkgVerFromLock (lock, pkg, ver) {
