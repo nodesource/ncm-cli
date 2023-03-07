@@ -209,9 +209,10 @@ async function report (argv, _dir) {
           isLock = true
           start = findPkgVerFromLock(pkgLock, pkg.name, pkg.version)
         }
+        pkg.failures = pkg.failures || []
         const reasons = pkg.failures.map(failure => failure.title).join('\n')
         ret.push({
-          message: `${pkg.name}@${pkg.version} is vulnerable.\n${reasons}`,
+          message: `NCM found ${pkg.failures.length} issues in ${pkg.name}@${pkg.version}:\n${reasons}`,
           path: isLock ? 'package-lock.json' : 'package.json',
           line: { start, end: start },
           level: 'failure'
