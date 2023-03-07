@@ -43,7 +43,7 @@ async function main () {
   })
   
 
-  if(typeof argv.dir !== 'string'){
+  if(argv.dir && typeof argv.dir !== 'string'){
     handleError('ERR_INVALID_ARG_TYPE: --dir or -d must to be a string')
   }
 
