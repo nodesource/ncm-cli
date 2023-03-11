@@ -221,7 +221,7 @@ async function report (argv, _dir) {
     })
     let sh = ''
     ret.forEach(item => {
-      sh += `echo "::error file=${item.path},line=${item.line.start},col=1::${item.message}"\n`
+      sh += `echo "::error title=NCM,file=${item.path},line=${item.line.start},col=1::${item.message}"\n`
     })
     fs.writeFileSync('ncm.sh', sh)
     return L(JSON.stringify(ret, null, 2))
