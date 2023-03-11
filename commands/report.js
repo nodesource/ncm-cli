@@ -212,8 +212,7 @@ async function report (argv, _dir) {
         pkg.failures = pkg.failures || []
         const reasons = pkg.failures.map(failure => failure.title).join('\n')
         ret.push({
-          message: `NCM found ${pkg.failures.length} issues in ${pkg.name}@${pkg.version}:
-          ${reasons}`,
+          message: `NCM found ${pkg.failures.length} issues in ${pkg.name}@${pkg.version}:%0A${reasons}`,
           path: isLock ? 'package-lock.json' : 'package.json',
           line: { start, end: start },
           level: 'failure'
