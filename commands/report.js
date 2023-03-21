@@ -225,6 +225,7 @@ async function report (argv, _dir) {
     ret.forEach(item => {
       sh += `echo "::error title=NCM Report,file=${item.path},line=${item.line.start},col=1::${item.message}"\n`
     })
+    if (sh) sh += 'exit 1'
     fs.writeFileSync('ncm-annotate.sh', sh)
     return L(JSON.stringify(ret, null, 2))
   }
