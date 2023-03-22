@@ -177,7 +177,7 @@ async function whitelist (argv) {
       let maxSeverity = 0
       let license = {}
       if (!version) return
-      if (scores.license == null) {
+      if (!scores.license) {
         score.license = { pass: false }
       }
       for (const score of scores) {
