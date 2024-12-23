@@ -4,7 +4,7 @@
 
 The command-line tool for NodeSource Certified Modules 2.0 — designed to make code quality, security, and compliance a breeze. Generate a custom project report, fetch compliance and security information, manage organizational whitelists, and inspect specific packages in greater detail — all from the command-line.
 
-_Additional NodeSource Certified Modules v2 information is available [on the NodeSource documentation site](https://docs.nodesource.com/ncmv2/docs)._
+_Additional NodeSource Certified Modules v2 information is available [on the NodeSource documentation site](https://docs.nodesource.com/docs/category/ncm-v2)._
 
 ## Installation
 
