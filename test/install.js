@@ -31,6 +31,12 @@ NCMTestRunner.test('install output matches snapshot', async (runner, t) => {
     t.match(stdout, /[NCM::SECURITY]/)
 
     const out = stdout.toString()
-    t.match(out, 'SUBCOMMAND ARGS: [ \'install\', \'npm@6.8.0\', \'--force\'')
+    // Split output into lines and find the SUBCOMMAND ARGS line
+    const lines = out.split('\n')
+    const subcommandLine = lines.find(line => line.includes('SUBCOMMAND ARGS:'))
+    t.ok(subcommandLine, 'Should find SUBCOMMAND ARGS line')
+    // Remove ANSI color codes for comparison
+    const cleanLine = subcommandLine?.replace(/\[\d+m/g, '')
+    t.match(cleanLine, /SUBCOMMAND ARGS: \[ 'install', 'npm@6.8.0', '--force' \]/, 'Should have correct command arguments')
   }
 })

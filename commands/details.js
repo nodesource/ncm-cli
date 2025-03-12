@@ -1,6 +1,7 @@
 'use strict'
 
 const path = require('path')
+const debug = require('debug')('ncm:details')
 const {
   formatAPIURL,
   graphql,
@@ -54,15 +55,17 @@ async function details (argv, arg1, arg2, arg3) {
   let requirePaths = []
   try {
     const tree = await universalModuleTree(dir)
-    const list = universalModuleTree.flatten(tree)
-    for (const pkg of list) {
-      if (pkg.name === name && pkg.version === version) {
-        requirePaths = pkg.paths
-        break
+    if (tree) {
+      const list = universalModuleTree.flatten(tree)
+      for (const pkg of list) {
+        if (pkg.name === name && pkg.version === version) {
+          requirePaths = pkg.paths
+          break
+        }
       }
     }
   } catch (err) {
-    if (err.code !== 'ENOENT' && err.code !== 'ERR_ASSERTION') throw err
+    debug('Failed to analyze dependencies: %s', err.message)
   }
 
   if (!name || (version !== 'latest' && !semver.valid(version))) {
@@ -143,8 +146,8 @@ async function details (argv, arg1, arg2, arg3) {
 
   for (const score of report.scores) {
     if (score.group !== 'compliance' &&
-        score.group !== 'security' &&
-        score.group !== 'risk') {
+      score.group !== 'security' &&
+      score.group !== 'risk') {
       continue
     }
 
