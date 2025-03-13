@@ -2,7 +2,7 @@ const { test } = require('tap')
 const tapeCluster = require('tape-cluster')
 const graphql = require('graphql')
 const express = require('express')
-const expressGraphql = require('express-graphql').graphqlHTTP
+const { createHandler } = require('graphql-http/lib/use/express')
 const path = require('path')
 const { exec } = require('child_process')
 const util = require('util')
@@ -135,10 +135,9 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
     next()
   })
 
-  this.app.use('/ncm2/api/v2/graphql', expressGraphql({
+  this.app.all('/ncm2/api/v2/graphql', createHandler({
     schema,
-    rootValue: api,
-    graphiql: true
+    rootValue: api
   }))
 
   this.httpServer = this.app.listen(0, () => {

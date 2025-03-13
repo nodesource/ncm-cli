@@ -198,12 +198,22 @@ async function report (argv, _dir) {
 
   const npmAudit = () => {
     return new Promise((resolve, reject) => {
-      const npmAuditProcess = spawnSync('npm', ['audit', '--json'], { cwd: dir })
+      const npmAuditProcess = spawnSync('npm', ['audit', '--json'], {
+        cwd: dir,
+        timeout: 10000, // Add a 10 second timeout to prevent hanging
+        encoding: 'utf8'
+      })
+
       if (npmAuditProcess.error) {
         return reject(npmAuditProcess.error)
       }
 
-      resolve(npmAuditProcess.stdout.toString())
+      if (npmAuditProcess.status !== 0 && npmAuditProcess.signal === 'SIGTERM') {
+        // Handle timeout case
+        return resolve('{}')
+      }
+
+      resolve(npmAuditProcess.stdout ? npmAuditProcess.stdout.toString() : '{}')
     })
   }
 
