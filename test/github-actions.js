@@ -1,12 +1,13 @@
 'use strict'
 
-const { test } = require('tap')
+// Import AVA's default export
+const test = require('ava').default
 const sinon = require('sinon')
 
 const core = require('@actions/core')
 const updateCheck = require('../lib/report/github-action')
 
-test('Github Action Annotation', (t) => {
+test('Github Action Annotation', async (t) => {
   sinon.stub(core, 'getInput').returns('test-run')
 
   const octokit = {
@@ -52,8 +53,8 @@ test('Github Action Annotation', (t) => {
     repo: 'ncm-cli'
   }
 
-  t.doesNotThrow(function () {
+  // AVA handles assertions differently than tap
+  await t.notThrowsAsync(async () => {
     updateCheck(octokit, listChecks, annotations, contextData)
   })
-  t.end()
 })
