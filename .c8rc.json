@@ -1,0 +1,24 @@
+{
+  "all": true,
+  "include": [
+    "bin/**/*.js",
+    "lib/**/*.js",
+    "index.js"
+  ],
+  "exclude": [
+    "test/**",
+    "coverage/**",
+    "node_modules/**",
+    "**/*.d.ts",
+    "tap-snapshots/**",
+    "tools/**"
+  ],
+  "reporter": [
+    "text",
+    "html",
+    "lcov"
+  ],
+  "check-coverage": false,
+  "per-file": true,
+  "cache": false
+}

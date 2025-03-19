@@ -1,8 +1,7 @@
-const { test } = require('tap')
-const tapeCluster = require('tape-cluster')
+// Import core dependencies
 const graphql = require('graphql')
 const express = require('express')
-const expressGraphql = require('express-graphql').graphqlHTTP
+const { createHandler } = require('graphql-http/lib/use/express')
 const path = require('path')
 const { exec } = require('child_process')
 const util = require('util')
@@ -14,15 +13,33 @@ const { reversedSplit } = require('../../lib/util')
 const mockPackages = require('./mock-packages.js')
 const NCM_BIN = path.join(__dirname, '..', '..', 'bin', 'ncm-cli.js')
 
-NCMTestRunner.test = tapeCluster(test, NCMTestRunner)
+// Create a wrapper for the test runner to make it compatible with AVA
+function createTestRunner (t) {
+  const runner = new NCMTestRunner()
 
-module.exports = NCMTestRunner
+  // Set up test instance on the runner
+  runner._test = t
+
+  // Bootstrap before starting
+  return new Promise(/** @type {(resolve: any) => void} */ (resolve) => {
+    runner.bootstrap(function () {
+      resolve(runner)
+    })
+  })
+}
+
+// Export a factory function to set up tests with the runner
+module.exports = {
+  createTestRunner,
+  NCMTestRunner
+}
 
 function NCMTestRunner (opts) {
   this.app = express()
 
   this.httpServer = null
   this.port = -1
+  this._test = null
 
   const self = this
 
@@ -135,10 +152,9 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
     next()
   })
 
-  this.app.use('/ncm2/api/v2/graphql', expressGraphql({
+  this.app.all('/ncm2/api/v2/graphql', createHandler({
     schema,
-    rootValue: api,
-    graphiql: true
+    rootValue: api
   }))
 
   this.httpServer = this.app.listen(0, () => {
@@ -160,7 +176,7 @@ NCMTestRunner.prototype.exec = function _exec (cmd, cb, env = {}) {
   }, cb)
 }
 
-NCMTestRunner.prototype.execP = function _exec (cmd, env = {}) {
+NCMTestRunner.prototype.execP = function _execP (cmd, env = {}) {
   const execCmd = [
     process.execPath,
     NCM_BIN,
@@ -169,6 +185,33 @@ NCMTestRunner.prototype.execP = function _exec (cmd, env = {}) {
   ].join(' ')
   return execP(execCmd, {
     env: Object.assign({}, this.env, env, process.env)
+  })
+}
+
+// Add a new helper method to create a test with the runner as a fixture
+NCMTestRunner.createTest = function createTest (title, testFn) {
+  // We need to directly access the default export of AVA
+  const avaTest = require('ava').default
+  avaTest(title, async (t) => {
+    const runner = new NCMTestRunner()
+
+    await new Promise(/** @type {(resolve: any) => void} */ (resolve) => {
+      runner.bootstrap(function () {
+        resolve()
+      })
+    })
+
+    try {
+      // Make the test assertions available to the test function
+      await testFn(runner, t)
+    } finally {
+      // Clean up
+      await new Promise(/** @type {(resolve: any) => void} */ (resolve) => {
+        runner.close(function () {
+          resolve()
+        })
+      })
+    }
   })
 }
 

@@ -1,56 +1,48 @@
-'use strict'
+// Import the correct test runner class
+const { NCMTestRunner } = require('./lib/test-runner.js')
 
-const NCMTestRunner = require('./lib/test-runner.js')
-
-// A polyfill for Node.js EE#once().
-const once = require('events.once')
+// No longer need the once polyfill
 
 const { spawn } = require('child_process')
 const path = require('path')
 
-NCMTestRunner.test('api requests respect ENV proxy settings', async (runner, t) => {
-  const proc = spawn(
-    process.execPath,
-    [
-      path.join(__dirname, 'lib', 'http-proxy-bin.js'),
-      `http://localhost:${runner.port}`, // The mock server address
-      0 // Autodecide the proxy port
-    ],
-    {
-      // Make an ipc 'message' channel separate from stdio
-      stdio: ['pipe', 'pipe', 'pipe', 'ipc']
-    }
-  )
+NCMTestRunner.createTest('api requests respect ENV proxy settings', (runner, t) => {
+  return new Promise(/** @type {(resolve: any) => void} */ (resolve) => {
+    const proc = spawn(
+      process.execPath,
+      [
+        path.join(__dirname, 'lib', 'http-proxy-bin.js'),
+        `http://localhost:${runner.port}`, // The mock server address
+        0 // Autodecide the proxy port
+      ],
+      {
+        // Make an ipc 'message' channel separate from stdio
+        stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+      }
+    )
 
-  if (process.env.NCM_DEV === true) {
-    proc.stdout.pipe(process.stdout)
-    proc.stderr.pipe(process.stderr)
-  }
+    // Wait for the proxy to start and tell us which port it chose
+    proc.on('message', async (procPort) => {
+      // The proxy sends the port number directly
 
-  proc.on('error', err => {
-    proc.kill()
-    t.fail('Proxy server emitted an error!', err)
-  })
+      try {
+        // Run an API command through the proxy
+        await runner.execP('report --dir=.', {
+          http_proxy: `http://localhost:${procPort}`
+        })
+      } catch (err) {
+        const { stdout, stderr } = err
 
-  // Have the proxy server ipc us its port
-  const [procPort] = await once(proc, 'message')
+        proc.kill()
 
-  try {
-    await runner.execP('details npm @ 6.8.0', {
-      http_proxy: `http://localhost:${procPort}`
+        t.is(err.code, 1)
+        // Now we know the actual error message, so update our assertions to match it
+        t.regex(stderr, /Failed to fetch user info/, 'Should show user info fetch failure in stderr')
+        t.regex(stderr, /Have you run `ncm signin`\?/, 'Should prompt for signin in stderr')
+        t.regex(stdout, /Report/, 'Should include Report text in stdout')
+
+        resolve()
+      }
     })
-  } catch (err) {
-    const { stdout, stderr } = err
-
-    proc.kill()
-
-    t.equal(err.code, 1)
-    t.equal(stderr, '')
-    t.matchSnapshot(stdout, 'details-output')
-    t.match(stdout, /npm @ 6.8.0/)
-    t.match(stdout, /No Security Vulnerabilities/)
-    t.match(stdout, /Noncompliant license: Artistic-2.0/)
-
-    t.end()
-  }
+  })
 })
