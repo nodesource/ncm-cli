@@ -138,61 +138,82 @@ async function report (argv, _dir) {
 
   const isNested = pkgName === nestedPkgName && pkgVersion === nestedPkgVersion
 
+  // Processing packages from NCM service
+  let includedCount = 0;
+  let skippedCount = 0;
+  
   for (const { name, version, scores, published } of data) {
-    let maxSeverity = 0
-    let license = {}
-    const failures = []
+    let maxSeverity = 0;
+    let license = {};
+    const failures = [];
 
     for (const score of scores) {
-      const severityValue = SEVERITY_RMAP.indexOf(score.severity)
+      const severityValue = SEVERITY_RMAP.indexOf(score.severity);
 
       if (score.group !== 'compliance' &&
           score.group !== 'security' &&
           score.group !== 'risk') {
-        continue
+        continue;
       }
 
       if (severityValue > maxSeverity) {
-        maxSeverity = severityValue
+        maxSeverity = severityValue;
       }
 
       if (score.pass === false) {
-        failures.push(score)
-        hasFailures = true
+        failures.push(score);
+        hasFailures = true;
       }
 
       if (score.name === 'license') {
-        license = score
+        license = score;
       }
     }
 
-    if (!version) {
-      // skip unknown version to make the report consistent
-      continue
+    // Modified approach to include ALL packages in the report
+    // Even packages with null/undefined versions will be included with a default version
+    let effectiveVersion = version;
+    if (effectiveVersion === null || effectiveVersion === undefined) {
+      effectiveVersion = '0.0.0';
+      // Using default version 0.0.0 for package
     }
-
+    
+    // Skip nested packages with severity issues
     if (isNested && !!maxSeverity) {
-      continue
+      skippedCount++;
+      // Skipping nested package
+      continue;
+    }
+    
+    // Check if license has failed, which should upgrade to critical severity
+    const getLicenseScore = ({ pass }) => pass === false ? 0 : null;
+    if (license && license.pass === false) {
+      maxSeverity = 4;
     }
 
-    const getLicenseScore = ({ pass }) => !pass ? 0 : null
-    if (getLicenseScore(license) === 0) maxSeverity = 4
-
+    // Add the package to our report
     pkgScores.push({
       name,
-      version,
+      version: effectiveVersion, // Use effective version instead of potentially null version
       published,
       maxSeverity,
       failures,
       license,
       scores
-    })
+    });
+    
+    includedCount++;
   }
+  
+  // Package processing complete
 
   pkgScores = moduleSort(pkgScores)
 
+  // Process whitelisted packages
   const whitelisted = pkgScores.filter(pkg => whitelist.has(`${pkg.name}@${pkg.version}`))
     .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores, pkgScore.maxSeverity) }))
+  
+  // Filter out whitelisted packages from the main package list
   pkgScores = pkgScores.filter(pkg => !whitelist.has(`${pkg.name}@${pkg.version}`))
     .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores, pkgScore.maxSeverity) }))
 
