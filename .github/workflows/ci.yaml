@@ -1,0 +1,28 @@
+name: N|Solid CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  CI:
+    name: CI with N|Solid ${{ matrix.nsolid-version }} (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+        nsolid-version: [5]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup N|Solid ${{ matrix.node-version }}
+        uses: nodesource/setup-nsolid@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+          nsolid-version: ${{ matrix.nsolid-version }}
+      - run: nsolid -vv
+      - run: npm ci || npm install
+      - run: npm run test
+
