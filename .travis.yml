@@ -7,9 +7,11 @@ node_js:
   - "14"
   - "16"
   - "18"
+  - "20"
+  - "22"
 matrix:
   include:
-    - node_js: "19"
+    - node_js: "23"
       env: "NVM_NODEJS_ORG_MIRROR=https://nodejs.org/download/nightly"
   allow_failures:
     # Allow the nightly installs to fail
