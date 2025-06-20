@@ -40,7 +40,7 @@
     "@actions/core": "^1.10.0",
     "@actions/github": "^6.0.0",
     "@octokit/rest": "^21.1.1",
-    "@ns-private/ncm-ng": "^3.0.0",
+    "@ns-private/ncm-ng": "^2.9.7",
     "chalk": "^4.1.2",
     "client-request": "^2.3.0",
     "configstore": "^5.0.1",
