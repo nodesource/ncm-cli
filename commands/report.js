@@ -54,95 +54,65 @@ async function report (argv, _dir) {
   }
 
   let orgId = config.getValue('orgId')
-  let useLocalNcmNg = true // Flag to indicate local ncm-ng usage
-  
+
+  // Local ncm-ng adapter is required for certification
   try {
-    // Try to require the local ncm-ng adapter to see if it's available
+    // Verify that ncm-ng adapter is available
     try {
       require('../lib/ncm-ng-adapter')
       if (!json) {
-        // If we're using local ncm-ng, inform the user
+        // Inform the user about local certification
         L()
-        L(chalk.blue('Using local ncm-ng for certification (no authentication required)'))
+        L(chalk.blue('Using local ncm-ng for certification'))
         L()
       }
     } catch (adapterErr) {
-      useLocalNcmNg = false
-    }
-    
-    // Only authenticate with remote API if not using local ncm-ng
-    if (!useLocalNcmNg) {
-      const details = await apiRequest(
-        'GET',
-        formatAPIURL('/accounts/user/details')
-      )
-      if (typeof details.orgId === 'string') {
-        orgId = details.orgId
-      }
-    }
-  } catch (err) {
-    if (!useLocalNcmNg) {
+      // Fail if ncm-ng adapter is not available
       E()
-      E(formatError('Failed to fetch user info. Have you run `ncm signin`?', err))
+      E(formatError('Local certification via ncm-ng is required but not available', adapterErr))
+      E()
+      E(chalk.yellow('Make sure the ncm-ng package is correctly installed as a dependency.'))
       E()
       process.exitCode = 1
       return
     }
+  } catch (err) {
+    E()
+    E(formatError('Failed to initialize certification', err))
+    E()
+    process.exitCode = 1
+    return
   }
 
   const whitelist = new Set()
-  // Only try to fetch whitelist from remote API if not using local ncm-ng
-  if (!useLocalNcmNg) {
-    try {
-      const data = await graphql(
-        formatAPIURL('/ncm2/api/v2/graphql'),
-        `query($organizationId: String!) {
-          policies(organizationId: $organizationId) {
-            whitelist {
-              name
-              version
-            }
+  // Using local whitelist file only
+  // Look for .ncm-whitelist.json in the project directory
+  try {
+    const fs = require('fs')
+    const path = require('path')
+    const whitelistPath = path.join(dir, '.ncm-whitelist.json')
+
+    if (fs.existsSync(whitelistPath)) {
+      const whitelistData = JSON.parse(fs.readFileSync(whitelistPath, 'utf8'))
+      if (Array.isArray(whitelistData)) {
+        for (const pkg of whitelistData) {
+          if (pkg && pkg.name && pkg.version) {
+            whitelist.add(`${pkg.name}@${pkg.version}`)
           }
-        }`,
-        { organizationId: orgId }
-      )
-      for (const policy of data.policies) {
-        for (const pkg of policy.whitelist) {
-          whitelist.add(`${pkg.name}@${pkg.version}`)
         }
-      }
-    } catch (err) {
-      L()
-      L(formatError('Unable to fetch whitelist from remote API.', err))
-      L()
-    }
-  } else {
-    // When using local ncm-ng, attempt to load local whitelist config if available
-    try {
-      const fs = require('fs')
-      const path = require('path')
-      const localWhitelistPath = path.join(process.cwd(), '.ncm-whitelist.json')
-      
-      if (fs.existsSync(localWhitelistPath)) {
-        const localWhitelist = JSON.parse(fs.readFileSync(localWhitelistPath, 'utf8'))
-        if (Array.isArray(localWhitelist)) {
-          for (const item of localWhitelist) {
-            if (item && item.name && item.version) {
-              whitelist.add(`${item.name}@${item.version}`)
-            }
-          }
-          L()
-          L(chalk.green(`Loaded local whitelist with ${whitelist.size} entries`))
-        }
-      } else {
         L()
-        L(chalk.yellow('No local whitelist found at .ncm-whitelist.json'))
+        L(chalk.blue(`Loaded local whitelist from ${whitelistPath}`))
+        L()
       }
-    } catch (err) {
+    } else {
       L()
-      L(formatError('Unable to load local whitelist.', err))
+      L(chalk.yellow('No local whitelist file found (.ncm-whitelist.json)'))
       L()
     }
+  } catch (err) {
+    L()
+    L(formatError(`Error loading local whitelist: ${err.message}`, err))
+    L()
   }
 
   /* verify */
@@ -150,11 +120,22 @@ async function report (argv, _dir) {
   let hasFailures = false
 
   let data
+  let usingLocalCertification = false
   try {
-    data = await analyze({
+    // analyze now returns both the data and a flag indicating if local certification was used
+    const analyzeResult = await analyze({
       dir,
       url: formatAPIURL('/ncm2/api/v2/graphql')
     })
+
+    // Extract the data and the flag
+    data = analyzeResult.data
+    usingLocalCertification = analyzeResult.usingLocalCertification
+
+    // Log whether we're using local or remote certification
+    if (usingLocalCertification) {
+      console.log(chalk.cyan('✓ Using local certification via ncm-ng'))
+    }
   } catch (err) {
     if (err.code === 'ENOENT') {
       E()
@@ -188,56 +169,56 @@ async function report (argv, _dir) {
   const isNested = pkgName === nestedPkgName && pkgVersion === nestedPkgVersion
 
   // Processing packages from NCM service
-  let includedCount = 0;
-  let skippedCount = 0;
-  
+  let includedCount = 0
+  let skippedCount = 0
+
   for (const { name, version, scores, published } of data) {
-    let maxSeverity = 0;
-    let license = {};
-    const failures = [];
+    let maxSeverity = 0
+    let license = {}
+    const failures = []
 
     for (const score of scores) {
-      const severityValue = SEVERITY_RMAP.indexOf(score.severity);
+      const severityValue = SEVERITY_RMAP.indexOf(score.severity)
 
       if (score.group !== 'compliance' &&
           score.group !== 'security' &&
           score.group !== 'risk') {
-        continue;
+        continue
       }
 
       if (severityValue > maxSeverity) {
-        maxSeverity = severityValue;
+        maxSeverity = severityValue
       }
 
       if (score.pass === false) {
-        failures.push(score);
-        hasFailures = true;
+        failures.push(score)
+        hasFailures = true
       }
 
       if (score.name === 'license') {
-        license = score;
+        license = score
       }
     }
 
     // Modified approach to include ALL packages in the report
     // Even packages with null/undefined versions will be included with a default version
-    let effectiveVersion = version;
+    let effectiveVersion = version
     if (effectiveVersion === null || effectiveVersion === undefined) {
-      effectiveVersion = '0.0.0';
+      effectiveVersion = '0.0.0'
       // Using default version 0.0.0 for package
     }
-    
+
     // Skip nested packages with severity issues
     if (isNested && !!maxSeverity) {
-      skippedCount++;
+      skippedCount++
       // Skipping nested package
-      continue;
+      continue
     }
-    
+
     // Check if license has failed, which should upgrade to critical severity
-    const getLicenseScore = ({ pass }) => pass === false ? 0 : null;
+    const getLicenseScore = ({ pass }) => pass === false ? 0 : null
     if (license && license.pass === false) {
-      maxSeverity = 4;
+      maxSeverity = 4
     }
 
     // Add the package to our report
@@ -249,11 +230,11 @@ async function report (argv, _dir) {
       failures,
       license,
       scores
-    });
-    
-    includedCount++;
+    })
+
+    includedCount++
   }
-  
+
   // Package processing complete
 
   pkgScores = moduleSort(pkgScores)
@@ -261,7 +242,7 @@ async function report (argv, _dir) {
   // Process whitelisted packages
   const whitelisted = pkgScores.filter(pkg => whitelist.has(`${pkg.name}@${pkg.version}`))
     .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores, pkgScore.maxSeverity) }))
-  
+
   // Filter out whitelisted packages from the main package list
   pkgScores = pkgScores.filter(pkg => !whitelist.has(`${pkg.name}@${pkg.version}`))
     .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores, pkgScore.maxSeverity) }))
