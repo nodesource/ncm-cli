@@ -54,46 +54,95 @@ async function report (argv, _dir) {
   }
 
   let orgId = config.getValue('orgId')
-
+  let useLocalNcmNg = true // Flag to indicate local ncm-ng usage
+  
   try {
-    const details = await apiRequest(
-      'GET',
-      formatAPIURL('/accounts/user/details')
-    )
-    if (typeof details.orgId === 'string') {
-      orgId = details.orgId
+    // Try to require the local ncm-ng adapter to see if it's available
+    try {
+      require('../lib/ncm-ng-adapter')
+      if (!json) {
+        // If we're using local ncm-ng, inform the user
+        L()
+        L(chalk.blue('Using local ncm-ng for certification (no authentication required)'))
+        L()
+      }
+    } catch (adapterErr) {
+      useLocalNcmNg = false
     }
-  } catch (err) {
-    E()
-    E(formatError('Failed to fetch user info. Have you run `ncm signin`?', err))
-    E()
-    process.exitCode = 1
-    return
-  }
-
-  const whitelist = new Set()
-  try {
-    const data = await graphql(
-      formatAPIURL('/ncm2/api/v2/graphql'),
-      `query($organizationId: String!) {
-        policies(organizationId: $organizationId) {
-          whitelist {
-            name
-            version
-          }
-        }
-      }`,
-      { organizationId: orgId }
-    )
-    for (const policy of data.policies) {
-      for (const pkg of policy.whitelist) {
-        whitelist.add(`${pkg.name}@${pkg.version}`)
+    
+    // Only authenticate with remote API if not using local ncm-ng
+    if (!useLocalNcmNg) {
+      const details = await apiRequest(
+        'GET',
+        formatAPIURL('/accounts/user/details')
+      )
+      if (typeof details.orgId === 'string') {
+        orgId = details.orgId
       }
     }
   } catch (err) {
-    L()
-    L(formatError('Unable to fetch whitelist.', err))
-    L()
+    if (!useLocalNcmNg) {
+      E()
+      E(formatError('Failed to fetch user info. Have you run `ncm signin`?', err))
+      E()
+      process.exitCode = 1
+      return
+    }
+  }
+
+  const whitelist = new Set()
+  // Only try to fetch whitelist from remote API if not using local ncm-ng
+  if (!useLocalNcmNg) {
+    try {
+      const data = await graphql(
+        formatAPIURL('/ncm2/api/v2/graphql'),
+        `query($organizationId: String!) {
+          policies(organizationId: $organizationId) {
+            whitelist {
+              name
+              version
+            }
+          }
+        }`,
+        { organizationId: orgId }
+      )
+      for (const policy of data.policies) {
+        for (const pkg of policy.whitelist) {
+          whitelist.add(`${pkg.name}@${pkg.version}`)
+        }
+      }
+    } catch (err) {
+      L()
+      L(formatError('Unable to fetch whitelist from remote API.', err))
+      L()
+    }
+  } else {
+    // When using local ncm-ng, attempt to load local whitelist config if available
+    try {
+      const fs = require('fs')
+      const path = require('path')
+      const localWhitelistPath = path.join(process.cwd(), '.ncm-whitelist.json')
+      
+      if (fs.existsSync(localWhitelistPath)) {
+        const localWhitelist = JSON.parse(fs.readFileSync(localWhitelistPath, 'utf8'))
+        if (Array.isArray(localWhitelist)) {
+          for (const item of localWhitelist) {
+            if (item && item.name && item.version) {
+              whitelist.add(`${item.name}@${item.version}`)
+            }
+          }
+          L()
+          L(chalk.green(`Loaded local whitelist with ${whitelist.size} entries`))
+        }
+      } else {
+        L()
+        L(chalk.yellow('No local whitelist found at .ncm-whitelist.json'))
+      }
+    } catch (err) {
+      L()
+      L(formatError('Unable to load local whitelist.', err))
+      L()
+    }
   }
 
   /* verify */
