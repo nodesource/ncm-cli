@@ -82,7 +82,7 @@ async function report (argv, _dir) {
     L(header(`${path.basename(dir)} Report`))
   }
 
-  let orgId = config.getValue('orgId')
+  const orgId = config.getValue('orgId')
 
   // Local ncm-ng adapter is required for certification
   try {
@@ -140,55 +140,55 @@ async function report (argv, _dir) {
   let pkgScores = []
   let hasFailures = false
 
-  let data = [];
-  let usingLocalCertification = false;
-  
+  let data = []
+  let usingLocalCertification = false
+
   try {
     // analyze now returns both the data and a flag indicating if local certification was used
     const analyzeResult = await analyze({
       dir,
       url: formatAPIURL('/ncm2/api/v2/graphql')
-    });
+    })
 
     // Extract the data and the flag
-    data = analyzeResult.data;
-    usingLocalCertification = analyzeResult.usingLocalCertification;
-    
+    data = analyzeResult.data
+    usingLocalCertification = analyzeResult.usingLocalCertification
+
     // Convert data from Set to Array if needed
     if (data instanceof Set) {
-      data = Array.from(data);
+      data = Array.from(data)
     } else if (!Array.isArray(data)) {
       if (!data) {
-        console.log('WARNING: No data received from analyze function');
-        data = [];
+        console.log('WARNING: No data received from analyze function')
+        data = []
       } else if (typeof data === 'object') {
         // Try to convert from object to array if possible
         try {
-          data = Object.values(data);
+          data = Object.values(data)
         } catch (e) {
-          console.log('Error converting object to array:', e.message);
-          data = [];
+          console.log('Error converting object to array:', e.message)
+          data = []
         }
       } else {
-        data = [];
+        data = []
       }
     }
-    
-    // If we have certified packages from ncm-ng but report doesn't see them, 
+
+    // If we have certified packages from ncm-ng but report doesn't see them,
     // copy the certification data over
-    if (data.length === 0 && analyzeResult.certifiedPackages && 
-        Array.isArray(analyzeResult.certifiedPackages) && 
+    if (data.length === 0 && analyzeResult.certifiedPackages &&
+        Array.isArray(analyzeResult.certifiedPackages) &&
         analyzeResult.certifiedPackages.length > 0) {
-      console.log('Recovering certified packages from analyzeResult.certifiedPackages');
-      data = analyzeResult.certifiedPackages;
-      console.log(`Recovered ${data.length} certified packages`);
+      console.log('Recovering certified packages from analyzeResult.certifiedPackages')
+      data = analyzeResult.certifiedPackages
+      console.log(`Recovered ${data.length} certified packages`)
     }
-    
+
     // ALWAYS ensure we have at least one package for self-certification mode
     if (data.length === 0 && dir && path.basename(dir) === 'ncm-cli') {
-      console.log('Self-certification mode detected with no data, adding placeholder');
+      console.log('Self-certification mode detected with no data, adding placeholder')
       // Add a minimal placeholder package
-      const pkg = require(path.join(dir, 'package.json'));
+      const pkg = require(path.join(dir, 'package.json'))
       data.push({
         name: pkg.name || 'ncm-cli',
         version: pkg.version || '1.0.0',
@@ -211,29 +211,28 @@ async function report (argv, _dir) {
           title: 'License Check',
           data: { spdx: pkg.license || 'MIT', valid: true }
         }]
-      });
+      })
     }
-    
-    // No debug logs needed
 
+    // No debug logs needed
   } catch (err) {
     // Handle errors during analysis
     if (err.code === 'ENOENT') {
-      E();
-      E(failure(err.message));
-      E(formatError(`Unable to read project at: ${dir}`, err));
-      E();
+      E()
+      E(failure(err.message))
+      E(formatError(`Unable to read project at: ${dir}`, err))
+      E()
     } else {
-      E();
-      E(formatError(`Unable to analyze project: ${err.message}`, err));
-      E();
+      E()
+      E(formatError(`Unable to analyze project: ${err.message}`, err))
+      E()
     }
-    process.exitCode = 1;
-    return;
+    process.exitCode = 1
+    return
   }
 
   // Process the data from analyze
-  
+
   const {
     name: pkgName,
     version: pkgVersion
@@ -261,7 +260,7 @@ async function report (argv, _dir) {
     let maxSeverity = 1
     let license = {}
     const failures = []
-    
+
     // Track if this package has a certification error
     const hasError = !!error
 
@@ -299,10 +298,10 @@ async function report (argv, _dir) {
     // Self-certification mode: DO NOT filter out packages in self-certification mode
     // Only skip extreme cases where we have a critical severity AND we're in nested mode that's not self-cert
     if (isNested && maxSeverity >= 4 && name !== 'ncm-cli') {
-      skippedCount++;
-      continue;
+      skippedCount++
+      continue
     }
-    
+
     // Track packages for reporting
 
     // Check if license has failed, which should upgrade to critical severity
@@ -317,7 +316,7 @@ async function report (argv, _dir) {
       version: effectiveVersion, // Use effective version instead of potentially null version
       published,
       // If package has an error, still include it with appropriate data
-      maxSeverity, 
+      maxSeverity,
       failures: hasError ? [...failures, { name: 'certification', message: error || 'Unknown certification error' }] : failures,
       // Add error info if present
       hasError,
@@ -434,7 +433,7 @@ Reports may be filtered based on any of the following flags:
 }
 
 // Define help text generation function separately
-function getOptionsText() {
+function getOptionsText () {
   return chalk`
 {${COLORS.light1} ncm} {${COLORS.yellow} report}
 {${COLORS.light1} ncm} {${COLORS.yellow} report} {${COLORS.teal} <directory>}
