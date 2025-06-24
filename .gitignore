@@ -4,3 +4,6 @@ test/fixtures/*/node_modules
 .vscode/
 .nyc_output
 .tmp
+.cache
+tmp
+.log
