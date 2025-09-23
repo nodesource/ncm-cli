@@ -45,7 +45,7 @@ $ ncm signin
 $ NCM_TOKEN=<token> ncm <command> [options]
 ```
 
-Learn more about obtaining NodeSource service tokens and configuring permissions [here](https://docs.nodesource.com/docs/ncm2/getting-started/#3-environment-variable-cicd).
+Learn more about obtaining NodeSource service tokens and configuring permissions [here](https://docs.nodesource.com/docs/accounts/saasdashboard).
 
 ## `ncm report`
 
