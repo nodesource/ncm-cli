@@ -139,9 +139,6 @@ async function report (argv, _dir) {
   const isNested = pkgName === nestedPkgName && pkgVersion === nestedPkgVersion
 
   // Processing packages from NCM service
-  let includedCount = 0;
-  let skippedCount = 0;
-  
   for (const { name, version, scores, published } of data) {
     let maxSeverity = 0;
     let license = {};
@@ -170,42 +167,29 @@ async function report (argv, _dir) {
       }
     }
 
-    // Modified approach to include ALL packages in the report
-    // Even packages with null/undefined versions will be included with a default version
-    let effectiveVersion = version;
-    if (effectiveVersion === null || effectiveVersion === undefined) {
-      effectiveVersion = '0.0.0';
-      // Using default version 0.0.0 for package
-    }
-    
-    // Skip nested packages with severity issues
-    if (isNested && !!maxSeverity) {
-      skippedCount++;
-      // Skipping nested package
-      continue;
-    }
-    
+    // Skip packages the NCM service didn't return data for (null version /
+    // unpublished). Previously these were coerced to '0.0.0' which polluted
+    // reports with placeholder entries like `jwt @ 0.0.0`.
+    if (version === null || version === undefined) continue;
+
+    // Skip nested packages (the project reporting on itself) with severity issues
+    if (isNested && !!maxSeverity) continue;
+
     // Check if license has failed, which should upgrade to critical severity
-    const getLicenseScore = ({ pass }) => pass === false ? 0 : null;
     if (license && license.pass === false) {
       maxSeverity = 4;
     }
 
-    // Add the package to our report
     pkgScores.push({
       name,
-      version: effectiveVersion, // Use effective version instead of potentially null version
+      version,
       published,
       maxSeverity,
       failures,
       license,
       scores
     });
-    
-    includedCount++;
   }
-  
-  // Package processing complete
 
   pkgScores = moduleSort(pkgScores)
 
