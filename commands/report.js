@@ -193,6 +193,11 @@ async function report (argv, _dir) {
 
   pkgScores = moduleSort(pkgScores)
 
+  // Build name→version map from NCM data for npm audit v7+ version lookup
+  const versionByName = new Map([...data]
+    .filter(pkg => pkg.version)
+    .map(pkg => [pkg.name, pkg.version]))
+
   // Process whitelisted packages
   const whitelisted = pkgScores.filter(pkg => whitelist.has(`${pkg.name}@${pkg.version}`))
     .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores, pkgScore.maxSeverity) }))
@@ -235,6 +240,7 @@ async function report (argv, _dir) {
   try {
     const npmAuditJson = JSON.parse(npmAuditData) || {}
     if (npmAuditJson.advisories) {
+      // npm v6 format
       for (const advisory of Object.values(npmAuditJson.advisories)) {
         const { version } = advisory.findings ? (advisory.findings[0] || {}) : {}
         const { module_name: name, severity = 'NONE' } = advisory
@@ -242,6 +248,22 @@ async function report (argv, _dir) {
         pkgScores.push({
           name,
           version,
+          published: true,
+          maxSeverity,
+          failures: [],
+          license: {},
+          scores: [],
+          auditScore: maxSeverity
+        })
+      }
+    } else if (npmAuditJson.vulnerabilities) {
+      // npm v7+ format (auditReportVersion: 2)
+      for (const [name, vuln] of Object.entries(npmAuditJson.vulnerabilities)) {
+        const { severity = 'none' } = vuln
+        const maxSeverity = SEVERITY_RMAP_NPM.indexOf(severity.toUpperCase())
+        pkgScores.push({
+          name,
+          version: versionByName.get(name),
           published: true,
           maxSeverity,
           failures: [],
