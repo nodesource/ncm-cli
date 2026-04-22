@@ -257,13 +257,20 @@ async function report (argv, _dir) {
         })
       }
     } else if (npmAuditJson.vulnerabilities) {
-      // npm v7+ format (auditReportVersion: 2)
+      // npm v7+ format (auditReportVersion: 2). Packages already reported by
+      // NCM (in pkgScores or whitelisted) are skipped — otherwise every
+      // transitive vuln would show up twice.
+      const reportedIds = new Set(
+        [...pkgScores, ...whitelisted].map(p => `${p.name}@${p.version}`)
+      )
       for (const [name, vuln] of Object.entries(npmAuditJson.vulnerabilities)) {
+        const version = versionByName.get(name)
+        if (reportedIds.has(`${name}@${version}`)) continue
         const { severity = 'none' } = vuln
         const maxSeverity = SEVERITY_RMAP_NPM.indexOf(severity.toUpperCase())
         pkgScores.push({
           name,
-          version: versionByName.get(name),
+          version,
           published: true,
           maxSeverity,
           failures: [],

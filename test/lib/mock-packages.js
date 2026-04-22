@@ -1449,11 +1449,11 @@ module.exports =
     {
       group: 'compliance',
       name: 'license',
-      pass: false,
-      severity: 'HIGH',
-      title: 'This package version has no license.',
+      pass: true,
+      severity: 'NONE',
+      title: 'This package version license is acceptable: \'MIT\'',
       data: {
-        spdx: null
+        spdx: 'MIT'
       }
     },
     {
@@ -6040,4 +6040,548 @@ module.exports =
       data: null
     }
   ]
-}]
+},
+/* --- Additional license coverage for the certification flow.                  */
+/* Each entry exists to demonstrate that a specific SPDX identifier flows       */
+/* through the analyze → report pipeline. Scores are intentionally minimal —   */
+/* only a passing `license` compliance score — so adding them does not skew    */
+/* severity counts in report snapshots.                                         */
+{
+  name: 'apache-2-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'Apache-2.0\'',
+    data: { spdx: 'Apache-2.0' }
+  }]
+},
+{
+  name: 'mpl-2-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'MPL-2.0\'',
+    data: { spdx: 'MPL-2.0' }
+  }]
+},
+{
+  name: 'lgpl-3-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'LGPL-3.0-or-later\'', data: { spdx: 'LGPL-3.0-or-later' }
+  }]
+},
+{
+  name: 'gpl-3-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'GPL-3.0-or-later\'', data: { spdx: 'GPL-3.0-or-later' }
+  }]
+},
+{
+  name: 'cc0-1-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'CC0-1.0\'',
+    data: { spdx: 'CC0-1.0' }
+  }]
+},
+{
+  name: 'unlicense-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'Unlicense\'',
+    data: { spdx: 'Unlicense' }
+  }]
+},
+{
+  name: 'zero-bsd-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'0BSD\'',
+    data: { spdx: '0BSD' }
+  }]
+},
+{
+  name: 'epl-2-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'EPL-2.0\'', data: { spdx: 'EPL-2.0' }
+  }]
+},
+{
+  name: 'cddl-1-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'CDDL-1.0\'', data: { spdx: 'CDDL-1.0' }
+  }]
+},
+{
+  name: 'agpl-3-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'AGPL-3.0-or-later\'', data: { spdx: 'AGPL-3.0-or-later' }
+  }]
+},
+{
+  name: 'apache-1-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'Apache-1.0\'',
+    data: { spdx: 'Apache-1.0' }
+  }]
+},
+{
+  name: 'apache-1-1-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'Apache-1.1\'',
+    data: { spdx: 'Apache-1.1' }
+  }]
+},
+{
+  name: 'agpl-3-0-only-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'AGPL-3.0-only\'', data: { spdx: 'AGPL-3.0-only' }
+  }]
+},
+{
+  name: 'artistic-1-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'Artistic-1.0\'', data: { spdx: 'Artistic-1.0' }
+  }]
+},
+{
+  name: 'artistic-1-0-perl-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'Artistic-1.0-Perl\'', data: { spdx: 'Artistic-1.0-Perl' }
+  }]
+},
+{
+  name: 'bsd-4-clause-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'BSD-4-Clause\'', data: { spdx: 'BSD-4-Clause' }
+  }]
+},
+{
+  name: 'bsl-1-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'BSL-1.0\'',
+    data: { spdx: 'BSL-1.0' }
+  }]
+},
+{
+  name: 'cc-by-3-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'CC-BY-3.0\'',
+    data: { spdx: 'CC-BY-3.0' }
+  }]
+},
+{
+  name: 'cc-by-4-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'CC-BY-4.0\'',
+    data: { spdx: 'CC-BY-4.0' }
+  }]
+},
+{
+  name: 'cc-by-sa-3-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'CC-BY-SA-3.0\'', data: { spdx: 'CC-BY-SA-3.0' }
+  }]
+},
+{
+  name: 'cc-by-sa-4-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'CC-BY-SA-4.0\'', data: { spdx: 'CC-BY-SA-4.0' }
+  }]
+},
+{
+  name: 'epl-1-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'EPL-1.0\'', data: { spdx: 'EPL-1.0' }
+  }]
+},
+{
+  name: 'eupl-1-1-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'EUPL-1.1\'', data: { spdx: 'EUPL-1.1' }
+  }]
+},
+{
+  name: 'eupl-1-2-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'EUPL-1.2\'', data: { spdx: 'EUPL-1.2' }
+  }]
+},
+{
+  name: 'gpl-2-0-only-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'GPL-2.0-only\'', data: { spdx: 'GPL-2.0-only' }
+  }]
+},
+{
+  name: 'gpl-2-0-or-later-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'GPL-2.0-or-later\'', data: { spdx: 'GPL-2.0-or-later' }
+  }]
+},
+{
+  name: 'gpl-3-0-only-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'GPL-3.0-only\'', data: { spdx: 'GPL-3.0-only' }
+  }]
+},
+{
+  name: 'json-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'JSON\'', data: { spdx: 'JSON' }
+  }]
+},
+{
+  name: 'lgpl-2-0-only-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'LGPL-2.0-only\'', data: { spdx: 'LGPL-2.0-only' }
+  }]
+},
+{
+  name: 'lgpl-2-1-only-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'LGPL-2.1-only\'', data: { spdx: 'LGPL-2.1-only' }
+  }]
+},
+{
+  name: 'lgpl-2-1-or-later-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'LGPL-2.1-or-later\'', data: { spdx: 'LGPL-2.1-or-later' }
+  }]
+},
+{
+  name: 'lgpl-3-0-only-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'LGPL-3.0-only\'', data: { spdx: 'LGPL-3.0-only' }
+  }]
+},
+{
+  name: 'mit-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'MIT-0\'',
+    data: { spdx: 'MIT-0' }
+  }]
+},
+{
+  name: 'mit-or-apache-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'MIT OR Apache-2.0\'',
+    data: { spdx: 'MIT OR Apache-2.0' }
+  }]
+},
+{
+  name: 'mpl-1-1-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'MPL-1.1\'', data: { spdx: 'MPL-1.1' }
+  }]
+},
+{
+  name: 'postgresql-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'PostgreSQL\'',
+    data: { spdx: 'PostgreSQL' }
+  }]
+},
+{
+  name: 'python-2-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'Python-2.0\'',
+    data: { spdx: 'Python-2.0' }
+  }]
+},
+{
+  name: 'ruby-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'Ruby\'', data: { spdx: 'Ruby' }
+  }]
+},
+{
+  name: 'sleepycat-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'Sleepycat\'', data: { spdx: 'Sleepycat' }
+  }]
+},
+{
+  name: 'upl-1-0-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'UPL-1.0\'',
+    data: { spdx: 'UPL-1.0' }
+  }]
+},
+{
+  name: 'vim-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: false, severity: 'MEDIUM', title: 'This package version license is unacceptable: \'Vim\'', data: { spdx: 'Vim' }
+  }]
+},
+{
+  name: 'w3c-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'W3C\'',
+    data: { spdx: 'W3C' }
+  }]
+},
+{
+  name: 'x11-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'X11\'',
+    data: { spdx: 'X11' }
+  }]
+},
+{
+  name: 'zlib-sample',
+  version: '1.0.0',
+  published: true,
+  publishedAt: '2023-01-01T00:00:00.000Z',
+  scores: [{
+    group: 'compliance',
+    name: 'license',
+    pass: true,
+    severity: 'NONE',
+    title: 'This package version license is acceptable: \'Zlib\'',
+    data: { spdx: 'Zlib' }
+  }]
+}
+]

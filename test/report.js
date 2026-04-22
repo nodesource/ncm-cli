@@ -12,10 +12,12 @@ NCMTestRunner.createTest('report output matches snapshot', (runner, t) => {
       t.is(stderr, '')
       t.snapshot(stdout, 'report-output')
       t.regex(stdout, /mock-project Report/)
-      t.regex(stdout, /36 .+packages checked/)
-      t.regex(stdout, /handlebars @ 4.0.5/)
+      t.regex(stdout, /80 .+packages checked/)
+      // Top 5 is now dominated by license-failing packages (all at Crit);
+      // verify the cert flow surfaces a license-failing SPDX in that list.
+      t.regex(stdout, /AGPL-3\.0-only/)
       t.notRegex(stdout, /has-flag @ 3.0.0/)
-      t.regex(stdout, /2 noncompliant modules found/)
+      t.regex(stdout, /27 noncompliant modules found/)
       t.regex(stdout, /3 security vulnerabilities found/)
       resolve()
     })
@@ -31,11 +33,11 @@ NCMTestRunner.createTest('report --compliance output', (runner, t) => {
         t.snapshot(stdout, 'report-output-compliance')
 
         const out = stdout.toString()
-        t.regex(out, /2 noncompliant modules found/)
+        t.regex(out, /27 noncompliant modules found/)
         t.regex(out, /left-pad @ 1.3.0/)
-        t.regex(out, /ms @ 0.7.1/)
+        t.notRegex(out, /ms @ 0.7.1/)
         t.regex(out, /WTFPL/)
-        t.regex(out, /UNKNOWN/)
+        t.notRegex(out, /UNKNOWN/)
         t.regex(out, /3 security vulnerabilities found/)
         resolve()
       })
@@ -50,7 +52,7 @@ NCMTestRunner.createTest('report -c output', (runner, t) => {
       t.snapshot(stdout, 'report-output-compliance')
 
       const out = stdout.toString()
-      t.regex(out, /2 noncompliant modules found/)
+      t.regex(out, /27 noncompliant modules found/)
       t.regex(out, /left-pad @ 1.3.0/)
       t.regex(out, /WTFPL/)
       t.regex(out, /3 security vulnerabilities found/)
@@ -68,11 +70,11 @@ NCMTestRunner.createTest('report --filter=compliance output', (runner, t) => {
       t.snapshot(stdout, 'report-output-compliance')
 
       const out = stdout.toString()
-      t.regex(out, /2 noncompliant modules found/)
+      t.regex(out, /27 noncompliant modules found/)
       t.regex(out, /left-pad @ 1.3.0/)
-      t.regex(out, /ms @ 0.7.1/)
+      t.notRegex(out, /ms @ 0.7.1/)
       t.regex(out, /WTFPL/)
-      t.regex(out, /UNKNOWN/)
+      t.notRegex(out, /UNKNOWN/)
       t.regex(out, /3 security vulnerabilities found/)
       resolve()
     })
@@ -87,7 +89,7 @@ NCMTestRunner.createTest('report --security output', (runner, t) => {
       t.snapshot(stdout, 'report-output-security')
 
       const out = stdout.toString()
-      t.regex(out, /2 noncompliant modules found/)
+      t.regex(out, /27 noncompliant modules found/)
       t.regex(out, /3 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.regex(out, /ms @ 0.7.1/)
@@ -109,7 +111,7 @@ NCMTestRunner.createTest('report -s output', (runner, t) => {
       t.snapshot(stdout, 'report-output-security')
 
       const out = stdout.toString()
-      t.regex(out, /2 noncompliant modules found/)
+      t.regex(out, /27 noncompliant modules found/)
       t.regex(out, /3 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.regex(out, /1H/)
@@ -126,7 +128,7 @@ NCMTestRunner.createTest('report --filter=security output', (runner, t) => {
       t.snapshot(stdout, 'report-output-security')
 
       const out = stdout.toString()
-      t.regex(out, /2 noncompliant modules found/)
+      t.regex(out, /27 noncompliant modules found/)
       t.regex(out, /3 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.regex(out, /ms @ 0.7.1/)
@@ -149,7 +151,7 @@ NCMTestRunner.createTest('report --filter=high --security output', (runner, t) =
       t.snapshot(stdout, 'report-output-high-security')
 
       const out = stdout.toString()
-      t.regex(out, /2 noncompliant modules found/)
+      t.regex(out, /27 noncompliant modules found/)
       t.regex(out, /3 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
@@ -172,7 +174,7 @@ NCMTestRunner.createTest('report --filter=high output', (runner, t) => {
       t.snapshot(stdout, 'report-output-high-security')
 
       const out = stdout.toString()
-      t.regex(out, /2 noncompliant modules found/)
+      t.regex(out, /27 noncompliant modules found/)
       t.regex(out, /3 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
@@ -195,7 +197,7 @@ NCMTestRunner.createTest('report --filter=h output', (runner, t) => {
       t.snapshot(stdout, 'report-output-high-security')
 
       const out = stdout.toString()
-      t.regex(out, /2 noncompliant modules found/)
+      t.regex(out, /27 noncompliant modules found/)
       t.regex(out, /3 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
@@ -218,7 +220,7 @@ NCMTestRunner.createTest('report --filter=high,security output', (runner, t) => 
       t.snapshot(stdout, 'report-output-high-security')
 
       const out = stdout.toString()
-      t.regex(out, /2 noncompliant modules found/)
+      t.regex(out, /27 noncompliant modules found/)
       t.regex(out, /3 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
@@ -241,7 +243,7 @@ NCMTestRunner.createTest('report --filter=medium --security output', (runner, t)
       t.snapshot(stdout, 'report-output-med-security')
 
       const out = stdout.toString()
-      t.regex(out, /2 noncompliant modules found/)
+      t.regex(out, /27 noncompliant modules found/)
       t.regex(out, /3 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
@@ -264,7 +266,7 @@ NCMTestRunner.createTest('report --filter=m --security output', (runner, t) => {
       t.snapshot(stdout, 'report-output-med-security')
 
       const out = stdout.toString()
-      t.regex(out, /2 noncompliant modules found/)
+      t.regex(out, /27 noncompliant modules found/)
       t.regex(out, /3 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
@@ -287,7 +289,7 @@ NCMTestRunner.createTest('report --filter=low --security output', (runner, t) =>
       t.snapshot(stdout, 'report-output-med-security')
 
       const out = stdout.toString()
-      t.regex(out, /2 noncompliant modules found/)
+      t.regex(out, /27 noncompliant modules found/)
       t.regex(out, /3 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.regex(out, /ms @ 0.7.1/)
@@ -310,7 +312,7 @@ NCMTestRunner.createTest('report --filter=l --security output', (runner, t) => {
       t.snapshot(stdout, 'report-output-med-security')
 
       const out = stdout.toString()
-      t.regex(out, /2 noncompliant modules found/)
+      t.regex(out, /27 noncompliant modules found/)
       t.regex(out, /3 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.regex(out, /ms @ 0.7.1/)
