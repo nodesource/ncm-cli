@@ -2,6 +2,26 @@
 
 const test = require('ava').default
 const licenses = require('../lib/report/licenses')
+const spdxIds = require('spdx-license-ids')
+const spdxDeprecated = require('spdx-license-ids/deprecated')
+
+// ─── Full SPDX coverage guard ───────────────────────────────────────────────
+
+test('every canonical SPDX identifier classifies to a non-"unknown" bucket', t => {
+  const unclassified = []
+  for (const id of [...spdxIds, ...spdxDeprecated]) {
+    if (licenses.classify(id) === 'unknown') unclassified.push(id)
+  }
+  t.deepEqual(unclassified, [], `${unclassified.length} SPDX ids fall through to 'unknown'`)
+})
+
+test('every canonical SPDX identifier resolves to a concrete pass/fail verdict', t => {
+  const noVerdict = []
+  for (const id of [...spdxIds, ...spdxDeprecated]) {
+    if (licenses.evaluate(id) === null) noVerdict.push(id)
+  }
+  t.deepEqual(noVerdict, [], `${noVerdict.length} SPDX ids produce null verdicts`)
+})
 
 // ─── normalize() ────────────────────────────────────────────────────────────
 
