@@ -8,6 +8,7 @@ const { helpHeader } = require('../lib/help')
 const { getValue, setValue } = require('../lib/config')
 const whitelistReport = require('../lib/report/whitelist')
 const { SEVERITY_RMAP } = require('../lib/report/util')
+const licenses = require('../lib/report/licenses')
 const {
   COLORS,
   header,
@@ -189,6 +190,28 @@ async function whitelist (argv) {
           }
         }
         if (score.name === 'license') license = score
+      }
+
+      // License cert fallback: if the server returned an SPDX but no pass
+      // verdict, apply the built-in policy so whitelisted modules render
+      // with a deterministic badge. Mirrors the logic in commands/report.js.
+      if (license && license.data && license.data.spdx != null) {
+        const canonical = licenses.normalize(license.data.spdx)
+        if (canonical && canonical !== license.data.spdx) {
+          license = Object.assign({}, license, {
+            data: Object.assign({}, license.data, { spdx: canonical })
+          })
+        }
+        if (license.pass == null) {
+          const verdict = licenses.evaluate(canonical)
+          if (verdict !== null) {
+            license = Object.assign({}, license, {
+              pass: verdict,
+              severity: verdict ? 'NONE' : (license.severity || 'MEDIUM')
+            })
+            if (!verdict) failures.push(license)
+          }
+        }
       }
 
       const getLicenseScore = ({ pass }) => !pass ? 0 : null

@@ -14,6 +14,7 @@ const {
   SEVERITY_RMAP_NPM,
   moduleSort
 } = require('../lib/report/util')
+const licenses = require('../lib/report/licenses')
 const longReport = require('../lib/report/long')
 const shortReport = require('../lib/report/short')
 const { helpHeader } = require('../lib/help')
@@ -175,7 +176,35 @@ async function report (argv, _dir) {
     // Skip nested packages (the project reporting on itself) with severity issues
     if (isNested && !!maxSeverity) continue;
 
-    // Check if license has failed, which should upgrade to critical severity
+    // License cert fallback: when the NCM API returned a license score but
+    // didn't commit to `pass` (or when `data.spdx` is a non-canonical or
+    // compound expression the server didn't normalise), apply the built-in
+    // SPDX policy so the CLI still reaches a deterministic verdict. The
+    // server-supplied verdict always wins when present.
+    if (license && license.data && license.data.spdx != null) {
+      const canonical = licenses.normalize(license.data.spdx);
+      if (canonical && canonical !== license.data.spdx) {
+        license = Object.assign({}, license, {
+          data: Object.assign({}, license.data, { spdx: canonical })
+        });
+      }
+      if (license.pass == null) {
+        const verdict = licenses.evaluate(canonical);
+        if (verdict !== null) {
+          license = Object.assign({}, license, {
+            pass: verdict,
+            severity: verdict ? 'NONE' : (license.severity || 'MEDIUM')
+          });
+          if (!verdict) {
+            failures.push(license);
+            hasFailures = true;
+          }
+        }
+      }
+    }
+
+    // Escalate to Critical when the license is noncompliant (whether the
+    // verdict came from the server or the client-side fallback above).
     if (license && license.pass === false) {
       maxSeverity = 4;
     }
