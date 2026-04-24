@@ -14,6 +14,7 @@ const {
   SEVERITY_RMAP_NPM,
   moduleSort
 } = require('../lib/report/util')
+const licenses = require('../lib/report/licenses')
 const longReport = require('../lib/report/long')
 const shortReport = require('../lib/report/short')
 const { helpHeader } = require('../lib/help')
@@ -139,9 +140,6 @@ async function report (argv, _dir) {
   const isNested = pkgName === nestedPkgName && pkgVersion === nestedPkgVersion
 
   // Processing packages from NCM service
-  let includedCount = 0;
-  let skippedCount = 0;
-  
   for (const { name, version, scores, published } of data) {
     let maxSeverity = 0;
     let license = {};
@@ -170,44 +168,64 @@ async function report (argv, _dir) {
       }
     }
 
-    // Modified approach to include ALL packages in the report
-    // Even packages with null/undefined versions will be included with a default version
-    let effectiveVersion = version;
-    if (effectiveVersion === null || effectiveVersion === undefined) {
-      effectiveVersion = '0.0.0';
-      // Using default version 0.0.0 for package
+    // Skip packages the NCM service didn't return data for (null version /
+    // unpublished). Previously these were coerced to '0.0.0' which polluted
+    // reports with placeholder entries like `jwt @ 0.0.0`.
+    if (version === null || version === undefined) continue;
+
+    // Skip nested packages (the project reporting on itself) with severity issues
+    if (isNested && !!maxSeverity) continue;
+
+    // License cert fallback: when the NCM API returned a license score but
+    // didn't commit to `pass` (or when `data.spdx` is a non-canonical or
+    // compound expression the server didn't normalise), apply the built-in
+    // SPDX policy so the CLI still reaches a deterministic verdict. The
+    // server-supplied verdict always wins when present.
+    if (license && license.data && license.data.spdx != null) {
+      const canonical = licenses.normalize(license.data.spdx);
+      if (canonical && canonical !== license.data.spdx) {
+        license = Object.assign({}, license, {
+          data: Object.assign({}, license.data, { spdx: canonical })
+        });
+      }
+      if (license.pass == null) {
+        const verdict = licenses.evaluate(canonical);
+        if (verdict !== null) {
+          license = Object.assign({}, license, {
+            pass: verdict,
+            severity: verdict ? 'NONE' : (license.severity || 'MEDIUM')
+          });
+          if (!verdict) {
+            failures.push(license);
+            hasFailures = true;
+          }
+        }
+      }
     }
-    
-    // Skip nested packages with severity issues
-    if (isNested && !!maxSeverity) {
-      skippedCount++;
-      // Skipping nested package
-      continue;
-    }
-    
-    // Check if license has failed, which should upgrade to critical severity
-    const getLicenseScore = ({ pass }) => pass === false ? 0 : null;
+
+    // Escalate to Critical when the license is noncompliant (whether the
+    // verdict came from the server or the client-side fallback above).
     if (license && license.pass === false) {
       maxSeverity = 4;
     }
 
-    // Add the package to our report
     pkgScores.push({
       name,
-      version: effectiveVersion, // Use effective version instead of potentially null version
+      version,
       published,
       maxSeverity,
       failures,
       license,
       scores
     });
-    
-    includedCount++;
   }
-  
-  // Package processing complete
 
   pkgScores = moduleSort(pkgScores)
+
+  // Build name→version map from NCM data for npm audit v7+ version lookup
+  const versionByName = new Map([...data]
+    .filter(pkg => pkg.version)
+    .map(pkg => [pkg.name, pkg.version]))
 
   // Process whitelisted packages
   const whitelisted = pkgScores.filter(pkg => whitelist.has(`${pkg.name}@${pkg.version}`))
@@ -251,9 +269,33 @@ async function report (argv, _dir) {
   try {
     const npmAuditJson = JSON.parse(npmAuditData) || {}
     if (npmAuditJson.advisories) {
+      // npm v6 format
       for (const advisory of Object.values(npmAuditJson.advisories)) {
         const { version } = advisory.findings ? (advisory.findings[0] || {}) : {}
         const { module_name: name, severity = 'NONE' } = advisory
+        const maxSeverity = SEVERITY_RMAP_NPM.indexOf(severity.toUpperCase())
+        pkgScores.push({
+          name,
+          version,
+          published: true,
+          maxSeverity,
+          failures: [],
+          license: {},
+          scores: [],
+          auditScore: maxSeverity
+        })
+      }
+    } else if (npmAuditJson.vulnerabilities) {
+      // npm v7+ format (auditReportVersion: 2). Packages already reported by
+      // NCM (in pkgScores or whitelisted) are skipped — otherwise every
+      // transitive vuln would show up twice.
+      const reportedIds = new Set(
+        [...pkgScores, ...whitelisted].map(p => `${p.name}@${p.version}`)
+      )
+      for (const [name, vuln] of Object.entries(npmAuditJson.vulnerabilities)) {
+        const version = versionByName.get(name)
+        if (reportedIds.has(`${name}@${version}`)) continue
+        const { severity = 'none' } = vuln
         const maxSeverity = SEVERITY_RMAP_NPM.indexOf(severity.toUpperCase())
         pkgScores.push({
           name,
