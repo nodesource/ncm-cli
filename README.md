@@ -24,7 +24,7 @@ $ ncm help <command>
 
 ## Authentication
 
-`ncm-cli` supports three forms of authentication (required).
+`ncm-cli` supports three forms of authentication. `ncm report` and `ncm details` need none of them: they score packages without signing in.
 
 ### 1. NodeSource Account:
 
@@ -75,9 +75,6 @@ $ ncm report
   ! 2 noncompliant modules found
     |➔ Run `ncm report --filter=compliance` for a list
 
-  ! 1 used modules whitelisted
-    |➔ Run `ncm whitelist --list` for a list
-
 ─────────────────────────────────────────────────────────────────────────────────────────────────
   Top 5: Highest Risk Modules
 -------------------------------------------------------------------------------------------------
@@ -116,17 +113,11 @@ $ ncm report --long
     |➔ Run `ncm report --filter=compliance` for a list
 
 ─────────────────────────────────────────────────────────────────────────────────────────────────
-  Whitelisted Modules
+  Modules
 -------------------------------------------------------------------------------------------------
   Module Name                               Risk         License                 Security
 ┌──────────────────────────────────────────┬────────────┬───────────────────────┬───────────────┐
 │ qs @ 6.3.1                               │ |||| Crit  │ ✓ BSD-3-Clause        │ X 1H          │
-└──────────────────────────────────────────┴────────────┴───────────────────────┴───────────────┘
-─────────────────────────────────────────────────────────────────────────────────────────────────
-  Non-whitelisted Modules
--------------------------------------------------------------------------------------------------
-  Module Name                               Risk         License                 Security
-┌──────────────────────────────────────────┬────────────┬───────────────────────┬───────────────┐
 │ mime @ 1.3.4                             │ |||| Crit  │ ✓ MIT                 │ X 1L          │
 │ superagent @ 1.8.5                       │ |||| Crit  │ ✓ MIT                 │ X 1M 1L       │
 │ form-data @ 1.0.0-rc3                    │ |||| High  │ ✓ MIT                 │ ✓ 0           │

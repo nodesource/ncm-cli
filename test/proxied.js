@@ -36,9 +36,12 @@ NCMTestRunner.createTest('api requests respect ENV proxy settings', (runner, t) 
         proc.kill()
 
         t.is(err.code, 1)
-        // Now we know the actual error message, so update our assertions to match it
-        t.regex(stderr, /Failed to fetch user info/, 'Should show user info fetch failure in stderr')
-        t.regex(stderr, /Have you run `ncm signin`\?/, 'Should prompt for signin in stderr')
+        // Behind a proxy the first API request fails today: lib/client-request.js
+        // calls proxy-agent v6's module as a constructor, and v6 exports
+        // { ProxyAgent }. `report` no longer asks NodeSource Accounts for the
+        // user first, so the request that fails is the scoring one.
+        t.regex(stderr, /Unable to analyze project/, 'Should show the analyze failure in stderr')
+        t.notRegex(stderr, /ncm signin/, 'Should not prompt for signin')
         t.regex(stdout, /Report/, 'Should include Report text in stdout')
 
         resolve()

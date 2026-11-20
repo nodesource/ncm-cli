@@ -1,7 +1,13 @@
 'use strict'
 
+const fs = require('fs')
+const os = require('os')
+const path = require('path')
+const { execFile } = require('child_process')
+
 // Import the correct test runner class
 const { NCMTestRunner } = require('./lib/test-runner.js')
+const NCM_BIN = path.join(__dirname, '..', 'bin', 'ncm-cli.js')
 const MOCK_PROJECT = '--dir=./test/fixtures/mock-project'
 const POISONED_PROJECT = '--dir=./test/fixtures/poisoned-project'
 
@@ -12,13 +18,16 @@ NCMTestRunner.createTest('report output matches snapshot', (runner, t) => {
       t.is(stderr, '')
       t.snapshot(stdout, 'report-output')
       t.regex(stdout, /mock-project Report/)
-      t.regex(stdout, /80 .+packages checked/)
+      t.regex(stdout, /81 .+packages checked/)
       // Top 5 is now dominated by license-failing packages (all at Crit);
       // verify the cert flow surfaces a license-failing SPDX in that list.
       t.regex(stdout, /AGPL-3\.0-only/)
       t.notRegex(stdout, /has-flag @ 3.0.0/)
       t.regex(stdout, /27 noncompliant modules found/)
-      t.regex(stdout, /3 security vulnerabilities found/)
+      t.regex(stdout, /4 security vulnerabilities found/)
+      // The mock org whitelists debug@2.2.0, but report no longer reads it.
+      t.notRegex(stdout, /whitelisted/)
+      t.deepEqual(runner.accountsCalls, [])
       resolve()
     })
   })
@@ -38,7 +47,7 @@ NCMTestRunner.createTest('report --compliance output', (runner, t) => {
         t.notRegex(out, /ms @ 0.7.1/)
         t.regex(out, /WTFPL/)
         t.notRegex(out, /UNKNOWN/)
-        t.regex(out, /3 security vulnerabilities found/)
+        t.regex(out, /4 security vulnerabilities found/)
         resolve()
       })
   })
@@ -55,7 +64,7 @@ NCMTestRunner.createTest('report -c output', (runner, t) => {
       t.regex(out, /27 noncompliant modules found/)
       t.regex(out, /left-pad @ 1.3.0/)
       t.regex(out, /WTFPL/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       resolve()
     })
   })
@@ -75,7 +84,7 @@ NCMTestRunner.createTest('report --filter=compliance output', (runner, t) => {
       t.notRegex(out, /ms @ 0.7.1/)
       t.regex(out, /WTFPL/)
       t.notRegex(out, /UNKNOWN/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       resolve()
     })
   })
@@ -90,7 +99,7 @@ NCMTestRunner.createTest('report --security output', (runner, t) => {
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.regex(out, /ms @ 0.7.1/)
       t.regex(out, /brace-expansion @ 1.1.2/)
@@ -112,7 +121,7 @@ NCMTestRunner.createTest('report -s output', (runner, t) => {
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.regex(out, /1H/)
       resolve()
@@ -129,7 +138,7 @@ NCMTestRunner.createTest('report --filter=security output', (runner, t) => {
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.regex(out, /ms @ 0.7.1/)
       t.regex(out, /brace-expansion @ 1.1.2/)
@@ -152,7 +161,7 @@ NCMTestRunner.createTest('report --filter=high --security output', (runner, t) =
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
       t.notRegex(out, /brace-expansion @ 1.1.2/)
@@ -175,7 +184,7 @@ NCMTestRunner.createTest('report --filter=high output', (runner, t) => {
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
       t.notRegex(out, /brace-expansion @ 1.1.2/)
@@ -198,7 +207,7 @@ NCMTestRunner.createTest('report --filter=h output', (runner, t) => {
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
       t.notRegex(out, /brace-expansion @ 1.1.2/)
@@ -221,7 +230,7 @@ NCMTestRunner.createTest('report --filter=high,security output', (runner, t) => 
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
       t.notRegex(out, /brace-expansion @ 1.1.2/)
@@ -244,7 +253,7 @@ NCMTestRunner.createTest('report --filter=medium --security output', (runner, t)
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
       t.regex(out, /brace-expansion @ 1.1.2/)
@@ -267,7 +276,7 @@ NCMTestRunner.createTest('report --filter=m --security output', (runner, t) => {
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
       t.regex(out, /brace-expansion @ 1.1.2/)
@@ -290,7 +299,7 @@ NCMTestRunner.createTest('report --filter=low --security output', (runner, t) =>
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.regex(out, /ms @ 0.7.1/)
       t.regex(out, /brace-expansion @ 1.1.2/)
@@ -313,7 +322,7 @@ NCMTestRunner.createTest('report --filter=l --security output', (runner, t) => {
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.regex(out, /ms @ 0.7.1/)
       t.regex(out, /brace-expansion @ 1.1.2/)
@@ -334,6 +343,32 @@ NCMTestRunner.createTest('report --long output matches snapshot', (runner, t) =>
       t.snapshot(stdout, 'long-report-output')
       t.regex(stdout, /mock-project Report/)
       t.regex(stdout, /has-flag @ 3.0.0/)
+      resolve()
+    })
+  })
+})
+
+NCMTestRunner.createTest('report scores a project without signing in or a token, and never calls NodeSource Accounts', (runner, t) => {
+  // A fresh config, as after installing the CLI, with no NCM_TOKEN: nobody
+  // signed in, and NodeSource Accounts (which `ncm signin` needs) is gone.
+  const configHome = fs.mkdtempSync(path.join(os.tmpdir(), 'ncm-cli-config-'))
+  const env = {
+    ...process.env,
+    ...runner.env,
+    NCM_TOKEN: '',
+    XDG_CONFIG_HOME: configHome
+  }
+
+  return new Promise(/** @type {(resolve: any) => void} */ (resolve) => {
+    execFile(process.execPath, [NCM_BIN, 'report', MOCK_PROJECT, '--color=16m'], { env }, (err, stdout, stderr) => {
+      fs.rmSync(configHome, { recursive: true, force: true })
+      // 1 because the mock project has failing packages, as in the tests above.
+      t.is(err.code, 1)
+      t.is(stderr, '')
+      t.regex(stdout, /81 .+packages checked/)
+      t.regex(stdout, /27 noncompliant modules found/)
+      t.regex(stdout, /4 security vulnerabilities found/)
+      t.deepEqual(runner.accountsCalls, [])
       resolve()
     })
   })
