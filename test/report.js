@@ -378,7 +378,7 @@ function reportWithConfig (runner, t, { saved = {}, ncmToken = '' } = {}) {
   })
 }
 
-// The whole mock project was scored, and NodeSource Accounts never asked.
+// The whole mock project was scored, and the sign-in service never asked.
 function assertScoredWithoutAccounts (t, runner, { err, stdout, stderr }) {
   t.falsy(err && err.killed, `report was stopped after ${SPAWN_TIMEOUT} ms`)
   // 1 because the mock project has failing packages, as in the tests above.
@@ -390,14 +390,14 @@ function assertScoredWithoutAccounts (t, runner, { err, stdout, stderr }) {
   t.deepEqual(runner.accountsCalls, [])
 }
 
-NCMTestRunner.createTest('report scores a project without signing in or a token, and never calls NodeSource Accounts', async (runner, t) => {
+NCMTestRunner.createTest('report scores a project without signing in or a token, and never calls the sign-in service', async (runner, t) => {
   // A fresh config, as after installing the CLI, with no NCM_TOKEN: nobody
-  // signed in, and accounts-api (which `ncm signin` needs) is gone.
+  // ran `ncm signin`.
   assertScoredWithoutAccounts(t, runner, await reportWithConfig(runner, t))
 })
 
-NCMTestRunner.createTest('report scores a project when the API refuses a saved session, without asking NodeSource Accounts for a new one', async (runner, t) => {
-  // Signed in before accounts-api shut down; the session has since expired.
+NCMTestRunner.createTest('report scores a project when the API refuses a saved session, without asking the sign-in service for a new one', async (runner, t) => {
+  // Signed in with `ncm signin` once; the session has since expired.
   const outcome = await reportWithConfig(runner, t, {
     saved: { token: 'refused-token', refreshToken: 'saved-refresh-token' }
   })

@@ -38,7 +38,7 @@ NCMTestRunner.createTest('api requests respect ENV proxy settings', (runner, t) 
         t.is(err.code, 1)
         // Behind a proxy the first API request fails today: lib/client-request.js
         // calls proxy-agent v6's module as a constructor, and v6 exports
-        // { ProxyAgent }. `report` no longer asks NodeSource Accounts for the
+        // { ProxyAgent }. `report` no longer asks the sign-in service for the
         // user first, so the request that fails is the scoring one.
         t.regex(stderr, /Unable to analyze project/, 'Should show the analyze failure in stderr')
         t.notRegex(stderr, /ncm signin/, 'Should not prompt for signin')

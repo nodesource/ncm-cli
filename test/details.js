@@ -12,7 +12,7 @@ const NCM_BIN = path.join(__dirname, '..', 'bin', 'ncm-cli.js')
 // retries forever.
 const SPAWN_TIMEOUT = 30000
 
-NCMTestRunner.createTest('details answers when the API refuses NCM_TOKEN, without asking NodeSource Accounts', (runner, t) => {
+NCMTestRunner.createTest('details answers when the API refuses NCM_TOKEN, without asking the sign-in service', (runner, t) => {
   t.timeout(SPAWN_TIMEOUT + 10000)
   const configHome = fs.mkdtempSync(path.join(os.tmpdir(), 'ncm-cli-config-'))
   const env = { ...process.env, ...runner.env, NCM_TOKEN: 'refused-token', XDG_CONFIG_HOME: configHome }

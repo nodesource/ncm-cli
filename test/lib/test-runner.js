@@ -40,7 +40,7 @@ function NCMTestRunner (opts) {
   this.httpServer = null
   this.port = -1
   this._test = null
-  // The paths of the calls the CLI made to NodeSource Accounts.
+  // The paths of the calls the CLI made to the sign-in service (`/accounts`).
   this.accountsCalls = []
 
   const self = this
@@ -140,8 +140,9 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
     next()
   })
 
-  // accounts-api is shutting down: record every call to it, so a test
-  // can check `report` makes none. `ncm whitelist` still asks it for the org.
+  // Record every call to the sign-in service `ncm signin` uses, so a test can
+  // check `report` and `details` make none. `ncm whitelist` still asks it for
+  // the org.
   this.app.use('/accounts', (req, res, next) => {
     this.accountsCalls.push(req.originalUrl)
     next()
