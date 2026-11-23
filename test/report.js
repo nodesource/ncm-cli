@@ -348,10 +348,16 @@ NCMTestRunner.createTest('report --long output matches snapshot', (runner, t) =>
   })
 })
 
+// A `report` run takes about 2 s alone and about 8 s on a loaded machine
+// running AVA's tests side by side. The bound only has to stop a run that
+// retries forever.
+const SPAWN_TIMEOUT = 30000
+
 // Runs `report` on the mock project in a config of its own, holding `saved`
 // as `ncm signin` would have left it, with `ncmToken` as NCM_TOKEN. Resolves
 // to the outcome and the config as the run left it.
-function reportWithConfig (runner, { saved = {}, ncmToken = '' } = {}) {
+function reportWithConfig (runner, t, { saved = {}, ncmToken = '' } = {}) {
+  t.timeout(SPAWN_TIMEOUT + 10000)
   const configHome = fs.mkdtempSync(path.join(os.tmpdir(), 'ncm-cli-config-'))
   const configFile = path.join(configHome, 'configstore', 'ncm-cli.json')
   fs.mkdirSync(path.dirname(configFile), { recursive: true })
@@ -364,8 +370,7 @@ function reportWithConfig (runner, { saved = {}, ncmToken = '' } = {}) {
   }
 
   return new Promise(/** @type {(resolve: any) => void} */ (resolve) => {
-    // The timeout stops a run that retries forever.
-    execFile(process.execPath, [NCM_BIN, 'report', MOCK_PROJECT, '--color=16m'], { env, timeout: 8000 }, (err, stdout, stderr) => {
+    execFile(process.execPath, [NCM_BIN, 'report', MOCK_PROJECT, '--color=16m'], { env, timeout: SPAWN_TIMEOUT }, (err, stdout, stderr) => {
       const config = JSON.parse(fs.readFileSync(configFile, 'utf8'))
       fs.rmSync(configHome, { recursive: true, force: true })
       resolve({ err, stdout, stderr, config })
@@ -375,6 +380,7 @@ function reportWithConfig (runner, { saved = {}, ncmToken = '' } = {}) {
 
 // The whole mock project was scored, and NodeSource Accounts never asked.
 function assertScoredWithoutAccounts (t, runner, { err, stdout, stderr }) {
+  t.falsy(err && err.killed, `report was stopped after ${SPAWN_TIMEOUT} ms`)
   // 1 because the mock project has failing packages, as in the tests above.
   t.is(err && err.code, 1)
   t.is(stderr, '')
@@ -387,12 +393,12 @@ function assertScoredWithoutAccounts (t, runner, { err, stdout, stderr }) {
 NCMTestRunner.createTest('report scores a project without signing in or a token, and never calls NodeSource Accounts', async (runner, t) => {
   // A fresh config, as after installing the CLI, with no NCM_TOKEN: nobody
   // signed in, and accounts-api (which `ncm signin` needs) is gone.
-  assertScoredWithoutAccounts(t, runner, await reportWithConfig(runner))
+  assertScoredWithoutAccounts(t, runner, await reportWithConfig(runner, t))
 })
 
 NCMTestRunner.createTest('report scores a project when the API refuses a saved session, without asking NodeSource Accounts for a new one', async (runner, t) => {
   // Signed in before accounts-api shut down; the session has since expired.
-  const outcome = await reportWithConfig(runner, {
+  const outcome = await reportWithConfig(runner, t, {
     saved: { token: 'refused-token', refreshToken: 'saved-refresh-token' }
   })
   assertScoredWithoutAccounts(t, runner, outcome)
@@ -401,7 +407,7 @@ NCMTestRunner.createTest('report scores a project when the API refuses a saved s
 })
 
 NCMTestRunner.createTest('report scores a project when the API refuses NCM_TOKEN, instead of retrying it forever', async (runner, t) => {
-  assertScoredWithoutAccounts(t, runner, await reportWithConfig(runner, { ncmToken: 'refused-token' }))
+  assertScoredWithoutAccounts(t, runner, await reportWithConfig(runner, t, { ncmToken: 'refused-token' }))
 })
 
 NCMTestRunner.createTest('report with poisoned project', (runner, t) => {
