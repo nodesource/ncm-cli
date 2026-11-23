@@ -386,12 +386,12 @@ function assertScoredWithoutAccounts (t, runner, { err, stdout, stderr }) {
 
 NCMTestRunner.createTest('report scores a project without signing in or a token, and never calls NodeSource Accounts', async (runner, t) => {
   // A fresh config, as after installing the CLI, with no NCM_TOKEN: nobody
-  // signed in, and NodeSource Accounts (which `ncm signin` needs) is gone.
+  // signed in, and accounts-api (which `ncm signin` needs) is gone.
   assertScoredWithoutAccounts(t, runner, await reportWithConfig(runner))
 })
 
 NCMTestRunner.createTest('report scores a project when the API refuses a saved session, without asking NodeSource Accounts for a new one', async (runner, t) => {
-  // Signed in before Accounts shut down; the session has since expired.
+  // Signed in before accounts-api shut down; the session has since expired.
   const outcome = await reportWithConfig(runner, {
     saved: { token: 'refused-token', refreshToken: 'saved-refresh-token' }
   })

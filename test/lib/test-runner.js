@@ -140,7 +140,7 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
     next()
   })
 
-  // NodeSource Accounts is shutting down: record every call to it, so a test
+  // accounts-api is shutting down: record every call to it, so a test
   // can check `report` makes none. `ncm whitelist` still asks it for the org.
   this.app.use('/accounts', (req, res, next) => {
     this.accountsCalls.push(req.originalUrl)

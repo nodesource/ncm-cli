@@ -180,7 +180,7 @@ async function report (argv, _dir) {
     .map(pkg => [pkg.name, pkg.version]))
 
   // The report no longer reads the org's whitelist: finding the org took a
-  // call to NodeSource Accounts, which is shutting down, and the NCM API
+  // call to accounts-api, which is shutting down, and the NCM API
   // refuses policy reads, so the whitelist was always empty
   // (nodesource/ncm2-api#308).
   const whitelisted = []
