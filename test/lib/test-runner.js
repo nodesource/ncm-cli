@@ -161,6 +161,15 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
     next()
   })
 
+  // A token the NCM API refuses, as an expired session would be if it ever
+  // checked them on scoring: the CLI then gets a 401.
+  this.app.use('/ncm2/api/v2/graphql', function (req, res, next) {
+    if (req.headers.authorization === 'Bearer refused-token') {
+      return res.status(401).send({ message: 'Unauthorized' })
+    }
+    next()
+  })
+
   this.app.all('/ncm2/api/v2/graphql', createHandler({
     schema,
     rootValue: api

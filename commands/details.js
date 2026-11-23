@@ -107,7 +107,8 @@ async function details (argv, arg1, arg2, arg3) {
           }
         }
         `,
-      vars
+      vars,
+      { publicRead: true }
     )
   } catch (err) {
     E()

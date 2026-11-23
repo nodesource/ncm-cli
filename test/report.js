@@ -348,30 +348,60 @@ NCMTestRunner.createTest('report --long output matches snapshot', (runner, t) =>
   })
 })
 
-NCMTestRunner.createTest('report scores a project without signing in or a token, and never calls NodeSource Accounts', (runner, t) => {
-  // A fresh config, as after installing the CLI, with no NCM_TOKEN: nobody
-  // signed in, and NodeSource Accounts (which `ncm signin` needs) is gone.
+// Runs `report` on the mock project in a config of its own, holding `saved`
+// as `ncm signin` would have left it, with `ncmToken` as NCM_TOKEN. Resolves
+// to the outcome and the config as the run left it.
+function reportWithConfig (runner, { saved = {}, ncmToken = '' } = {}) {
   const configHome = fs.mkdtempSync(path.join(os.tmpdir(), 'ncm-cli-config-'))
+  const configFile = path.join(configHome, 'configstore', 'ncm-cli.json')
+  fs.mkdirSync(path.dirname(configFile), { recursive: true })
+  fs.writeFileSync(configFile, JSON.stringify(saved))
   const env = {
     ...process.env,
     ...runner.env,
-    NCM_TOKEN: '',
+    NCM_TOKEN: ncmToken,
     XDG_CONFIG_HOME: configHome
   }
 
   return new Promise(/** @type {(resolve: any) => void} */ (resolve) => {
-    execFile(process.execPath, [NCM_BIN, 'report', MOCK_PROJECT, '--color=16m'], { env }, (err, stdout, stderr) => {
+    // The timeout stops a run that retries forever.
+    execFile(process.execPath, [NCM_BIN, 'report', MOCK_PROJECT, '--color=16m'], { env, timeout: 8000 }, (err, stdout, stderr) => {
+      const config = JSON.parse(fs.readFileSync(configFile, 'utf8'))
       fs.rmSync(configHome, { recursive: true, force: true })
-      // 1 because the mock project has failing packages, as in the tests above.
-      t.is(err.code, 1)
-      t.is(stderr, '')
-      t.regex(stdout, /81 .+packages checked/)
-      t.regex(stdout, /27 noncompliant modules found/)
-      t.regex(stdout, /4 security vulnerabilities found/)
-      t.deepEqual(runner.accountsCalls, [])
-      resolve()
+      resolve({ err, stdout, stderr, config })
     })
   })
+}
+
+// The whole mock project was scored, and NodeSource Accounts never asked.
+function assertScoredWithoutAccounts (t, runner, { err, stdout, stderr }) {
+  // 1 because the mock project has failing packages, as in the tests above.
+  t.is(err && err.code, 1)
+  t.is(stderr, '')
+  t.regex(stdout, /81 .+packages checked/)
+  t.regex(stdout, /27 noncompliant modules found/)
+  t.regex(stdout, /4 security vulnerabilities found/)
+  t.deepEqual(runner.accountsCalls, [])
+}
+
+NCMTestRunner.createTest('report scores a project without signing in or a token, and never calls NodeSource Accounts', async (runner, t) => {
+  // A fresh config, as after installing the CLI, with no NCM_TOKEN: nobody
+  // signed in, and NodeSource Accounts (which `ncm signin` needs) is gone.
+  assertScoredWithoutAccounts(t, runner, await reportWithConfig(runner))
+})
+
+NCMTestRunner.createTest('report scores a project when the API refuses a saved session, without asking NodeSource Accounts for a new one', async (runner, t) => {
+  // Signed in before Accounts shut down; the session has since expired.
+  const outcome = await reportWithConfig(runner, {
+    saved: { token: 'refused-token', refreshToken: 'saved-refresh-token' }
+  })
+  assertScoredWithoutAccounts(t, runner, outcome)
+  // Refreshing would also have used up the saved refresh token.
+  t.is(outcome.config.refreshToken, 'saved-refresh-token')
+})
+
+NCMTestRunner.createTest('report scores a project when the API refuses NCM_TOKEN, instead of retrying it forever', async (runner, t) => {
+  assertScoredWithoutAccounts(t, runner, await reportWithConfig(runner, { ncmToken: 'refused-token' }))
 })
 
 NCMTestRunner.createTest('report with poisoned project', (runner, t) => {
