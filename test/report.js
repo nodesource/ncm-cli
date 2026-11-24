@@ -1,7 +1,13 @@
 'use strict'
 
+const fs = require('fs')
+const os = require('os')
+const path = require('path')
+const { execFile } = require('child_process')
+
 // Import the correct test runner class
 const { NCMTestRunner } = require('./lib/test-runner.js')
+const NCM_BIN = path.join(__dirname, '..', 'bin', 'ncm-cli.js')
 const MOCK_PROJECT = '--dir=./test/fixtures/mock-project'
 const POISONED_PROJECT = '--dir=./test/fixtures/poisoned-project'
 
@@ -12,13 +18,16 @@ NCMTestRunner.createTest('report output matches snapshot', (runner, t) => {
       t.is(stderr, '')
       t.snapshot(stdout, 'report-output')
       t.regex(stdout, /mock-project Report/)
-      t.regex(stdout, /80 .+packages checked/)
+      t.regex(stdout, /81 .+packages checked/)
       // Top 5 is now dominated by license-failing packages (all at Crit);
       // verify the cert flow surfaces a license-failing SPDX in that list.
       t.regex(stdout, /AGPL-3\.0-only/)
       t.notRegex(stdout, /has-flag @ 3.0.0/)
       t.regex(stdout, /27 noncompliant modules found/)
-      t.regex(stdout, /3 security vulnerabilities found/)
+      t.regex(stdout, /4 security vulnerabilities found/)
+      // The mock org whitelists debug@2.2.0, but report no longer reads it.
+      t.notRegex(stdout, /whitelisted/)
+      t.deepEqual(runner.accountsCalls, [])
       resolve()
     })
   })
@@ -38,7 +47,7 @@ NCMTestRunner.createTest('report --compliance output', (runner, t) => {
         t.notRegex(out, /ms @ 0.7.1/)
         t.regex(out, /WTFPL/)
         t.notRegex(out, /UNKNOWN/)
-        t.regex(out, /3 security vulnerabilities found/)
+        t.regex(out, /4 security vulnerabilities found/)
         resolve()
       })
   })
@@ -55,7 +64,7 @@ NCMTestRunner.createTest('report -c output', (runner, t) => {
       t.regex(out, /27 noncompliant modules found/)
       t.regex(out, /left-pad @ 1.3.0/)
       t.regex(out, /WTFPL/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       resolve()
     })
   })
@@ -75,7 +84,7 @@ NCMTestRunner.createTest('report --filter=compliance output', (runner, t) => {
       t.notRegex(out, /ms @ 0.7.1/)
       t.regex(out, /WTFPL/)
       t.notRegex(out, /UNKNOWN/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       resolve()
     })
   })
@@ -90,7 +99,7 @@ NCMTestRunner.createTest('report --security output', (runner, t) => {
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.regex(out, /ms @ 0.7.1/)
       t.regex(out, /brace-expansion @ 1.1.2/)
@@ -112,7 +121,7 @@ NCMTestRunner.createTest('report -s output', (runner, t) => {
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.regex(out, /1H/)
       resolve()
@@ -129,7 +138,7 @@ NCMTestRunner.createTest('report --filter=security output', (runner, t) => {
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.regex(out, /ms @ 0.7.1/)
       t.regex(out, /brace-expansion @ 1.1.2/)
@@ -152,7 +161,7 @@ NCMTestRunner.createTest('report --filter=high --security output', (runner, t) =
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
       t.notRegex(out, /brace-expansion @ 1.1.2/)
@@ -175,7 +184,7 @@ NCMTestRunner.createTest('report --filter=high output', (runner, t) => {
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
       t.notRegex(out, /brace-expansion @ 1.1.2/)
@@ -198,7 +207,7 @@ NCMTestRunner.createTest('report --filter=h output', (runner, t) => {
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
       t.notRegex(out, /brace-expansion @ 1.1.2/)
@@ -221,7 +230,7 @@ NCMTestRunner.createTest('report --filter=high,security output', (runner, t) => 
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
       t.notRegex(out, /brace-expansion @ 1.1.2/)
@@ -244,7 +253,7 @@ NCMTestRunner.createTest('report --filter=medium --security output', (runner, t)
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
       t.regex(out, /brace-expansion @ 1.1.2/)
@@ -267,7 +276,7 @@ NCMTestRunner.createTest('report --filter=m --security output', (runner, t) => {
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.notRegex(out, /ms @ 0.7.1/)
       t.regex(out, /brace-expansion @ 1.1.2/)
@@ -290,7 +299,7 @@ NCMTestRunner.createTest('report --filter=low --security output', (runner, t) =>
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.regex(out, /ms @ 0.7.1/)
       t.regex(out, /brace-expansion @ 1.1.2/)
@@ -313,7 +322,7 @@ NCMTestRunner.createTest('report --filter=l --security output', (runner, t) => {
 
       const out = stdout.toString()
       t.regex(out, /27 noncompliant modules found/)
-      t.regex(out, /3 security vulnerabilities found/)
+      t.regex(out, /4 security vulnerabilities found/)
       t.regex(out, /handlebars @ 4.0.5/)
       t.regex(out, /ms @ 0.7.1/)
       t.regex(out, /brace-expansion @ 1.1.2/)
@@ -337,6 +346,88 @@ NCMTestRunner.createTest('report --long output matches snapshot', (runner, t) =>
       resolve()
     })
   })
+})
+
+// A `report` run takes about 2 s alone and about 8 s on a loaded machine
+// running AVA's tests side by side. The bound only has to stop a run that
+// retries forever.
+const SPAWN_TIMEOUT = 30000
+
+// Runs `report` on the mock project in a config of its own, holding `saved`
+// as `ncm signin` would have left it, with `ncmToken` as NCM_TOKEN. Resolves
+// to the outcome and the config as the run left it.
+function reportWithConfig (runner, t, { saved = {}, ncmToken = '' } = {}) {
+  t.timeout(SPAWN_TIMEOUT + 10000)
+  const configHome = fs.mkdtempSync(path.join(os.tmpdir(), 'ncm-cli-config-'))
+  const configFile = path.join(configHome, 'configstore', 'ncm-cli.json')
+  fs.mkdirSync(path.dirname(configFile), { recursive: true })
+  fs.writeFileSync(configFile, JSON.stringify(saved))
+  const env = {
+    ...process.env,
+    ...runner.env,
+    NCM_TOKEN: ncmToken,
+    XDG_CONFIG_HOME: configHome
+  }
+
+  return new Promise(/** @type {(resolve: any) => void} */ (resolve) => {
+    execFile(process.execPath, [NCM_BIN, 'report', MOCK_PROJECT, '--color=16m'], { env, timeout: SPAWN_TIMEOUT }, (err, stdout, stderr) => {
+      const config = JSON.parse(fs.readFileSync(configFile, 'utf8'))
+      fs.rmSync(configHome, { recursive: true, force: true })
+      resolve({ err, stdout, stderr, config })
+    })
+  })
+}
+
+// The whole mock project was scored, and the sign-in service never asked.
+function assertScoredWithoutAccounts (t, runner, { err, stdout, stderr }) {
+  t.falsy(err && err.killed, `report was stopped after ${SPAWN_TIMEOUT} ms`)
+  // 1 because the mock project has failing packages, as in the tests above.
+  t.is(err && err.code, 1)
+  t.is(stderr, '')
+  t.regex(stdout, /81 .+packages checked/)
+  t.regex(stdout, /27 noncompliant modules found/)
+  t.regex(stdout, /4 security vulnerabilities found/)
+  t.deepEqual(runner.accountsCalls, [])
+}
+
+// Each request sent the refused token first, then once more without one.
+function assertRefusedThenAnonymous (t, runner) {
+  const sent = runner.apiAuthorizations
+  const refused = sent.filter(a => a === 'Bearer refused-token')
+  t.true(refused.length > 0)
+  t.is(sent.length, refused.length * 2)
+  t.is(sent.filter(a => a === undefined).length, refused.length)
+}
+
+NCMTestRunner.createTest('report scores a project without signing in or a token, and never calls the sign-in service', async (runner, t) => {
+  // A fresh config, as after installing the CLI, with no NCM_TOKEN: nobody
+  // ran `ncm signin`.
+  assertScoredWithoutAccounts(t, runner, await reportWithConfig(runner, t))
+  // The saved token is blank, so no request carries an Authorization header.
+  t.true(runner.apiAuthorizations.length > 0)
+  t.deepEqual(runner.apiAuthorizations.filter(a => a !== undefined), [])
+})
+
+NCMTestRunner.createTest('report scores a project when the API refuses a saved session, without asking the sign-in service for a new one', async (runner, t) => {
+  // Signed in with `ncm signin` once; the session has since expired.
+  const outcome = await reportWithConfig(runner, t, {
+    saved: { token: 'refused-token', refreshToken: 'saved-refresh-token' }
+  })
+  assertScoredWithoutAccounts(t, runner, outcome)
+  assertRefusedThenAnonymous(t, runner)
+  // Refreshing would also have used up the saved refresh token.
+  t.is(outcome.config.refreshToken, 'saved-refresh-token')
+})
+
+NCMTestRunner.createTest('report scores a project when the API refuses NCM_TOKEN, instead of retrying it forever', async (runner, t) => {
+  assertScoredWithoutAccounts(t, runner, await reportWithConfig(runner, t, { ncmToken: 'refused-token' }))
+  assertRefusedThenAnonymous(t, runner)
+})
+
+NCMTestRunner.createTest('report sends no Authorization header when NCM_TOKEN is blank', async (runner, t) => {
+  assertScoredWithoutAccounts(t, runner, await reportWithConfig(runner, t, { ncmToken: '  ' }))
+  t.true(runner.apiAuthorizations.length > 0)
+  t.deepEqual(runner.apiAuthorizations.filter(a => a !== undefined), [])
 })
 
 NCMTestRunner.createTest('report with poisoned project', (runner, t) => {

@@ -2,12 +2,7 @@
 
 const path = require('path')
 const analyze = require('../lib/ncm-analyze-tree')
-const {
-  apiRequest,
-  formatAPIURL,
-  graphql
-} = require('../lib/util')
-const config = require('../lib/config')
+const { formatAPIURL } = require('../lib/util')
 const score = require('../lib/report/score')
 const {
   SEVERITY_RMAP,
@@ -52,49 +47,6 @@ async function report (argv, _dir) {
     /* NCM-Cli Header */
     L()
     L(header(`${path.basename(dir)} Report`))
-  }
-
-  let orgId = config.getValue('orgId')
-
-  try {
-    const details = await apiRequest(
-      'GET',
-      formatAPIURL('/accounts/user/details')
-    )
-    if (typeof details.orgId === 'string') {
-      orgId = details.orgId
-    }
-  } catch (err) {
-    E()
-    E(formatError('Failed to fetch user info. Have you run `ncm signin`?', err))
-    E()
-    process.exitCode = 1
-    return
-  }
-
-  const whitelist = new Set()
-  try {
-    const data = await graphql(
-      formatAPIURL('/ncm2/api/v2/graphql'),
-      `query($organizationId: String!) {
-        policies(organizationId: $organizationId) {
-          whitelist {
-            name
-            version
-          }
-        }
-      }`,
-      { organizationId: orgId }
-    )
-    for (const policy of data.policies) {
-      for (const pkg of policy.whitelist) {
-        whitelist.add(`${pkg.name}@${pkg.version}`)
-      }
-    }
-  } catch (err) {
-    L()
-    L(formatError('Unable to fetch whitelist.', err))
-    L()
   }
 
   /* verify */
@@ -227,12 +179,12 @@ async function report (argv, _dir) {
     .filter(pkg => pkg.version)
     .map(pkg => [pkg.name, pkg.version]))
 
-  // Process whitelisted packages
-  const whitelisted = pkgScores.filter(pkg => whitelist.has(`${pkg.name}@${pkg.version}`))
-    .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores, pkgScore.maxSeverity) }))
-  
-  // Filter out whitelisted packages from the main package list
-  pkgScores = pkgScores.filter(pkg => !whitelist.has(`${pkg.name}@${pkg.version}`))
+  // The report no longer reads the org's whitelist: finding the org took a
+  // call to the sign-in service `ncm signin` uses, and the NCM API refuses
+  // policy reads, so the whitelist was always empty.
+  const whitelisted = []
+
+  pkgScores = pkgScores
     .map(pkgScore => ({ ...pkgScore, quantitativeScore: score(pkgScore.scores, pkgScore.maxSeverity) }))
 
   const npmAudit = () => {
