@@ -1192,6 +1192,8 @@ module.exports =
   version: '2.2.0',
   published: true,
   publishedAt: '2015-05-10T07:21:25.639Z',
+  maintainers: [],
+  keywords: [],
   scores: [
     {
       group: 'risk',
@@ -1528,6 +1530,8 @@ module.exports =
   version: '4.0.5',
   published: true,
   publishedAt: '2015-11-20T05:07:09.574Z',
+  maintainers: [],
+  keywords: [],
   scores: [
     {
       group: 'risk',
@@ -6671,5 +6675,36 @@ module.exports =
     title: 'This package version license is acceptable: \'Zlib\'',
     data: { spdx: 'Zlib' }
   }]
+},
+{
+  name: 'minimist',
+  version: '1.2.5',
+  published: true,
+  publishedAt: '2020-03-12T19:45:10.000Z',
+  maintainers: [],
+  keywords: [],
+  scores: [
+    {
+      group: 'compliance',
+      name: 'license',
+      pass: true,
+      severity: 'NONE',
+      title: 'This package version license is acceptable: \'MIT\'',
+      data: { spdx: 'MIT' }
+    },
+    {
+      group: 'security',
+      name: 'vulnerability',
+      pass: false,
+      severity: 'CRITICAL',
+      title: 'Prototype Pollution (CVE-2021-44906)',
+      data: {
+        id: 'GHSA-xvch-5gv4-984h',
+        vulnerable: [
+          '<1.2.6'
+        ]
+      }
+    }
+  ]
 }
 ]
