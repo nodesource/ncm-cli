@@ -1,7 +1,46 @@
 'use strict'
 
+const fs = require('fs')
+const os = require('os')
+const path = require('path')
+const { execFile } = require('child_process')
+
 // Only import what we need, avoid unused imports
 const { NCMTestRunner } = require('./lib/test-runner.js')
+const NCM_BIN = path.join(__dirname, '..', 'bin', 'ncm-cli.js')
+// Far above a run on a loaded machine: the bound only has to stop a run that
+// retries forever.
+const SPAWN_TIMEOUT = 30000
+
+// Runs `details npm @ 6.8.0` in a fresh config, with `ncmToken` as
+// NCM_TOKEN, and checks it answers without asking the sign-in service.
+function detailsInFreshConfig (runner, t, ncmToken) {
+  t.timeout(SPAWN_TIMEOUT + 10000)
+  const configHome = fs.mkdtempSync(path.join(os.tmpdir(), 'ncm-cli-config-'))
+  const env = { ...process.env, ...runner.env, NCM_TOKEN: ncmToken, XDG_CONFIG_HOME: configHome }
+  return new Promise(/** @type {(resolve: any) => void} */ (resolve) => {
+    execFile(process.execPath, [NCM_BIN, 'details', 'npm', '@', '6.8.0', '--color=16m'], { env, timeout: SPAWN_TIMEOUT }, (err, stdout, stderr) => {
+      fs.rmSync(configHome, { recursive: true, force: true })
+      t.falsy(err?.killed, `details was stopped after ${SPAWN_TIMEOUT} ms`)
+      t.is(err?.code, 1)
+      t.is(stderr, '')
+      t.regex(stdout, /npm @ 6.8.0/)
+      t.deepEqual(runner.accountsCalls, [])
+      resolve()
+    })
+  })
+}
+
+NCMTestRunner.createTest('details answers when the API refuses NCM_TOKEN, without asking the sign-in service', async (runner, t) => {
+  await detailsInFreshConfig(runner, t, 'refused-token')
+  // The refused token first, then the same request once more without one.
+  t.deepEqual(runner.apiAuthorizations, ['Bearer refused-token', undefined])
+})
+
+NCMTestRunner.createTest('details sends no Authorization header without signing in or a token', async (runner, t) => {
+  await detailsInFreshConfig(runner, t, '')
+  t.deepEqual(runner.apiAuthorizations, [undefined])
+})
 
 // Use the new createTest helper function to create tests with the runner
 NCMTestRunner.createTest('details output matches snapshot', (runner, t) => {
