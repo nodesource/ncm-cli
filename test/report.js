@@ -390,10 +390,22 @@ function assertScoredWithoutAccounts (t, runner, { err, stdout, stderr }) {
   t.deepEqual(runner.accountsCalls, [])
 }
 
+// Each request sent the refused token first, then once more without one.
+function assertRefusedThenAnonymous (t, runner) {
+  const sent = runner.apiAuthorizations
+  const refused = sent.filter(a => a === 'Bearer refused-token')
+  t.true(refused.length > 0)
+  t.is(sent.length, refused.length * 2)
+  t.is(sent.filter(a => a === undefined).length, refused.length)
+}
+
 NCMTestRunner.createTest('report scores a project without signing in or a token, and never calls the sign-in service', async (runner, t) => {
   // A fresh config, as after installing the CLI, with no NCM_TOKEN: nobody
   // ran `ncm signin`.
   assertScoredWithoutAccounts(t, runner, await reportWithConfig(runner, t))
+  // The saved token is blank, so no request carries an Authorization header.
+  t.true(runner.apiAuthorizations.length > 0)
+  t.deepEqual(runner.apiAuthorizations.filter(a => a !== undefined), [])
 })
 
 NCMTestRunner.createTest('report scores a project when the API refuses a saved session, without asking the sign-in service for a new one', async (runner, t) => {
@@ -402,12 +414,20 @@ NCMTestRunner.createTest('report scores a project when the API refuses a saved s
     saved: { token: 'refused-token', refreshToken: 'saved-refresh-token' }
   })
   assertScoredWithoutAccounts(t, runner, outcome)
+  assertRefusedThenAnonymous(t, runner)
   // Refreshing would also have used up the saved refresh token.
   t.is(outcome.config.refreshToken, 'saved-refresh-token')
 })
 
 NCMTestRunner.createTest('report scores a project when the API refuses NCM_TOKEN, instead of retrying it forever', async (runner, t) => {
   assertScoredWithoutAccounts(t, runner, await reportWithConfig(runner, t, { ncmToken: 'refused-token' }))
+  assertRefusedThenAnonymous(t, runner)
+})
+
+NCMTestRunner.createTest('report sends no Authorization header when NCM_TOKEN is blank', async (runner, t) => {
+  assertScoredWithoutAccounts(t, runner, await reportWithConfig(runner, t, { ncmToken: '  ' }))
+  t.true(runner.apiAuthorizations.length > 0)
+  t.deepEqual(runner.apiAuthorizations.filter(a => a !== undefined), [])
 })
 
 NCMTestRunner.createTest('report with poisoned project', (runner, t) => {

@@ -42,6 +42,8 @@ function NCMTestRunner (opts) {
   this._test = null
   // The paths of the calls the CLI made to the sign-in service (`/accounts`).
   this.accountsCalls = []
+  // The Authorization header of each NCM API request, undefined when none.
+  this.apiAuthorizations = []
 
   const self = this
 
@@ -162,9 +164,11 @@ NCMTestRunner.prototype.bootstrap = function bootstrap (cb) {
     next()
   })
 
-  // A token the NCM API refuses, as an expired session would be if it ever
-  // checked them on scoring: the CLI then gets a 401.
-  this.app.use('/ncm2/api/v2/graphql', function (req, res, next) {
+  // Record the Authorization header of every NCM API request. Refuse one
+  // token, as an expired session would be if the API ever checked them on
+  // scoring: the CLI then gets a 401.
+  this.app.use('/ncm2/api/v2/graphql', (req, res, next) => {
+    this.apiAuthorizations.push(req.headers.authorization)
     if (req.headers.authorization === 'Bearer refused-token') {
       return res.status(401).send({ message: 'Unauthorized' })
     }
