@@ -90,7 +90,7 @@ test.serial('moduleReport links npm:* advisories to Snyk', t => {
   t.notRegex(out, /Synk/)
 })
 
-test.serial('moduleReport omits link and source for unknown advisory ids', t => {
+test.serial('moduleReport prints an unknown advisory id without a link', t => {
   const out = renderWithVulnerability({
     title: 'Prototype Pollution',
     data: {
@@ -101,7 +101,8 @@ test.serial('moduleReport omits link and source for unknown advisory ids', t => 
 
   t.regex(out, /^Versions <1\.2\.6$/m)
   t.notRegex(out, /Source:/)
-  t.notRegex(out, /\|➔/)
+  t.regex(out, /\|➔ CVE-2021-44906\b/)
+  t.notRegex(out, /\|➔ https?:/)
 })
 
 test.serial('moduleReport uses data.source when id is neither GHSA nor Snyk', t => {
@@ -115,7 +116,8 @@ test.serial('moduleReport uses data.source when id is neither GHSA nor Snyk', t 
   })
 
   t.regex(out, /^Versions <1\.2\.6 \(Source: OSV\)$/m)
-  t.notRegex(out, /\|➔/)
+  t.regex(out, /\|➔ OSV-2021-1234\b/)
+  t.notRegex(out, /\|➔ https?:/)
 })
 
 test.serial('moduleReport omits link and source when advisory id is missing', t => {
